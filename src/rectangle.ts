@@ -23,11 +23,17 @@ export class Rectangle{
         let maxTop: number;
         let minBottom: number;
         if(isPoint(pointOrRectangle)){
+            if(pointOrRectangle.x < 0 || pointOrRectangle.y < 0){
+                console.log("expanding to include", pointOrRectangle);
+            }
             maxLeft = pointOrRectangle.x;
             minRight = pointOrRectangle.x;
             maxTop = pointOrRectangle.y;
             minBottom = pointOrRectangle.y;
         }else{
+            if(pointOrRectangle.left < 0 || pointOrRectangle.top < 0){
+                console.log("expanding to include", pointOrRectangle);
+            }
             maxLeft = pointOrRectangle.left;
             minRight = pointOrRectangle.right;
             maxTop = pointOrRectangle.top;

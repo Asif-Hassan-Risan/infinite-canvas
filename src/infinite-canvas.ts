@@ -6,6 +6,8 @@ import { Transformer } from "./transformer/transformer"
 import { InfiniteCanvasTransformer } from "./transformer/infinite-canvas-transformer";
 import { InfiniteCanvasEvents } from "./events/infinite-canvas-events";
 import { InfiniteCanvasConfig } from "./config/infinite-canvas-config";
+import {DrawingIterationProvider} from "./interfaces/drawing-iteration-provider";
+import {AnimationFrameDrawingIterationProvider} from "./animation-frame-drawing-iteration-provider";
 
 export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private context: InfiniteCanvasRenderingContext2D;
@@ -14,7 +16,8 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private config: InfiniteCanvasConfig;
 	constructor(private readonly canvas: HTMLCanvasElement, config?: InfiniteCanvasConfig){
 		this.config = config || {rotationEnabled: true, greedyGestureHandling: false};
-		this.viewBox = new InfiniteCanvasViewBox(canvas.width, canvas.height, canvas.getContext("2d"));
+		const drawingIterationProvider: DrawingIterationProvider = new AnimationFrameDrawingIterationProvider();
+		this.viewBox = new InfiniteCanvasViewBox(canvas.width, canvas.height, canvas.getContext("2d"), drawingIterationProvider);
 		this.transformer = new InfiniteCanvasTransformer(this.viewBox, this.config);
 		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.viewBox, this.transformer, this.config);
 	}

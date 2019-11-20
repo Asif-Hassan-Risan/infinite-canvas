@@ -120,14 +120,17 @@ export class InfiniteCanvasInstructionSet {
     }
 
     public clearArea(x: number, y: number, width: number, height: number): void{
+        console.log("clearing area")
         const rectangle: Rectangle = new Rectangle(x, y, width, height).transform(this.state.current.transformation);
         if(!this.intersects(rectangle)){
             return;
         }
         this.clearContentsInsideArea(rectangle);
         if(this.currentInstructionsWithPath && this.currentInstructionsWithPath.hasDrawingAcrossBorderOf(rectangle)){
+            console.log("adding a clearRect to current instructions", this.currentInstructionsWithPath);
             this.currentInstructionsWithPath.addClearRect(rectangle);
         }else if(this.previousInstructionsWithPath.hasDrawingAcrossBorderOf(rectangle)){
+            console.log("adding a clearRect to previous instructions")
             this.previousInstructionsWithPath.addClearRect(rectangle);
         }
 		this.onChange();

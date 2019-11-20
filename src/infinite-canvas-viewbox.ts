@@ -6,12 +6,14 @@ import { PathInstruction } from "./interfaces/path-instruction";
 import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set";
 import { InfiniteCanvasState } from "./state/infinite-canvas-state";
 import {InfiniteCanvasStateInstance} from "./state/infinite-canvas-state-instance";
+import {DrawingIterationProvider} from "./interfaces/drawing-iteration-provider";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
 	private _transformation: Transformation;
-	constructor(public width: number, public height: number, private context: CanvasRenderingContext2D){
-		this.instructionSet = new InfiniteCanvasInstructionSet(() => this.draw());
+	constructor(public width: number, public height: number, private context: CanvasRenderingContext2D, drawingIterationProvider: DrawingIterationProvider){
+		const executeDraw: () => void = drawingIterationProvider.provideDrawingIteration(() => this.draw());
+		this.instructionSet = new InfiniteCanvasInstructionSet(executeDraw);
 		this._transformation = Transformation.identity;
 	}
 	public get state(): InfiniteCanvasState{return this.instructionSet.state;}

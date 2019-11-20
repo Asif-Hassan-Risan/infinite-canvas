@@ -68,18 +68,25 @@
             ctx.restore();
         };
         var wheels = [
-            new CogWheel(101, 101, 10, 0, 1),
-            new CogWheel(160, 100, 7, 0, -1),
-            new CogWheel(199.5, 169, 17, 0, 1)
+            new CogWheel(301, 101, 10, 0, 1),
+            new CogWheel(360, 100, 7, 0, -1),
+            new CogWheel(399.5, 169, 17, 0, 1),
+            new CogWheel(150, 150, 40, 0, -1)
         ];
         var time = 0;
+        var times = 0;
         function draw(){
-            ctx.clearRect(0, 0, 300, 300);
+            ctx.clearRect(0, 0, 600, 600);
+            console.log("starting to draw cogs")
             for(var i=0;i<wheels.length;i++){
                 wheels[i].draw(ctx, time);
             }
             time += 0.06;
-            setTimeout(draw, 1000);
+            times +=1;
+            if(times < 3){
+                setTimeout(draw, 1000);
+            }
+
         }
         draw();
     })();
