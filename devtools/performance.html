@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>InfiniteCanvas performance</title>
+    <script type="text/javascript" src="infinite-canvas.js"></script>
+</head>
+<body>
+<canvas width="500" height="500" id="canvas"></canvas>
+<script type="application/javascript">
+    (function(){
+        var infCanvas = new InfiniteCanvas(document.getElementById("canvas"));
+        var ctx = infCanvas.getContext();
+
+        // var gradient = ctx.createLinearGradient(0, -1, 0, 0);
+        // gradient.addColorStop(0, "#999");
+        // gradient.addColorStop(1, "#fff");
+        function CogWheel(x, y, numberOfCogs, initialRotation, direction){
+            this.x = x;
+            this.y = y;
+            this.numberOfCogs = numberOfCogs;
+            this.initialRotation = initialRotation;
+            this.side = 10;
+            this.circumference = this.side * 1.8 * this.numberOfCogs;
+            this.radius = this.circumference / (2 * Math.PI);
+            this.smallerRadius = this.radius / 4;
+            this.halfSide = this.side / 2;
+            this.cogStartX = Math.sqrt(this.radius * this.radius - this.halfSide * this.halfSide);
+            this.rotationStep = 2 * Math.PI / this.numberOfCogs;
+            this.halfCogAngle = Math.asin(this.halfSide / this.radius);
+            this.arcAngle = this.rotationStep - this.halfCogAngle;
+            this.a = 1.5;
+            this.b = 0.9;
+            this.bigRadius = this.radius + this.halfSide * this.a;
+            this.rotationSpeed = direction * 1 / numberOfCogs;
+        }
+        CogWheel.prototype.draw = function(ctx, time){
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.save();
+            ctx.rotate(this.initialRotation + this.rotationSpeed * time);
+            ctx.beginPath();
+            for(var i=0; i < this.numberOfCogs; i++){
+                if(i === 0){
+                    ctx.moveTo(this.cogStartX, -this.halfSide);
+                }
+                ctx.lineTo(this.bigRadius, -this.halfSide * this.b);
+                ctx.lineTo(this.bigRadius, this.halfSide * this.b);
+                ctx.lineTo(this.cogStartX, this.halfSide);
+                ctx.arc(0, 0, this.radius, this.halfCogAngle, this.arcAngle);
+                ctx.rotate(this.rotationStep);
+            }
+            ctx.closePath();
+
+            ctx.restore();
+            //ctx.stroke();
+            ctx.save();
+            ctx.clip();
+            ctx.save();
+            ctx.scale(this.bigRadius, this.bigRadius);
+            ctx.fillStyle = "#999";
+            ctx.fillRect(-1, -1, 2, 2);
+            // ctx.fillStyle = gradient;
+            // ctx.fillRect(-1, -1, 2, 1);
+            ctx.restore();
+            ctx.stroke();
+            ctx.restore();
+            ctx.restore();
+        };
+        var wheels = [
+            new CogWheel(101, 101, 10, 0, 1),
+            new CogWheel(160, 100, 7, 0, -1),
+            new CogWheel(199.5, 169, 17, 0, 1)
+        ];
+        var time = 0;
+        function draw(){
+            ctx.clearRect(0, 0, 300, 300);
+            for(var i=0;i<wheels.length;i++){
+                wheels[i].draw(ctx, time);
+            }
+            time += 0.06;
+            setTimeout(draw, 1000);
+        }
+        draw();
+    })();
+</script>
+</body>
+</html>
