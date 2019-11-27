@@ -29,10 +29,21 @@ var infCanvas = new InfiniteCanvas(canvas);
 var ctx = infCanvas.getContext("2d");
 
 //Earth
-ctx.beginPath();
-ctx.arc(150, 100250, 100000, 0, 2 * Math.PI);
 ctx.save();
-ctx.fillStyle = "#888";
+ctx.translate(150, 100250);
+ctx.scale(100000, 100000);
+var gradient = ctx.createRadialGradient(0, 0, 1, 0, 0, 1.3);
+gradient.addColorStop(0, "#fff");
+gradient.addColorStop(0.005, "#6af");
+gradient.addColorStop(0.2, "#006");
+gradient.addColorStop(1, "#000");
+ctx.beginPath();
+ctx.arc(0, 0, 2, 0, 2 * Math.PI);
+ctx.fillStyle = gradient;
+ctx.fill();
+ctx.beginPath();
+ctx.arc(0, 0, 1, 0, 2 * Math.PI);
+ctx.fillStyle = "#0a0";
 ctx.fill();
 ctx.restore();
 
