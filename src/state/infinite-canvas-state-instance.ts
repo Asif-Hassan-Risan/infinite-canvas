@@ -50,7 +50,6 @@ export class InfiniteCanvasStateInstance{
 
     public withClippedPath(clippedPath: StateChangingInstructionSetWithAreaAndCurrentPathAndCurrentState): InfiniteCanvasStateInstance{
         const clippedArea: Rectangle = clippedPath.getClippedArea();
-        console.log("adding clipped path to state, it has area", clippedArea);
         
         const newClippedPaths: ClippedPaths = this.clippedPaths ? this.clippedPaths.withClippedPath(clippedPath) : new ClippedPaths(clippedPath.getClippedArea(), clippedPath);
         return new InfiniteCanvasStateInstance(this.fillStyle, this.lineWidth, this.lineDash, this.strokeStyle, this.lineDashOffset, this.transformation, newClippedPaths);

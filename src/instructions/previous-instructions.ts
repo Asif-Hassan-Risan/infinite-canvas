@@ -27,7 +27,6 @@ export class PreviousInstructions extends StateChangingInstructionSequence<State
         this.add(new ClearRectWithState(this.state, area));
     }
     public clearContentsInsideArea(area: Rectangle): void{
-        console.log(`number before removing: ${this.added.length}`)
         this.removeAll(i => {
             const result: boolean = i.isContainedBy(area);
             if(!result){
@@ -35,7 +34,6 @@ export class PreviousInstructions extends StateChangingInstructionSequence<State
             }
             return result;
         });
-        console.log(`number after removing: ${this.added.length}`)
     }
     public isContainedBy(area: Rectangle): boolean {
         return !this.contains(i => !i.isContainedBy(area));
