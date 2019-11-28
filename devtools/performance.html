@@ -12,9 +12,9 @@
         var infCanvas = new InfiniteCanvas(document.getElementById("canvas"));
         var ctx = infCanvas.getContext();
 
-        // var gradient = ctx.createLinearGradient(0, -1, 0, 0);
-        // gradient.addColorStop(0, "#999");
-        // gradient.addColorStop(1, "#fff");
+        var gradient = ctx.createLinearGradient(0, -1, 0, 0);
+        gradient.addColorStop(0, "#999");
+        gradient.addColorStop(1, "#fff");
         function CogWheel(x, y, numberOfCogs, initialRotation, direction){
             this.x = x;
             this.y = y;
@@ -60,8 +60,8 @@
             ctx.scale(this.bigRadius, this.bigRadius);
             ctx.fillStyle = "#999";
             ctx.fillRect(-1, -1, 2, 2);
-            // ctx.fillStyle = gradient;
-            // ctx.fillRect(-1, -1, 2, 1);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(-1, -1, 2, 1);
             ctx.restore();
             ctx.stroke();
             ctx.restore();
@@ -78,7 +78,7 @@
         function draw(){
             ctx.clearRect(-100, -100, 600, 600);
             for(var i=0;i<wheels.length;i++){
-                wheels[i].draw(ctx, time - 10 * Math.sin(time / 10));
+                wheels[i].draw(ctx, time - 8 * Math.sin(time / 10));
             }
             time += 1;
             times +=1;
