@@ -10,7 +10,8 @@
 <script type="application/javascript">
     (function(){
         var infCanvas = new InfiniteCanvas(document.getElementById("canvas"));
-        var ctx = infCanvas.getContext();
+        var ctx = infCanvas.getContext("2d");
+        infCanvas.rotationEnabled = false;
 
         var gradient = ctx.createLinearGradient(0, -1, 0, 0);
         gradient.addColorStop(0, "#999");
@@ -39,6 +40,7 @@
             ctx.translate(this.x, this.y);
             ctx.save();
             ctx.rotate(this.initialRotation + this.rotationSpeed * time);
+            ctx.save();
             ctx.beginPath();
             for(var i=0; i < this.numberOfCogs; i++){
                 if(i === 0){
@@ -51,11 +53,12 @@
                 ctx.rotate(this.rotationStep);
             }
             ctx.closePath();
-
+            ctx.restore();
+            ctx.rect(this.bigRadius / 4, 0, this.bigRadius / 4, this.bigRadius / 4);
             ctx.restore();
             //ctx.stroke();
             ctx.save();
-            ctx.clip();
+            ctx.clip("evenodd");
             ctx.save();
             ctx.scale(this.bigRadius, this.bigRadius);
             ctx.fillStyle = "#999";
@@ -71,17 +74,15 @@
             new CogWheel(301, 101, 10, 0, 1),
             new CogWheel(360, 100, 7, 0, -1),
             new CogWheel(399.5, 169, 17, 0, 1),
-            new CogWheel(150, 150, 40, 0, -1)
+            new CogWheel(155, 148, 40, 0, -1)
         ];
         var time = 0;
-        var times = 0;
         function draw(){
             ctx.clearRect(-100, -100, 600, 600);
             for(var i=0;i<wheels.length;i++){
                 wheels[i].draw(ctx, time - 8 * Math.sin(time / 10));
             }
-            time += 1;
-            times +=1;
+            time += .3;
             setTimeout(draw, 20);
 
         }
