@@ -15,16 +15,15 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
 	private _transformation: Transformation;
 	private _auxiliaryObjects: InfiniteCanvasAuxiliaryObject[] = [];
-	constructor(public width: number, public height: number, private context: CanvasRenderingContext2D, drawingIterationProvider: DrawingIterationProvider){
-		const executeDraw: () => void = drawingIterationProvider.provideDrawingIteration(() => this.draw());
-		this.instructionSet = new InfiniteCanvasInstructionSet(executeDraw);
+	constructor(public width: number, public height: number, private context: CanvasRenderingContext2D, private readonly drawingIterationProvider: DrawingIterationProvider){
+		this.instructionSet = new InfiniteCanvasInstructionSet(() => drawingIterationProvider.provideDrawingIteration(() => this.draw()));
 		this._transformation = Transformation.identity;
 	}
 	public get state(): InfiniteCanvasState{return this.instructionSet.state;}
 	public get transformation(): Transformation{return this._transformation};
 	public set transformation(value: Transformation){
 		this._transformation = value;
-		this.draw();
+		this.drawingIterationProvider.provideDrawingIteration(() => this.draw());
 	}
 	public changeState(instruction: (state: InfiniteCanvasStateInstance) => StateChange<InfiniteCanvasStateInstance>): void{
 		this.instructionSet.changeState(instruction);
