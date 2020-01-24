@@ -3,20 +3,31 @@ import { InfiniteContext } from "../src/infinite-context/infinite-context";
 import { ViewBox } from "../src/interfaces/viewbox";
 import { CanvasContextMock } from "./canvas-context-mock";
 import { Transformation } from "../src/transformation";
+import { DrawingLock } from "../src/drawing-lock";
+import { InfiniteCanvasRenderingContext2D } from "../src/infinite-context/infinite-canvas-rendering-context-2d";
 
 describe("an infinite canvas context", () => {
 	let width: number;
 	let height: number;
-	let infiniteContext: InfiniteContext;
+	let infiniteContext: InfiniteCanvasRenderingContext2D;
 	let contextMock: CanvasContextMock;
 	let viewbox: ViewBox;
+	let getDrawingLockSpy: jest.Mock;
+	let releaseDrawingLockSpy: jest.SpyInstance;
+	let latestDrawingInstruction: () => void;
+	let executeLatestDrawingInstruction: () => void;
 
 	beforeEach(() => {
+		executeLatestDrawingInstruction = () => {latestDrawingInstruction();};
+		const drawingLock: DrawingLock = {release(){}};
+		releaseDrawingLockSpy = jest.spyOn(drawingLock, 'release');
+		const getDrawingLock: () => DrawingLock = () => drawingLock;
+		getDrawingLockSpy = jest.fn().mockReturnValue(drawingLock);
 		width = 200;
 		height = 200;
 		contextMock = new CanvasContextMock();
 		const context: any = contextMock.mock;
-		viewbox = new InfiniteCanvasViewBox(width, height, context, {provideDrawingIteration(draw: () => void): void {draw();}});
+		viewbox = new InfiniteCanvasViewBox(width, height, context, {provideDrawingIteration(draw: () => void): void {latestDrawingInstruction = draw; executeLatestDrawingInstruction();}}, getDrawingLockSpy);
 		infiniteContext = new InfiniteContext(undefined, viewbox);
 	});
 
@@ -1148,42 +1159,42 @@ describe("an infinite canvas context", () => {
 		[
 			"linear gradient",
 			"fills",
-			(context: InfiniteContext) => context.createLinearGradient(10, 0, 10, 30),
-			(context: InfiniteContext) => context.fill(),
-			(context: InfiniteContext, x: number, y: number, w:number, h:number) => context.fillRect(x, y, w, h),
-			(context: InfiniteContext, fillStrokeStyle: CanvasGradient | CanvasPattern) => {context.fillStyle = fillStrokeStyle}
+			(context: InfiniteCanvasRenderingContext2D) => context.createLinearGradient(10, 0, 10, 30),
+			(context: InfiniteCanvasRenderingContext2D) => context.fill(),
+			(context: InfiniteCanvasRenderingContext2D, x: number, y: number, w:number, h:number) => context.fillRect(x, y, w, h),
+			(context: InfiniteCanvasRenderingContext2D, fillStrokeStyle: CanvasGradient | CanvasPattern) => {context.fillStyle = fillStrokeStyle}
 		],
 		[
 			"linear gradient",
 			"strokes",
-			(context: InfiniteContext) => context.createLinearGradient(10, 0, 10, 30),
-			(context: InfiniteContext) => context.stroke(),
-			(context: InfiniteContext, x: number, y: number, w:number, h:number) => context.strokeRect(x, y, w, h),
-			(context: InfiniteContext, fillStrokeStyle: CanvasGradient | CanvasPattern) => {context.strokeStyle = fillStrokeStyle}
+			(context: InfiniteCanvasRenderingContext2D) => context.createLinearGradient(10, 0, 10, 30),
+			(context: InfiniteCanvasRenderingContext2D) => context.stroke(),
+			(context: InfiniteCanvasRenderingContext2D, x: number, y: number, w:number, h:number) => context.strokeRect(x, y, w, h),
+			(context: InfiniteCanvasRenderingContext2D, fillStrokeStyle: CanvasGradient | CanvasPattern) => {context.strokeStyle = fillStrokeStyle}
 		],
 		[
 			"radial gradient",
 			"fills",
-			(context: InfiniteContext) => context.createRadialGradient(0, 0, 1, 5, 5, 5),
-			(context: InfiniteContext) => context.fill(),
-			(context: InfiniteContext, x: number, y: number, w:number, h:number) => context.fillRect(x, y, w, h),
-			(context: InfiniteContext, fillStrokeStyle: CanvasGradient | CanvasPattern) => {context.fillStyle = fillStrokeStyle}
+			(context: InfiniteCanvasRenderingContext2D) => context.createRadialGradient(0, 0, 1, 5, 5, 5),
+			(context: InfiniteCanvasRenderingContext2D) => context.fill(),
+			(context: InfiniteCanvasRenderingContext2D, x: number, y: number, w:number, h:number) => context.fillRect(x, y, w, h),
+			(context: InfiniteCanvasRenderingContext2D, fillStrokeStyle: CanvasGradient | CanvasPattern) => {context.fillStyle = fillStrokeStyle}
 		],
 		[
 			"radial gradient",
 			"strokes",
-			(context: InfiniteContext) => context.createRadialGradient(0, 0, 1, 5, 5, 5),
-			(context: InfiniteContext) => context.stroke(),
-			(context: InfiniteContext, x: number, y: number, w:number, h:number) => context.strokeRect(x, y, w, h),
-			(context: InfiniteContext, fillStrokeStyle: CanvasGradient | CanvasPattern) => {context.strokeStyle = fillStrokeStyle}
+			(context: InfiniteCanvasRenderingContext2D) => context.createRadialGradient(0, 0, 1, 5, 5, 5),
+			(context: InfiniteCanvasRenderingContext2D) => context.stroke(),
+			(context: InfiniteCanvasRenderingContext2D, x: number, y: number, w:number, h:number) => context.strokeRect(x, y, w, h),
+			(context: InfiniteCanvasRenderingContext2D, fillStrokeStyle: CanvasGradient | CanvasPattern) => {context.strokeStyle = fillStrokeStyle}
 		]
 	])(`that creates a %s`, (
 		fillStrokeStyleName: string,
 		drawingVerb: string,
-		createFillStrokeStyle: (context: InfiniteContext) => CanvasGradient | CanvasPattern,
-		drawPath: (context: InfiniteContext) => void,
-		drawRect: (context: InfiniteContext, x: number, y: number, w:number, h:number) => void,
-		setFillStrokeStyle:(context: InfiniteContext, fillStrokeStyle: CanvasGradient | CanvasPattern) => void) => {
+		createFillStrokeStyle: (context: InfiniteCanvasRenderingContext2D) => CanvasGradient | CanvasPattern,
+		drawPath: (context: InfiniteCanvasRenderingContext2D) => void,
+		drawRect: (context: InfiniteCanvasRenderingContext2D, x: number, y: number, w:number, h:number) => void,
+		setFillStrokeStyle:(context: InfiniteCanvasRenderingContext2D, fillStrokeStyle: CanvasGradient | CanvasPattern) => void) => {
 		let fillStrokeStyle: CanvasGradient | CanvasPattern;
 
 		beforeEach(() => {
@@ -1319,6 +1330,350 @@ describe("an infinite canvas context", () => {
 							});
 						});
 					});
+				});
+			});
+		});
+	});
+
+	describe("that creates image data", () => {
+		let width: number;
+		let height: number;
+		let returnImageBitmap: (bitmap: ImageBitmap) => void;
+		let createImageBitmapSpy: jest.SpyInstance;
+		let imageData: ImageData;
+
+		beforeEach(() => {
+			width = 10;
+			height = 10;
+			const imageBitmapPromise: Promise<ImageBitmap> = new Promise((res, rej) => {
+				returnImageBitmap = res;
+			});
+			createImageBitmapSpy = jest.spyOn(window, 'createImageBitmap').mockImplementation(() => imageBitmapPromise);
+			const array: Uint8ClampedArray = new Uint8ClampedArray(4 * width * height);
+			imageData = {data: array, height: height, width: width};
+		});
+
+		afterEach(() => {
+			createImageBitmapSpy.mockRestore();
+		});
+
+		describe("and then puts it on the context", () => {
+			let x: number;
+			let y: number;
+
+			beforeEach(() => {
+				executeLatestDrawingInstruction = () => {};
+				x = 10;
+				y = 10;
+				infiniteContext.putImageData(imageData, x, y);
+			});
+
+			it("should have gotten a drawing lock", () => {
+				expect(getDrawingLockSpy).toHaveBeenCalledTimes(1);
+			});
+	
+			it("should have asked for an image bitmap", () => {
+				const createImageBitmapLatestArgs = createImageBitmapSpy.mock.calls[0];
+				const imageData: ImageData = createImageBitmapLatestArgs[0];
+				expect(imageData.width).toBe(width);
+				expect(imageData.height).toBe(height);
+				expect(imageData.data.length).toBe(4 * width * height);
+			});
+	
+			describe("and then the bitmap is ready", () => {
+	
+				beforeEach(() => {
+					returnImageBitmap({height: height, width: width, close(){}});
+				});
+	
+				it("should have released the lock", () => {
+					expect(releaseDrawingLockSpy).toHaveBeenCalledTimes(1);
+				});
+	
+				describe("and then drawing is executed", () => {
+	
+					beforeEach(() => {
+						latestDrawingInstruction();
+					});
+	
+					it("should have filled a rect using a pattern created from the bitmap", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+
+					describe("and then part of the drawing is cleared", () => {
+
+						beforeEach(() => {
+							executeLatestDrawingInstruction = () => latestDrawingInstruction();
+							contextMock.clear();
+							infiniteContext.clearRect(5, 5, 10, 10);
+						});
+
+						it("should have added a clearRect", () => {
+							expect(contextMock.getLog()).toMatchSnapshot();
+						});
+					});
+
+					describe("and then the entire drawing is cleared", () => {
+
+						beforeEach(() => {
+							executeLatestDrawingInstruction = () => latestDrawingInstruction();
+							contextMock.clear();
+							infiniteContext.clearRect(5, 5, 20, 20);
+						});
+
+						it("should have forgotten everything", () => {
+							expect(contextMock.getLog()).toMatchSnapshot();
+						});
+					});
+				});
+			});
+		});
+
+		describe("and then puts part of it on the context", () => {
+			let x: number;
+			let y: number;
+			let dirtyX: number;
+			let dirtyY: number;
+			let dirtyWidth: number;
+			let dirtyHeight: number;
+
+			beforeEach(() => {
+				executeLatestDrawingInstruction = () => {};
+				x = 10;
+				y = 10;
+				dirtyX = 1;
+				dirtyY = 1;
+				dirtyWidth = 8;
+				dirtyHeight = 8;
+				infiniteContext.putImageData(imageData, x, y, dirtyX, dirtyY, dirtyWidth, dirtyHeight);
+			});
+
+			it("should have gotten a drawing lock", () => {
+				expect(getDrawingLockSpy).toHaveBeenCalledTimes(1);
+			});
+	
+			it("should have asked for an image bitmap", () => {
+				expect(createImageBitmapSpy).toHaveBeenCalledTimes(1);
+				const createImageBitmapLatestArgs = createImageBitmapSpy.mock.calls[0];
+				const imageData: ImageData = createImageBitmapLatestArgs[0];
+				expect(imageData.width).toBe(dirtyWidth);
+				expect(imageData.height).toBe(dirtyHeight);
+				expect(imageData.data.length).toBe(4 * dirtyWidth * dirtyHeight);
+			});
+
+			describe("and then the bitmap is ready", () => {
+	
+				beforeEach(() => {
+					returnImageBitmap({height: dirtyHeight, width: dirtyWidth, close(){}});
+				});
+	
+				it("should have released the lock", () => {
+					expect(releaseDrawingLockSpy).toHaveBeenCalledTimes(1);
+				});
+	
+				describe("and then drawing is executed", () => {
+	
+					beforeEach(() => {
+						latestDrawingInstruction();
+					});
+	
+					it("should have filled a rect using a pattern created from the bitmap", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+			});
+		});
+	});
+
+	describe("that creates a pattern", () => {
+		let pattern: CanvasPattern;
+
+		beforeEach(() => {
+			const imageBitmap: ImageBitmap = {width:1, height: 1, close(){}};
+			pattern = infiniteContext.createPattern(imageBitmap, 'repeat');
+		});
+
+		describe("and then uses it to fill a rect", () => {
+
+			beforeEach(() => {
+				infiniteContext.fillStyle = pattern;
+				contextMock.clear();
+				infiniteContext.fillRect(0, 0, 1, 1);
+			});
+
+			it("should wrap the fill command in a transform", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
+
+	describe("that uses an image", () => {
+		let image: CanvasImageSource;
+		let imageWidth: number;
+		let imageHeight: number;
+
+		beforeEach(() => {
+			imageWidth = 100;
+			imageHeight = 100;
+			image = {width: imageWidth, height: imageHeight, close(){}};
+		});
+
+		describe("and draws it using three arguments", () => {
+			let x: number;
+			let y: number;
+			
+			beforeEach(() => {
+				x = 10;
+				y = 10;
+				contextMock.clear();
+				infiniteContext.drawImage(image, x, y);
+			});
+
+			it("should call the context using three arguments", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+
+			describe("and then clears the rectangle where the image was drawn", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.clearRect(x-1, y-1, imageWidth+2, imageHeight+2);
+				});
+
+				it("should no longer draw the image", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+
+		describe("and draws it using five arguments", () => {
+			let x: number;
+			let y: number;
+			let width: number;
+			let height: number;
+			
+			beforeEach(() => {
+				x = 10;
+				y = 10;
+				width = 40;
+				height = 40;
+				contextMock.clear();
+				infiniteContext.drawImage(image, x, y, width, height);
+			});
+
+			it("should call the context using five arguments", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+
+			describe("and then clears the rectangle where the image was drawn", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.clearRect(x-1, y-1, width+2, height+2);
+				});
+
+				it("should no longer draw the image", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+
+		describe("and draws it using nine arguments", () => {
+			let x: number;
+			let y: number;
+			let width: number;
+			let height: number;
+			
+			beforeEach(() => {
+				x = 10;
+				y = 10;
+				width = 40;
+				height = 40;
+				contextMock.clear();
+				infiniteContext.drawImage(image, 10, 10, 80, 80, x, y, width, height);
+			});
+
+			it("should call the context using nine arguments", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+
+			describe("and then clears the rectangle where the image was drawn", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.clearRect(x-1, y-1, width+2, height+2);
+				});
+
+				it("should no longer draw the image", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+	});
+
+	describe("that takes text", () => {
+		let x: number;
+		let y: number;
+		let width: number;
+		let height: number;
+		let text: string;
+
+		beforeEach(() => {
+			text = "Some text";
+			width = 200;
+			height = 20;
+			jest.spyOn(contextMock.mock, "measureText").mockImplementation(()=> ({
+				actualBoundingBoxRight: width,
+				actualBoundingBoxLeft: 0,
+				actualBoundingBoxAscent: 0,
+				actualBoundingBoxDescent: height
+			}));
+			x = 100;
+			y = 100;
+		});
+
+		describe("and fills it", () => {
+
+			beforeEach(() => {
+				infiniteContext.fillText(text, x, y);
+			});
+
+			it("should contain the instruction to transform and fill text", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+
+			describe("and clears it", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.clearRect(x-1, y-1, width+2, height+2);
+				});
+
+				it("should forget the instructions", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+
+		describe("and strokes it", () => {
+
+			beforeEach(() => {
+				infiniteContext.strokeText(text, x, y);
+			});
+
+			it("should contain the instruction to transform and stroke text", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+
+			describe("and clears it", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.clearRect(x-1, y-1, width+2, height+2);
+				});
+
+				it("should forget the instructions", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
 				});
 			});
 		});

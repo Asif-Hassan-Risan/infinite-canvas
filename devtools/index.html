@@ -62,6 +62,23 @@
 		(function(){
 			var canvasWidth = 400;
 			var canvasHeight = 400;
+			var createRandomImage = async function(){
+				var width = 300;
+				var height = 227;
+				var array = new Uint8ClampedArray(4 * width * height);
+				for(var i=0;i<height;i++){
+					for(var j=0;j<width;j++){
+						var index = 4 * width * i + 4 * j;
+						array[index] = Math.floor(Math.random() * 255);
+						array[index + 1] = Math.floor(Math.random() * 255);
+						array[index + 2] = Math.floor(Math.random() * 255);
+						array[index + 3] = Math.floor(Math.random() * 255);
+					}
+				}
+				var imageData = new ImageData(array, width);
+				return await createImageBitmap(imageData);
+			};
+			var imagePromise = createRandomImage();
 			var compareImages = function(imageData1, imageData2){
 				var newData = new Uint8ClampedArray(4 * canvasWidth * canvasHeight);
 				var currentIndex = 0;
@@ -763,6 +780,88 @@
 								ctx.fill();
 							},
 							title: "clip using a fill rule"
+						},
+						{
+							code: function(ctx){
+								var width = 30;
+								var height = 30;
+								var centerX = 5;
+								var centerY = 5;
+								var radiusSq = 25;
+								var array = new Uint8ClampedArray(4 * width * height);
+								for(var j=0;j<height;j++){
+									for(var i=0;i<width;i++){
+									var dx = i - centerX;
+									var dy = j - centerY;
+									var index = 4 * j * width + 4 * i;
+									var inside = dx * dx + dy * dy < radiusSq;
+									array[index] = inside ? 255:0;
+									array[index + 3] = 255;
+								}
+								}
+								var imageData = new ImageData(array, width);
+								ctx.putImageData(imageData, 20, 20);
+							},
+							title: "put image data"
+						},
+						{
+							code:function(ctx){
+								var length = 20;
+								var array = new Uint8ClampedArray(4 * length * length);
+								for(var j=0;j<length;j++){
+									for(var i=0;i<length;i++){
+										var dx = i - length / 2;
+										var dy = j - length / 2;
+										var index = 4 * j * length + 4 * i;
+										var inside = dx * dx + dy * dy < length * length / 4;
+										array[index] = inside ? 255:0;
+										array[index + 3] = 255;
+									}
+								}
+								var imageData = new ImageData(array, length);
+								createImageBitmap(imageData).then(function(bitmap){
+									var pattern = ctx.createPattern(bitmap, 'repeat');
+									ctx.translate(17, 17);
+									ctx.fillStyle = pattern;
+									ctx.fillRect(0, 0, 100, 100);
+								});
+							}
+						},
+						{
+							code: function(ctx){
+								imagePromise.then(function(image){
+									ctx.drawImage(image, 33, 71, 104, 124, 21, 20, 87, 104);
+								});
+							},
+							title: "draw image"
+						},
+						{
+							code:function(ctx){
+								var gradient = ctx.createLinearGradient(0, 0, 0, 70);
+								gradient.addColorStop(0, "#000");
+								gradient.addColorStop(1, "#fff");
+								ctx.fillStyle = gradient;
+								ctx.font = "30px sans-serif";
+								ctx.fillText("Text", 0, 30);
+							},
+							title: "fill text"
+						},
+						{
+							code:function(ctx){
+								var gradient1 = ctx.createLinearGradient(0, 0, 0, 100);
+								gradient1.addColorStop(0, "#f00");
+								gradient1.addColorStop(1, "#00f");
+								var gradient2 = ctx.createLinearGradient(0, 0, 0, 100);
+								gradient2.addColorStop(0, "#00f");
+								gradient2.addColorStop(1, "#f00");
+								ctx.setLineDash([10, 10]);
+								ctx.lineWidth = 5;
+								ctx.font = "80px sans-serif";
+								ctx.strokeStyle = gradient1;
+								ctx.fillStyle = gradient2;
+								ctx.strokeText("Text", 0, 70);
+								ctx.fillText("Text", 0, 70);
+							}
 						}
 					];
 			new Vue({
