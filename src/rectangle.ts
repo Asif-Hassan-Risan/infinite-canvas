@@ -3,8 +3,9 @@ import { Transformation } from "./transformation";
 import { isPoint } from "./is-point";
 import { PathInstructions } from "./instructions/path-instructions";
 import { PathInstruction } from "./interfaces/path-instruction";
+import { Area } from "./interfaces/area";
 
-export class Rectangle{
+export class Rectangle implements Area{
     private vertices: Point[];
     public left: number;
     public right: number;
@@ -17,27 +18,24 @@ export class Rectangle{
         this.top = y;
         this.bottom = y + height;
     }
-    public expandToInclude(pointOrRectangle: Point | Rectangle): Rectangle{
-        let maxLeft: number;
-        let minRight: number;
-        let maxTop: number;
-        let minBottom: number;
-        if(isPoint(pointOrRectangle)){
-            maxLeft = pointOrRectangle.x;
-            minRight = pointOrRectangle.x;
-            maxTop = pointOrRectangle.y;
-            minBottom = pointOrRectangle.y;
-        }else{
-            maxLeft = pointOrRectangle.left;
-            minRight = pointOrRectangle.right;
-            maxTop = pointOrRectangle.top;
-            minBottom = pointOrRectangle.bottom;
-        }
-        const left: number = Math.min(maxLeft, this.left);
-        const right: number = Math.max(minRight, this.right);
-        const top: number = Math.min(maxTop, this.top);
-        const bottom: number = Math.max(minBottom, this.bottom);
+    public expandToIncludeRectangle(rectangle: Rectangle): Area{
+        const left: number = Math.min(rectangle.left, this.left);
+        const right: number = Math.max(rectangle.right, this.right);
+        const top: number = Math.min(rectangle.top, this.top);
+        const bottom: number = Math.max(rectangle.bottom, this.bottom);
         return new Rectangle(left, top, right - left, bottom - top);
+    }
+    public expandToInclude(pointOrRectangle: Point | Area): Area{
+        if(isPoint(pointOrRectangle)){
+            const left: number = Math.min(pointOrRectangle.x, this.left);
+            const right: number = Math.max(pointOrRectangle.x, this.right);
+            const top: number = Math.min(pointOrRectangle.y, this.top);
+            const bottom: number = Math.max(pointOrRectangle.y, this.bottom);
+            return new Rectangle(left, top, right - left, bottom - top);
+        }else{
+            return pointOrRectangle.expandToIncludeRectangle(this);
+        }
+        
     }
     public getInstructionToClear(): PathInstruction{
         const x: number = this.left;
@@ -46,23 +44,26 @@ export class Rectangle{
         const height: number = this.bottom - this.top;
         return PathInstructions.clearRect(x, y, width, height);
     }
-    public intersectWith(other: Rectangle): Rectangle{
-        if(this.contains(other)){
-            return other;
+    public intersectWithRectangle(rectangle: Rectangle): Area{
+        if(this.contains(rectangle)){
+            return rectangle;
         }
-        if(other.contains(this)){
+        if(rectangle.contains(this)){
             return this;
         }
-        if(!this.intersects(other)){
+        if(!this.intersects(rectangle)){
             return undefined;
         }
-        const newTop: number = Math.max(this.top, other.top);
-        const newBottom: number = Math.min(this.bottom, other.bottom);
-        const newLeft: number = Math.max(this.left, other.left);
-        const newRight: number = Math.min(this.right, other.right);
+        const newTop: number = Math.max(this.top, rectangle.top);
+        const newBottom: number = Math.min(this.bottom, rectangle.bottom);
+        const newLeft: number = Math.max(this.left, rectangle.left);
+        const newRight: number = Math.min(this.right, rectangle.right);
         return new Rectangle(newLeft, newTop, newRight - newLeft, newBottom - newTop);
     }
-    public transform(transformation: Transformation): Rectangle{
+    public intersectWith(other: Area): Area{
+        return other.intersectWithRectangle(this);
+    }
+    public transform(transformation: Transformation): Area{
         const transformedVertices: Point[] = this.vertices.map(p => transformation.apply(p));
         const transformedX: number[] = transformedVertices.map(p => p.x);
         const transformedY: number[] = transformedVertices.map(p => p.y);
@@ -72,17 +73,23 @@ export class Rectangle{
         const height: number = Math.max(...transformedY) - y;
         return new Rectangle(x, y, width, height);
     }
-    public intersects(other: Rectangle): boolean{
-        return this.left <= other.right && 
-               this.right >= other.left &&
-               this.bottom >= other.top &&
-               this.top <= other.bottom;
+    public intersectsRectangle(rectangle: Rectangle): boolean{
+        return this.left <= rectangle.right && 
+        this.right >= rectangle.left &&
+        this.bottom >= rectangle.top &&
+        this.top <= rectangle.bottom;
     }
-    public contains(other: Rectangle): boolean{
-        return this.left <= other.left &&
-               this.right >= other.right &&
-               this.top <= other.top &&
-               this.bottom >= other.bottom;
+    public intersects(other: Area): boolean{
+        return other.intersectsRectangle(this);
+    }
+    public isContainedByRectangle(rectangle: Rectangle): boolean{
+        return rectangle.left <= this.left &&
+               rectangle.right >= this.right &&
+               rectangle.top <= this.top &&
+               rectangle.bottom >= this.bottom;
+    }
+    public contains(other: Area): boolean{
+        return other.isContainedByRectangle(this);
     }
     public static create(area: Point | Rectangle): Rectangle{
         if(isPoint(area)){

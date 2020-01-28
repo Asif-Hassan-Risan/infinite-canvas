@@ -11,6 +11,7 @@ import { TransformationKind } from "./transformation-kind";
 import { RectangularDrawing } from "./instructions/rectangular-drawing";
 import { Transformation } from "./transformation";
 import { transformInstructionRelatively, transformInstructionAbsolutely } from "./instruction-utils";
+import { Area } from "./interfaces/area";
 
 export class InfiniteCanvasInstructionSet{
     private currentInstructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath;
@@ -58,7 +59,7 @@ export class InfiniteCanvasInstructionSet{
         }
 		this.drawPath(instruction, pathInstructions);
 	}
-    public addDrawing(instruction: Instruction, area: Rectangle, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
+    public addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
         if(transformationKind === TransformationKind.Relative){
 			instruction = transformInstructionRelatively(instruction);
 			area = area.transform(this.state.current.transformation);
