@@ -1,6 +1,5 @@
 import { Point } from "../point";
 import { Transformation } from "../transformation";
-import { isPoint } from "./is-point";
 import { PathInstructions } from "../instructions/path-instructions";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { Area } from "./area";
@@ -91,11 +90,5 @@ export class Rectangle implements Area{
     }
     public contains(other: Area): boolean{
         return other.isContainedByRectangle(this);
-    }
-    public static create(area: Point | Rectangle): Rectangle{
-        if(isPoint(area)){
-            return new Rectangle(area.x, area.y, 0, 0);
-        }
-        return area;
     }
 }

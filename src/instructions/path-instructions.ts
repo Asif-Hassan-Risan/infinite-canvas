@@ -36,7 +36,7 @@ export class PathInstructions{
     public static arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): PathInstruction{
         const p1: Point = {x:x1,y:y1};
         const p2: Point = {x:x2,y:y2};
-        const newRectangle: Area = Rectangle.create(p1).expandToIncludePoint(p2);
+        const newRectangle: Area = new PointArea(p1).expandToIncludePoint(p2);
         const instruction: Instruction = (context: CanvasRenderingContext2D, transformation: Transformation) => {
             const tp1: Point = transformation.apply(p1);
             const tp2: Point = transformation.apply(p2);
