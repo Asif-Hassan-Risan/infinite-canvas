@@ -1,5 +1,5 @@
 import { ViewBox } from "../interfaces/viewbox";
-import { Rectangle } from "../rectangle";
+import { Rectangle } from "../areas/rectangle";
 import { sliceImageData } from "./slice-image-data";
 import { DrawingLock } from "../drawing-lock";
 import { TransformationKind } from "../transformation-kind";

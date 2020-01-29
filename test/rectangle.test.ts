@@ -1,4 +1,4 @@
-import { Rectangle } from "../src/rectangle";
+import { Rectangle } from "../src/areas/rectangle";
 import { Transformation } from "../src/transformation";
 import { Point } from "../src/point";
 
@@ -20,7 +20,7 @@ describe("a rectangle", () => {
         expectedRight: number,
         expectedTop: number,
         expectedBottom: number) => {
-            const newRectangle: Rectangle = rectangle.expandToInclude(pointToInclude);
+            const newRectangle: Rectangle = rectangle.expandToIncludePoint(pointToInclude);
             expect(newRectangle.left).toBe(expectedLeft);
             expect(newRectangle.right).toBe(expectedRight);
             expect(newRectangle.top).toBe(expectedTop);

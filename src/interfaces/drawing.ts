@@ -1,7 +1,7 @@
-import { Rectangle } from "../rectangle";
 import { PartOfDrawing } from "./part-of-drawing";
+import { Area } from "../areas/area";
 
 export interface Drawing extends PartOfDrawing{
-    clearContentsInsideArea(area: Rectangle): void;
-    addClearRect(area: Rectangle): void;
+    clearContentsInsideArea(area: Area): void;
+    addClearRect(area: Area): void;
 }

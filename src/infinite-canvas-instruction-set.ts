@@ -6,12 +6,12 @@ import { StateChangingInstructionSetWithAreaAndCurrentPath } from "./interfaces/
 import { StateChangingInstructionSetWithArea } from "./interfaces/state-changing-instruction-set-with-area";
 import { InstructionsWithPath } from "./instructions/instructions-with-path";
 import { PathInstruction } from "./interfaces/path-instruction";
-//import { Rectangle } from "./rectangle";
+import { Rectangle } from "./areas/rectangle";
 import { TransformationKind } from "./transformation-kind";
 import { RectangularDrawing } from "./instructions/rectangular-drawing";
 import { Transformation } from "./transformation";
 import { transformInstructionRelatively, transformInstructionAbsolutely } from "./instruction-utils";
-import { Area } from "./interfaces/area";
+import { Area } from "./areas/area";
 
 export class InfiniteCanvasInstructionSet{
     private currentInstructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath;
@@ -140,7 +140,7 @@ export class InfiniteCanvasInstructionSet{
         }
     }
 
-    public intersects(area: Rectangle): boolean{
+    public intersects(area: Area): boolean{
         return this.previousInstructionsWithPath.intersects(area) || this.currentInstructionsWithPath && this.currentInstructionsWithPath.intersects(area);
     }
 
@@ -148,7 +148,7 @@ export class InfiniteCanvasInstructionSet{
         return this.previousInstructionsWithPath.hasDrawingAcrossBorderOf(area) || this.currentInstructionsWithPath && this.currentInstructionsWithPath.hasDrawingAcrossBorderOf(area);
     }
 
-    public clearContentsInsideArea(area: Rectangle): void{
+    public clearContentsInsideArea(area: Area): void{
         if(this.currentInstructionsWithPath){
             this.previousInstructionsWithPath.clearContentsInsideArea(area);
             this.currentInstructionsWithPath.clearContentsInsideArea(area);
@@ -159,7 +159,7 @@ export class InfiniteCanvasInstructionSet{
     }
 
     public clearArea(x: number, y: number, width: number, height: number): void{
-        const rectangle: Rectangle = new Rectangle(x, y, width, height).transform(this.state.current.transformation);
+        const rectangle: Area = new Rectangle(x, y, width, height).transform(this.state.current.transformation);
         if(!this.intersects(rectangle)){
             return;
         }

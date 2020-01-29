@@ -1,5 +1,5 @@
 import { ViewBox } from "../interfaces/viewbox";
-import { Rectangle } from "../rectangle";
+import { Rectangle } from "../areas/rectangle";
 import { Instruction } from "../instructions/instruction";
 import { TransformationKind } from "../transformation-kind";
 

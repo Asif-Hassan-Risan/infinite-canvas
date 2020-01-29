@@ -1,5 +1,5 @@
 import { Instruction } from "../instructions/instruction";
-import { AreaChange } from "../area-change";
+import { AreaChange } from "../areas/area-change";
 
 export interface PathInstruction{
     instruction: Instruction;

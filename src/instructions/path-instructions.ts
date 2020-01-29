@@ -1,11 +1,12 @@
 import { Instruction } from "./instruction";
 import { Transformation } from "../transformation";
-import { Rectangle } from "../rectangle";
-import { AreaChange } from "../area-change";
+import { Rectangle } from "../areas/rectangle";
+import { AreaChange } from "../areas/area-change";
 import { Point } from "../point";
 import { drawRect } from "../infinite-context/draw-rect";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { transformInstructionAbsolutely } from "../instruction-utils";
+import { Area } from "../areas/area";
 
 export class PathInstructions{
 
@@ -34,7 +35,7 @@ export class PathInstructions{
     public static arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): PathInstruction{
         const p1: Point = {x:x1,y:y1};
         const p2: Point = {x:x2,y:y2};
-        const newRectangle: Rectangle = Rectangle.create(p1).expandToInclude(p2);
+        const newRectangle: Area = Rectangle.create(p1).expandToIncludePoint(p2);
         const instruction: Instruction = (context: CanvasRenderingContext2D, transformation: Transformation) => {
             const tp1: Point = transformation.apply(p1);
             const tp2: Point = transformation.apply(p2);
@@ -61,7 +62,7 @@ export class PathInstructions{
     }
 
     public static ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): PathInstruction{
-        const newRectangle: Rectangle = new Rectangle(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
+        const newRectangle: Area = new Rectangle(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
         return {
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 const tCenter: Point = transformation.apply({x:x,y:y});

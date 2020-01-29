@@ -1,7 +1,7 @@
 import { CurrentState } from "./current-state";
 import { Instruction } from "../instructions/instruction";
 import { PathInstruction } from "./path-instruction";
-import { Rectangle } from "../rectangle";
+import { Rectangle } from "../areas/rectangle";
 import { DrawingLock } from "../drawing-lock";
 import { TransformationKind } from "../transformation-kind";
 import { TransformableBox } from "./transformable-box";

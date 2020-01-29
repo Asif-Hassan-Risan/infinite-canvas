@@ -1,11 +1,11 @@
 import { Transformation } from "../transformation";
 import { Instruction } from "../instructions/instruction";
 import { ClippedPaths } from "../instructions/clipped-paths";
-import {Rectangle} from "../rectangle";
 import { StateInstanceProperties } from "./state-instance-properties";
 import { allDimensions } from "./dimensions/all-dimensions";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../interfaces/state-changing-instruction-set-with-area-and-current-path";
 import { Point } from "../point";
+import { Area } from "../areas/area";
 
 export class InfiniteCanvasStateInstance implements StateInstanceProperties{
     public readonly fillStyle: string | CanvasGradient | CanvasPattern;
@@ -78,7 +78,7 @@ export class InfiniteCanvasStateInstance implements StateInstanceProperties{
         newProps[property] = newValue;
         return new InfiniteCanvasStateInstance(newProps);
     }
-    public get clippingRegion(): Rectangle{return this.clippedPaths ? this.clippedPaths.area : undefined;}
+    public get clippingRegion(): Area{return this.clippedPaths ? this.clippedPaths.area : undefined;}
     public equals(other: InfiniteCanvasStateInstance): boolean{
         for(let dimension of allDimensions){
             if(!dimension.isEqualForInstances(this, other)){

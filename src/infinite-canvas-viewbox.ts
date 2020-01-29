@@ -7,7 +7,7 @@ import {InfiniteCanvasStateInstance} from "./state/infinite-canvas-state-instanc
 import {DrawingIterationProvider} from "./interfaces/drawing-iteration-provider";
 import {InfiniteCanvasLinearGradient} from "./styles/infinite-canvas-linear-gradient";
 import {InfiniteCanvasRadialGradient} from "./styles/infinite-canvas-radial-gradient";
-import { Rectangle } from "./rectangle";
+import { Rectangle } from "./areas/rectangle";
 import { DrawingLock } from "./drawing-lock";
 import { InfiniteCanvasPattern } from "./styles/infinite-canvas-pattern";
 import { TransformationKind } from "./transformation-kind";
