@@ -4,17 +4,18 @@ import { Rectangle } from "./rectangle";
 import { Transformation } from "../transformation";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { AreaChange } from "./area-change";
+import { HalfPlane } from "./half-plane";
 
 export class PointArea implements Area{
     constructor(private readonly point: Point){}
     public expandToInclude(area: Area): Area {
         return area.expandToIncludePoint(this.point);
     }
-    public expandToIncludeRectangle(rectangle: Rectangle): Area {
-        return this.expandToInclude(rectangle);
-    }
     public expandToIncludePoint(point: Point): Area {
         return new Rectangle(this.point.x, this.point.y, 0, 0).expandToIncludePoint(point);
+    }
+    public expandToIncludeHalfPlane(halfPlane: HalfPlane): Area{
+        return halfPlane.expandToIncludePoint(this.point);
     }
     public transform(transformation: Transformation): Area {
         return new PointArea(transformation.apply(this.point))
@@ -33,6 +34,9 @@ export class PointArea implements Area{
     }
     public containsPoint(point: Point): boolean{
         return point.x === this.point.x && point.y === this.point.y;
+    }
+    public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
+        return halfPlane.containsPoint(this.point);
     }
     public isContainedByRectangle(rectangle: Rectangle): boolean {
         return rectangle.containsPoint(this.point);
