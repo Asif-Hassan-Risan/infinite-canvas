@@ -7,6 +7,7 @@ import { drawRect } from "../infinite-context/draw-rect";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { transformInstructionAbsolutely } from "../instruction-utils";
 import { Area } from "../areas/area";
+import { PointArea } from "../areas/point-area";
 
 export class PathInstructions{
 
@@ -80,7 +81,7 @@ export class PathInstructions{
                 const {x, y} = transformation.apply(point);
                 context.lineTo(x, y);
             },
-            changeArea: AreaChange.to(point)
+            changeArea: AreaChange.to(new PointArea(point))
         };
     }
 
@@ -91,7 +92,7 @@ export class PathInstructions{
                 const {x, y} = transformation.apply(point);
                 context.moveTo(x, y);
             },
-            changeArea: AreaChange.to(point)
+            changeArea: AreaChange.to(new PointArea(point))
         };
     }
 

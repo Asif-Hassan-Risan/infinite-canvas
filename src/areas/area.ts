@@ -11,6 +11,7 @@ export interface Area{
     intersectWith(area: Area): Area;
     intersectWithRectangle(rectangle: Rectangle): Area
     contains(area: Area): boolean;
+    containsPoint(point: Point): boolean;
     isContainedByRectangle(rectangle: Rectangle): boolean
     intersects(area: Area): boolean;
     intersectsRectangle(rectangle: Rectangle): boolean;

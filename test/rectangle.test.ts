@@ -1,6 +1,7 @@
 import { Rectangle } from "../src/areas/rectangle";
 import { Transformation } from "../src/transformation";
 import { Point } from "../src/point";
+import { Area } from "../src/areas/area";
 
 describe("a rectangle", () => {
     let rectangle: Rectangle;
@@ -20,11 +21,10 @@ describe("a rectangle", () => {
         expectedRight: number,
         expectedTop: number,
         expectedBottom: number) => {
-            const newRectangle: Rectangle = rectangle.expandToIncludePoint(pointToInclude);
-            expect(newRectangle.left).toBe(expectedLeft);
-            expect(newRectangle.right).toBe(expectedRight);
-            expect(newRectangle.top).toBe(expectedTop);
-            expect(newRectangle.bottom).toBe(expectedBottom);
+            const newRectangle: Area = rectangle.expandToIncludePoint(pointToInclude);
+            const expectedRectangle: Area = new Rectangle(expectedLeft, expectedTop, expectedRight - expectedLeft, expectedBottom - expectedTop);
+            expect(newRectangle.contains(expectedRectangle)).toBe(true);
+            expect(expectedRectangle.contains(newRectangle)).toBe(true);
     });
 
     it.each([
@@ -39,10 +39,9 @@ describe("a rectangle", () => {
         expectedTop: number,
         expectedBottom: number) => {
             const newRectangle = rectangle.expandToInclude(rectangleToInclude);
-            expect(newRectangle.left).toBe(expectedLeft);
-            expect(newRectangle.right).toBe(expectedRight);
-            expect(newRectangle.top).toBe(expectedTop);
-            expect(newRectangle.bottom).toBe(expectedBottom);
+            const expectedRectangle: Area = new Rectangle(expectedLeft, expectedTop, expectedRight - expectedLeft, expectedBottom - expectedTop);
+            expect(newRectangle.contains(expectedRectangle)).toBe(true);
+            expect(expectedRectangle.contains(newRectangle)).toBe(true);
     });
 
     it("should contain another rectangle", () => {
@@ -77,7 +76,7 @@ describe("a rectangle", () => {
         const sqrt2 = Math.sqrt(2);
         const halfSqrt2 = sqrt2 / 2;
         let transformation: Transformation;
-        let transformedRectangle: Rectangle;
+        let transformedRectangle: Area;
 
         beforeEach(() => {
             transformation = new Transformation(halfSqrt2, halfSqrt2, -halfSqrt2, halfSqrt2, 0, 0);
@@ -85,10 +84,8 @@ describe("a rectangle", () => {
         });
 
         it("should result in a new rectangle", () => {
-            expect(transformedRectangle.top).toBeCloseTo(sqrt2);
-            expect(transformedRectangle.bottom).toBeCloseTo(3 * sqrt2);
-            expect(transformedRectangle.left).toBeCloseTo(-sqrt2);
-            expect(transformedRectangle.right).toBeCloseTo(sqrt2);
+            const expectedRectangle: Area = new Rectangle(-sqrt2 - 0.05, sqrt2 - 0.05, 2 * sqrt2 + 0.1, 2 * sqrt2 + 0.1);
+            expect(expectedRectangle.contains(transformedRectangle)).toBe(true);
         });
     });
 });

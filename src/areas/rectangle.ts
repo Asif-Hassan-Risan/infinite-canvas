@@ -86,6 +86,9 @@ export class Rectangle implements Area{
                other.top <= this.top &&
                other.bottom >= this.bottom;
     }
+    public containsPoint(point: Point): boolean{
+        return this.top <= point.y && this.bottom >= point.y && this.left <= point.x && this.right >= point.x;
+    }
     public contains(other: Area): boolean{
         return other.isContainedByRectangle(this);
     }

@@ -2,7 +2,6 @@ import { StateChangingInstructionSequence } from "./state-changing-instruction-s
 import { PathInstructionWithState } from "./path-instruction-with-state";
 import { StateAndInstruction } from "./state-and-instruction";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../interfaces/state-changing-instruction-set-with-area-and-current-path";
-import { Rectangle } from "../areas/rectangle";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { Transformation } from "../transformation";
 import { InfiniteCanvasState } from "../state/infinite-canvas-state";

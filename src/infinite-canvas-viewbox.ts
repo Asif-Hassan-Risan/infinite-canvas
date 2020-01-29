@@ -7,11 +7,11 @@ import {InfiniteCanvasStateInstance} from "./state/infinite-canvas-state-instanc
 import {DrawingIterationProvider} from "./interfaces/drawing-iteration-provider";
 import {InfiniteCanvasLinearGradient} from "./styles/infinite-canvas-linear-gradient";
 import {InfiniteCanvasRadialGradient} from "./styles/infinite-canvas-radial-gradient";
-import { Rectangle } from "./areas/rectangle";
 import { DrawingLock } from "./drawing-lock";
 import { InfiniteCanvasPattern } from "./styles/infinite-canvas-pattern";
 import { TransformationKind } from "./transformation-kind";
 import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set";
+import { Area } from "./areas/area";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -58,7 +58,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		const bitmap: ImageBitmap = await createImageBitmap(imageData);
 		return this.context.createPattern(bitmap, 'no-repeat');
 	}
-	public addDrawing(instruction: Instruction, area: Rectangle, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
+	public addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
 		this.instructionSet.addDrawing(instruction, area, transformationKind, takeClippingRegionIntoAccount);
 	}
 	public addPathInstruction(pathInstruction: PathInstruction): void{

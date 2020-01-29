@@ -144,7 +144,7 @@ export class InfiniteCanvasInstructionSet{
         return this.previousInstructionsWithPath.intersects(area) || this.currentInstructionsWithPath && this.currentInstructionsWithPath.intersects(area);
     }
 
-    public hasDrawingAcrossBorderOf(area: Rectangle): boolean{
+    public hasDrawingAcrossBorderOf(area: Area): boolean{
         return this.previousInstructionsWithPath.hasDrawingAcrossBorderOf(area) || this.currentInstructionsWithPath && this.currentInstructionsWithPath.hasDrawingAcrossBorderOf(area);
     }
 
