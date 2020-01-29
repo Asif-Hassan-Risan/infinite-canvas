@@ -6,7 +6,7 @@ import { StateChangingInstructionSetWithAreaAndCurrentPath } from "./interfaces/
 import { StateChangingInstructionSetWithArea } from "./interfaces/state-changing-instruction-set-with-area";
 import { InstructionsWithPath } from "./instructions/instructions-with-path";
 import { PathInstruction } from "./interfaces/path-instruction";
-import { Rectangle } from "./rectangle";
+//import { Rectangle } from "./rectangle";
 import { TransformationKind } from "./transformation-kind";
 import { RectangularDrawing } from "./instructions/rectangular-drawing";
 import { Transformation } from "./transformation";

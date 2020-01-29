@@ -9,6 +9,7 @@ export interface Area{
     intersectWith(other: Area): Area;
     intersects(other: Area): boolean;
     contains(other: Area): boolean;
+    containsPoint(point: Point): boolean;
     transform(transformation: Transformation): Area;
     expandToIncludeRectangle(rectangle: Rectangle): Area;
     expandToInclude(pointOrRectangle: Point | Area): Area;

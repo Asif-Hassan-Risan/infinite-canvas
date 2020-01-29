@@ -2,10 +2,9 @@ import { Point } from "./point";
 import { Transformation } from "./transformation";
 import { isPoint } from "./is-point";
 import { Area } from "./interfaces/area";
-import { PointArea } from "./point-area";
 
 export class AreaChange{
-    constructor(public execute: (transformation: Transformation, previous?: Area) => Area){
+    constructor(public execute: (transformation: Transformation, previous?: Point | Area) => Point | Area){
 
     }
     public static to(to?: Point | Area): AreaChange{
@@ -20,7 +19,7 @@ export class AreaChange{
             if(previous){
                 return to ? previous.expandToInclude(to) : previous;
             }else if(to){
-                return isPoint(to) ? new PointArea(to) : to;
+                return to;
             }
             return undefined;
         });

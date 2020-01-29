@@ -82,6 +82,9 @@ export class Rectangle implements Area{
     public intersects(other: Area): boolean{
         return other.intersectsRectangle(this);
     }
+    public containsPoint(point: Point): boolean{
+        return this.top <= point.y && this.bottom >= point.y && this.left <= point.x && this.right >= point.x;
+    }
     public isContainedByRectangle(rectangle: Rectangle): boolean{
         return rectangle.left <= this.left &&
                rectangle.right >= this.right &&
