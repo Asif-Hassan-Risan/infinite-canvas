@@ -3,7 +3,6 @@ import { Transformation } from "../transformation";
 import { Rectangle } from "../areas/rectangle";
 import { AreaChange } from "../areas/area-change";
 import { Point } from "../point";
-import { drawRect } from "../infinite-context/draw-rect";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { transformInstructionAbsolutely } from "../instruction-utils";
 import { Area } from "../areas/area";
@@ -98,15 +97,5 @@ export class PathInstructions{
 
     public static quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): PathInstruction{
         return undefined;
-    }
-
-    public static rect(x: number, y: number, w: number, h: number): PathInstruction{
-        const rectangle: Rectangle = new Rectangle(x, y, w, h);
-        return {
-            instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                drawRect(x, y, w, h, context, transformation);
-            },
-            changeArea: AreaChange.to(rectangle)
-        };
     }
 }

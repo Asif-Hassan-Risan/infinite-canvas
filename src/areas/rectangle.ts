@@ -3,6 +3,7 @@ import { Transformation } from "../transformation";
 import { PathInstructions } from "../instructions/path-instructions";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { Area } from "./area";
+import { AreaChange } from "./area-change";
 
 export class Rectangle implements Area{
     private vertices: Point[];
@@ -11,7 +12,7 @@ export class Rectangle implements Area{
     public top: number;
     public bottom: number;
     constructor(x: number, y: number, width: number, height: number){
-        this.vertices = [{x:x, y:y}, {x: x + width, y:y}, {x:x, y: y + height}, {x: x + width, y: y + height}];
+        this.vertices = [{x:x, y:y}, {x: x + width, y:y}, {x: x + width, y: y + height}, {x:x, y: y + height}];
         this.left = x;
         this.right = x + width;
         this.top = y;
@@ -40,6 +41,23 @@ export class Rectangle implements Area{
         const width: number = this.right - this.left;
         const height: number = this.bottom - this.top;
         return PathInstructions.clearRect(x, y, width, height);
+    }
+    public getInstructionToDrawPath(): PathInstruction{
+        return {
+            instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                let {x, y} = transformation.apply(this.vertices[0]);
+                context.moveTo(x, y);
+                ({x,y} = transformation.apply(this.vertices[1]));
+                context.lineTo(x,y);
+                ({x,y} = transformation.apply(this.vertices[2]));
+                context.lineTo(x,y);
+                ({x,y} = transformation.apply(this.vertices[3]));
+                context.lineTo(x,y);
+                ({x,y} = transformation.apply(this.vertices[0]));
+                context.lineTo(x,y);
+            },
+            changeArea: AreaChange.to(this)
+        };
     }
     public intersectWithRectangle(other: Rectangle): Area{
         if(this.contains(other)){

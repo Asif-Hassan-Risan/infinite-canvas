@@ -3,6 +3,7 @@ import { PathInstructions } from "../src/instructions/path-instructions";
 import { logInstruction } from "./log-instruction";
 import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InfiniteCanvasInstructionSet } from "../src/infinite-canvas-instruction-set";
+import { Rectangle } from "../src/areas/rectangle";
 
 describe("an instruction set", () => {
     let instructionSet: InfiniteCanvasInstructionSet;
@@ -62,7 +63,7 @@ describe("an instruction set", () => {
             instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#f00"));
             instructionSet.fillPath((context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.fill();
-            }, [PathInstructions.rect(0, 0, 1, 1)]);
+            }, [new Rectangle(0, 0, 1, 1).getInstructionToDrawPath()]);
         });
 
         it("should have called onchange", () => {
@@ -111,7 +112,7 @@ describe("an instruction set", () => {
                 instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#00f"));
                 instructionSet.fillPath((context: CanvasRenderingContext2D, transformation: Transformation) => {
                     context.fill();
-                }, [PathInstructions.rect(2, 0, 1, 1)]);
+                }, [new Rectangle(2, 0, 1, 1).getInstructionToDrawPath()]);
             });
 
             it("should have recorded everything in the right order", () => {

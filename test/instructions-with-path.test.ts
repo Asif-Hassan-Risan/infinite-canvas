@@ -5,6 +5,7 @@ import { defaultState } from "../src/state/default-state";
 import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InstructionsWithPath } from "../src/instructions/instructions-with-path";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../src/interfaces/state-changing-instruction-set-with-area-and-current-path";
+import { Rectangle } from "../src/areas/rectangle";
 
 function drawAndLog(instructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath, state: InfiniteCanvasState): string[]{
     instructionsWithPath.drawPath((context: CanvasRenderingContext2D) => {context.fill();}, state);
@@ -119,7 +120,7 @@ describe("a set of instructions that describe a rectangle path that is drawn", (
 
     beforeEach(() => {
         currentState = defaultState;
-        instructionsWithPath = InstructionsWithPath.create(currentState, [PathInstructions.rect(0, 0, 1, 1)]);
+        instructionsWithPath = InstructionsWithPath.create(currentState, [new Rectangle(0, 0, 1, 1).getInstructionToDrawPath()]);
         instructionsWithPath.drawPath((context: CanvasRenderingContext2D) => {
             context.fill();
         }, currentState)

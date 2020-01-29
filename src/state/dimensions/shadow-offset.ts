@@ -7,8 +7,7 @@ import { InfiniteCanvasStateInstanceDimension } from "./infinite-canvas-state-in
 class ShadowOffset extends InfiniteCanvasStateInstanceDimension<"shadowOffset">{
     protected changeToNewValue(newValue: Point): Instruction{
         return (context: CanvasRenderingContext2D, transformation: Transformation) => {
-            const {x: origX, y: origY} = transformation.apply({x: 0, y: 0});
-            const {x, y} = transformation.before(Transformation.translation(-origX, -origY)).apply(newValue);
+            const {x, y} = transformation.untranslated().apply(newValue);
             context.shadowOffsetX = x;
             context.shadowOffsetY = y;
         };

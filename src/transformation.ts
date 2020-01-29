@@ -45,6 +45,10 @@ export class Transformation{
 			y: this.b * point.x + this.d * point.y + this.f
 		};
 	}
+	public untranslated(): Transformation{
+		const {x: originTransformedX, y: originTransformedY} = this.apply({x: 0, y: 0});
+		return this.before(Transformation.translation(-originTransformedX, -originTransformedY));
+	}
 	public before(other: Transformation): Transformation{
 		const a: number = other.a * this.a + other.c * this.b;
 		const b: number = other.b * this.a + other.d * this.b;
