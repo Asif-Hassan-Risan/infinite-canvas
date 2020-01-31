@@ -1,5 +1,5 @@
 import { Area } from "./area";
-import { Point } from "../point";
+import { Point } from "../geometry/point";
 import { Rectangle } from "./rectangle";
 import { Transformation } from "../transformation";
 import { PathInstruction } from "../interfaces/path-instruction";

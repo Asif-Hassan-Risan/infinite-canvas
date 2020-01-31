@@ -1,6 +1,6 @@
 import { AreaBuilder } from "./area-builder";
 import { Transformation } from "../transformation";
-import { Point } from "../point";
+import { Point } from "../geometry/point";
 import { Rectangle } from "./rectangle";
 import { InfiniteCanvasAreaBuilder } from "./infinite-canvas-area-builder";
 

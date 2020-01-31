@@ -1,4 +1,4 @@
-import { Point } from "../point";
+import { Point } from "../geometry/point";
 import { Transformation } from "../transformation";
 import { PathInstructions } from "../instructions/path-instructions";
 import { PathInstruction } from "../interfaces/path-instruction";
@@ -15,7 +15,7 @@ export class Rectangle implements Area{
     public top: number;
     public bottom: number;
     constructor(x: number, y: number, width: number, height: number){
-        this.vertices = [{x:x, y:y}, {x: x + width, y:y}, {x: x + width, y: y + height}, {x:x, y: y + height}];
+        this.vertices = [new Point(x, y), new Point(x + width, y), new Point(x + width, y + height), new Point(x, y + height)];
         this.left = x;
         this.right = x + width;
         this.top = y;

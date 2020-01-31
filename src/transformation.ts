@@ -1,4 +1,4 @@
-import { Point } from "./point"
+import { Point } from "./geometry/point"
 
 export class Transformation{
 	public scale: number;
@@ -40,13 +40,10 @@ export class Transformation{
 		return Math.PI + atan;
 	}
 	public apply(point: Point): Point{
-		return {
-			x: this.a * point.x + this.c * point.y + this.e,
-			y: this.b * point.x + this.d * point.y + this.f
-		};
+		return new Point(this.a * point.x + this.c * point.y + this.e, this.b * point.x + this.d * point.y + this.f);
 	}
 	public untranslated(): Transformation{
-		const {x: originTransformedX, y: originTransformedY} = this.apply({x: 0, y: 0});
+		const {x: originTransformedX, y: originTransformedY} = this.apply(Point.origin);
 		return this.before(Transformation.translation(-originTransformedX, -originTransformedY));
 	}
 	public before(other: Transformation): Transformation{

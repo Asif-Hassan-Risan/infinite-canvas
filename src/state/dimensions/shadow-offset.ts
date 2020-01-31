@@ -1,4 +1,4 @@
-import { Point } from "../../point";
+import { Point } from "../../geometry/point";
 import { Instruction } from "../../instructions/instruction";
 import { Transformation } from "../../transformation";
 import { TypedStateInstanceDimension } from "./typed-state-instance-dimension";

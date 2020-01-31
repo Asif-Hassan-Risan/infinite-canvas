@@ -1,6 +1,6 @@
 import { Transformation } from "../transformation";
 import { Rectangle } from "./rectangle";
-import { Point } from "../point";
+import { Point } from "../geometry/point";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { HalfPlane } from "./half-plane";
 

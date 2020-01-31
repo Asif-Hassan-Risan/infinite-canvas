@@ -1,6 +1,6 @@
 import { Rectangle } from "../src/areas/rectangle";
 import { Transformation } from "../src/transformation";
-import { Point } from "../src/point";
+import { Point } from "../src/geometry/point";
 import { Area } from "../src/areas/area";
 
 describe("a rectangle", () => {

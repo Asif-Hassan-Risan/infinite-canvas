@@ -8,6 +8,7 @@ import { defaultState } from "../src/state/default-state";
 import { fillStyle, strokeStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InstructionsWithPath } from "../src/instructions/instructions-with-path";
 import { Rectangle } from "../src/areas/rectangle";
+import { Point } from "../src/geometry/point";
 
 function applyChangeToCurrentState(state: InfiniteCanvasState, change: (instance: InfiniteCanvasStateInstance) => InfiniteCanvasStateInstance): InfiniteCanvasState{
     const newInstance: InfiniteCanvasStateInstance = change(state.current);
@@ -268,7 +269,7 @@ describe("a default state", () => {
                 textBaseline: "alphabetic",                             //same
                 clippedPaths: undefined,                                //same
                 fillAndStrokeStylesTransformed: false,
-                shadowOffset: {x: 0, y: 0},
+                shadowOffset: Point.origin,
                 shadowColor: 'rgba(0, 0, 0, 0)',
                 shadowBlur: 0
             }));

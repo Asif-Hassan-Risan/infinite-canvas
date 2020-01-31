@@ -2,7 +2,7 @@ import { Instruction } from "./instruction";
 import { Transformation } from "../transformation";
 import { Rectangle } from "../areas/rectangle";
 import { AreaChange } from "../areas/area-change";
-import { Point } from "../point";
+import { Point } from "../geometry/point";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { transformInstructionAbsolutely } from "../instruction-utils";
 import { Area } from "../areas/area";
@@ -23,7 +23,7 @@ export class PathInstructions{
     public static arc(_x: number, _y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean): PathInstruction{
         const instruction: Instruction = (context: CanvasRenderingContext2D, transformation: Transformation) => {
             const transformationAngle: number = transformation.getRotationAngle();
-            const {x, y} = transformation.apply({x:_x,y:_y});
+            const {x, y} = transformation.apply(new Point(_x, _y));
             context.arc(x, y, radius * transformation.scale, startAngle + transformationAngle, endAngle + transformationAngle, anticlockwise);
         };
         const changeArea: AreaChange = (builder: AreaBuilder) => builder.addRectangle(new Rectangle(_x - radius, _y - radius, 2 * radius, 2 * radius));
@@ -34,8 +34,8 @@ export class PathInstructions{
     }
 
     public static arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): PathInstruction{
-        const p1: Point = {x:x1,y:y1};
-        const p2: Point = {x:x2,y:y2};
+        const p1: Point = new Point(x1, y1);
+        const p2: Point = new Point(x2, y2);
         const newRectangle: Rectangle = new Rectangle(p1.x, p1.y, 0, 0).expandToIncludePoint(p2);
         const instruction: Instruction = (context: CanvasRenderingContext2D, transformation: Transformation) => {
             const tp1: Point = transformation.apply(p1);
@@ -66,7 +66,7 @@ export class PathInstructions{
         const newRectangle: Rectangle = new Rectangle(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
         return {
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                const tCenter: Point = transformation.apply({x:x,y:y});
+                const tCenter: Point = transformation.apply(new Point(x, y));
                 const transformationAngle: number = transformation.getRotationAngle();
                 context.ellipse(tCenter.x, tCenter.y, radiusX * transformation.scale, radiusY * transformation.scale, rotation + transformationAngle, startAngle, endAngle, anticlockwise);
             },
@@ -75,7 +75,7 @@ export class PathInstructions{
     }
 
     public static lineTo(_x: number, _y: number): PathInstruction{
-        const point: Point = {x: _x, y: _y};
+        const point: Point = new Point(_x, _y);
         return {
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 const {x, y} = transformation.apply(point);
@@ -86,7 +86,7 @@ export class PathInstructions{
     }
 
     public static moveTo(_x: number, _y: number): PathInstruction{
-        const point: Point = {x: _x, y: _y};
+        const point: Point = new Point(_x, _y);
         return {
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 const {x, y} = transformation.apply(point);

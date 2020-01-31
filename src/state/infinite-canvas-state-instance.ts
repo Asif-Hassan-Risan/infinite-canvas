@@ -4,7 +4,7 @@ import { ClippedPaths } from "../instructions/clipped-paths";
 import { StateInstanceProperties } from "./state-instance-properties";
 import { allDimensions } from "./dimensions/all-dimensions";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../interfaces/state-changing-instruction-set-with-area-and-current-path";
-import { Point } from "../point";
+import { Point } from "../geometry/point";
 import { Area } from "../areas/area";
 
 export class InfiniteCanvasStateInstance implements StateInstanceProperties{
@@ -124,7 +124,7 @@ export class InfiniteCanvasStateInstance implements StateInstanceProperties{
         textBaseline: "alphabetic",
         clippedPaths: undefined,
         fillAndStrokeStylesTransformed: false,
-        shadowOffset: {x: 0, y: 0},
+        shadowOffset: Point.origin,
         shadowColor: 'rgba(0, 0, 0, 0)',
         shadowBlur: 0
     });
