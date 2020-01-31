@@ -14,21 +14,6 @@ export class HalfPlane implements Area{
         const pointToBaseY: number = point.y - this.base.y;
         return (pointToBaseX * this.normalTowardInterior.x + pointToBaseY * this.normalTowardInterior.y) / this.lengthOfNormal;
     }
-    public expandToInclude(area: Area): Area {
-        return area.expandToIncludeHalfPlane(this);
-    }
-    public expandToIncludeHalfPlane(halfPlane: HalfPlane): Area{
-        if(this.isContainedByHalfPlane(halfPlane)){
-            return halfPlane;
-        }
-        //return the entire plane
-    }
-    public expandToIncludePoint(point: Point): Area {
-        if(this.containsPoint(point)){
-            return this;
-        }
-        return new HalfPlane(point, this.normalTowardInterior);
-    }
     public transform(transformation: Transformation): Area {
         return new HalfPlane(transformation.apply(this.base), transformation.untranslated().apply(this.normalTowardInterior));
     }

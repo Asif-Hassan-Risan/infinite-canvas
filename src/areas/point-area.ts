@@ -3,20 +3,11 @@ import { Point } from "../point";
 import { Rectangle } from "./rectangle";
 import { Transformation } from "../transformation";
 import { PathInstruction } from "../interfaces/path-instruction";
-import { AreaChange } from "./area-change";
+import { AreaBuilder } from "./area-builder";
 import { HalfPlane } from "./half-plane";
 
 export class PointArea implements Area{
     constructor(private readonly point: Point){}
-    public expandToInclude(area: Area): Area {
-        return area.expandToIncludePoint(this.point);
-    }
-    public expandToIncludePoint(point: Point): Area {
-        return new Rectangle(this.point.x, this.point.y, 0, 0).expandToIncludePoint(point);
-    }
-    public expandToIncludeHalfPlane(halfPlane: HalfPlane): Area{
-        return halfPlane.expandToIncludePoint(this.point);
-    }
     public transform(transformation: Transformation): Area {
         return new PointArea(transformation.apply(this.point))
     }
@@ -50,7 +41,7 @@ export class PointArea implements Area{
     public getInstructionToClear(): PathInstruction {
        return {
            instruction: () => {},
-           changeArea: AreaChange.to()
+           changeArea: (builder: AreaBuilder) => builder.addPoint(this.point)
        };
     }
     

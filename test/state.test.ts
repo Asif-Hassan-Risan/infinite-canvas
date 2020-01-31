@@ -23,7 +23,7 @@ describe("a state with a clipped path", () => {
         currentState = defaultState;
         currentPath = InstructionsWithPath.create(defaultState);
         currentState = applyChangeToCurrentState(currentState, s => fillStyle.changeInstanceValue(s, "#f00"));
-        currentPath.addPathInstruction(new Rectangle(0, 0, 3, 3).getInstructionToDrawPath(), currentState);
+        currentPath.addPathInstruction(new Rectangle(0, 0, 3, 3).getPathInstructionToDrawPath(), currentState);
         currentPath.clipPath((context: CanvasRenderingContext2D) => context.clip(), currentState);
         currentState = currentPath.state;
         stateWithOneClippedPath = currentState;

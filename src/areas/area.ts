@@ -5,9 +5,6 @@ import { PathInstruction } from "../interfaces/path-instruction";
 import { HalfPlane } from "./half-plane";
 
 export interface Area{
-    expandToInclude(area: Area): Area;
-    expandToIncludeHalfPlane(halfPlane: HalfPlane): Area;
-    expandToIncludePoint(point: Point): Area;
     transform(transformation: Transformation): Area;
     intersectWith(area: Area): Area;
     intersectWithRectangle(rectangle: Rectangle): Area

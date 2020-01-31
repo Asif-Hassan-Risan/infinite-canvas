@@ -9,14 +9,16 @@ import { Instruction } from "./instruction";
 import { ClippingPathInstructionWithState } from "./clipping-path-instruction-with-state";
 import { DrawingPathInstructionWithState } from "./drawing-path-instruction-with-state";
 import { Area } from "../areas/area";
+import { InfiniteCanvasAreaBuilder } from "../areas/infinite-canvas-area-builder";
 
 export class InstructionsWithPath extends StateChangingInstructionSequence<PathInstructionWithState> implements StateChangingInstructionSetWithAreaAndCurrentPath{
-    private area: Area;
+    private areaBuilder: InfiniteCanvasAreaBuilder = new InfiniteCanvasAreaBuilder();
     private drawnArea: Area;
     public visible: boolean;
     constructor(private _initiallyWithState: StateAndInstruction){
         super(_initiallyWithState);
     }
+    private get area(): Area{return this.areaBuilder.area;}
     private getCurrentlyDrawableArea(): Area{
         if(!this.area){
             return undefined;
@@ -35,7 +37,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
     }
     public drawPath(instruction: Instruction, state: InfiniteCanvasState): void{
         const newlyDrawnArea: Area = this.getCurrentlyDrawableArea();
-        this.drawnArea = this.drawnArea ? this.drawnArea.expandToInclude(newlyDrawnArea) : newlyDrawnArea;
+        this.drawnArea = !this.drawnArea || newlyDrawnArea.contains(this.drawnArea) ? newlyDrawnArea : this.drawnArea;
         const toAdd: DrawingPathInstructionWithState = DrawingPathInstructionWithState.createDrawing(state, instruction, this.drawnArea);
         toAdd.setInitialState(this.state);
         this.add(toAdd);
@@ -49,7 +51,8 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         this.addClippedPath(clippedPath);
     }
     public addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void{
-        this.area = pathInstruction.changeArea.execute(state.current.transformation, this.area);
+        //this.area = pathInstruction.changeArea.execute(state.current.transformation, this.area);
+        pathInstruction.changeArea(this.areaBuilder.transformedWith(state.current.transformation));
         const toAdd: PathInstructionWithState = PathInstructionWithState.create(state, pathInstruction.instruction);
         toAdd.setInitialState(this.state);
         this.add(toAdd);
@@ -98,13 +101,13 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
     public recreatePath(): StateChangingInstructionSetWithAreaAndCurrentPath{
         const result: InstructionsWithPath = this.copy();
         result.removeAll(i => (i instanceof DrawingPathInstructionWithState));
-        result.area = this.area;
+        result.areaBuilder = this.areaBuilder.copy();
         return result;
     }
     private recreateClippedPath(): StateChangingInstructionSetWithAreaAndCurrentPath{
         const result: InstructionsWithPath = this.copy();
         result.removeAll(i => i instanceof DrawingPathInstructionWithState);
-        result.area = this.area;
+        result.areaBuilder = this.areaBuilder.copy();
         return result;
     }
     public static create(initialState: InfiniteCanvasState, pathInstructions?: PathInstruction[]): InstructionsWithPath{

@@ -61,9 +61,9 @@ describe("an instruction set", () => {
 
         beforeEach(() => {
             instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#f00"));
-            instructionSet.drawPath((context: CanvasRenderingContext2D, transformation: Transformation) => {
+            instructionSet.drawRect((context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.fill();
-            }, [new Rectangle(0, 0, 1, 1).getInstructionToDrawPath()]);
+            }, new Rectangle(0, 0, 1, 1));
         });
 
         it("should have called onchange", () => {
@@ -110,9 +110,9 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#00f"));
-                instructionSet.drawPath((context: CanvasRenderingContext2D, transformation: Transformation) => {
+                instructionSet.drawRect((context: CanvasRenderingContext2D, transformation: Transformation) => {
                     context.fill();
-                }, [new Rectangle(2, 0, 1, 1).getInstructionToDrawPath()]);
+                }, new Rectangle(2, 0, 1, 1));
             });
 
             it("should have recorded everything in the right order", () => {

@@ -4,6 +4,8 @@ import { PathInstructions } from "../instructions/path-instructions";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { Area } from "./area";
 import { AreaChange } from "./area-change";
+import { Instruction } from "../instructions/instruction";
+import { AreaBuilder } from "./area-builder";
 import { HalfPlane } from "./half-plane";
 
 export class Rectangle implements Area{
@@ -19,27 +21,20 @@ export class Rectangle implements Area{
         this.top = y;
         this.bottom = y + height;
     }
-    public expandToIncludePoint(point: Point): Area{
+    public expandToIncludePoint(point: Point): Rectangle{
         const left: number = Math.min(point.x, this.left);
         const right: number = Math.max(point.x, this.right);
         const top: number = Math.min(point.y, this.top);
         const bottom: number = Math.max(point.y, this.bottom);
         return new Rectangle(left, top, right - left, bottom - top);
     }
-    public expandToIncludeHalfPlane(halfPlane: HalfPlane): Area{
-        let result: Area = halfPlane;
-        for(let vertex of this.vertices){
-            result = halfPlane.expandToIncludePoint(vertex);
-        }
-        return result;
+    public expandToIncludeRectangle(rectangle: Rectangle): Rectangle{
+        const left: number = Math.min(rectangle.left, this.left);
+        const right: number = Math.max(rectangle.right, this.right);
+        const top: number = Math.min(rectangle.top, this.top);
+        const bottom: number = Math.max(rectangle.bottom, this.bottom);
+        return new Rectangle(left, top, right - left, bottom - top);
     }
-    public expandToInclude(area: Area): Area{
-        for(let vertex of this.vertices){
-            area = area.expandToIncludePoint(vertex);
-        }
-        return area;
-    }
-
     public getInstructionToClear(): PathInstruction{
         const x: number = this.left;
         const y: number = this.top;
@@ -47,21 +42,24 @@ export class Rectangle implements Area{
         const height: number = this.bottom - this.top;
         return PathInstructions.clearRect(x, y, width, height);
     }
-    public getInstructionToDrawPath(): PathInstruction{
+    public getInstructionToDrawPath(): Instruction{
+        return (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            let {x, y} = transformation.apply(this.vertices[0]);
+            context.moveTo(x, y);
+            ({x,y} = transformation.apply(this.vertices[1]));
+            context.lineTo(x,y);
+            ({x,y} = transformation.apply(this.vertices[2]));
+            context.lineTo(x,y);
+            ({x,y} = transformation.apply(this.vertices[3]));
+            context.lineTo(x,y);
+            ({x,y} = transformation.apply(this.vertices[0]));
+            context.lineTo(x,y);
+        };
+    }
+    public getPathInstructionToDrawPath(): PathInstruction{
         return {
-            instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                let {x, y} = transformation.apply(this.vertices[0]);
-                context.moveTo(x, y);
-                ({x,y} = transformation.apply(this.vertices[1]));
-                context.lineTo(x,y);
-                ({x,y} = transformation.apply(this.vertices[2]));
-                context.lineTo(x,y);
-                ({x,y} = transformation.apply(this.vertices[3]));
-                context.lineTo(x,y);
-                ({x,y} = transformation.apply(this.vertices[0]));
-                context.lineTo(x,y);
-            },
-            changeArea: AreaChange.to(this)
+            instruction: this.getInstructionToDrawPath(),
+            changeArea: (builder: AreaBuilder) => builder.addRectangle(this)
         };
     }
     public intersectWithRectangle(other: Rectangle): Area{
@@ -83,7 +81,7 @@ export class Rectangle implements Area{
     public intersectWith(other: Area): Area{
         return other.intersectWithRectangle(this);
     }
-    public transform(transformation: Transformation): Area{
+    public transform(transformation: Transformation): Rectangle{
         const transformedVertices: Point[] = this.vertices.map(p => transformation.apply(p));
         const transformedX: number[] = transformedVertices.map(p => p.x);
         const transformedY: number[] = transformedVertices.map(p => p.y);

@@ -12,6 +12,7 @@ import { InfiniteCanvasPattern } from "./styles/infinite-canvas-pattern";
 import { TransformationKind } from "./transformation-kind";
 import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set";
 import { Area } from "./areas/area";
+import { Rectangle } from "./areas/rectangle";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -64,8 +65,11 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public addPathInstruction(pathInstruction: PathInstruction): void{
 		this.instructionSet.addPathInstruction(pathInstruction);
 	}
-	public drawPath(instruction: Instruction, pathInstructions?: PathInstruction[]): void{
-		this.instructionSet.drawPath(instruction, pathInstructions);
+	public drawPath(instruction: Instruction): void{
+		this.instructionSet.drawPath(instruction);
+	}
+	public drawRect(instruction: Instruction, rectangle: Rectangle): void{
+		this.instructionSet.drawRect(instruction, rectangle);
 	}
 	public clipPath(instruction: Instruction): void{
 		this.instructionSet.clipPath(instruction);

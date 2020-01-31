@@ -10,7 +10,7 @@ import { Rectangle } from "./areas/rectangle";
 import { TransformationKind } from "./transformation-kind";
 import { RectangularDrawing } from "./instructions/rectangular-drawing";
 import { Transformation } from "./transformation";
-import { transformInstructionRelatively, transformInstructionAbsolutely } from "./instruction-utils";
+import { transformInstructionRelatively, transformInstructionAbsolutely, prependToInstruction } from "./instruction-utils";
 import { Area } from "./areas/area";
 
 export class InfiniteCanvasInstructionSet{
@@ -37,16 +37,24 @@ export class InfiniteCanvasInstructionSet{
         this.setInstructionToRestoreState();
     }
 
-    public drawPath(instruction: Instruction, pathInstructions?: PathInstruction[]): void{
+    public drawPath(instruction: Instruction): void{
         const stateIsTransformable: boolean = this.state.current.isTransformable();
         if(!stateIsTransformable){
             instruction = transformInstructionRelatively(instruction);
         }
-        if(pathInstructions){
-            this.drawPathInstructions(pathInstructions, instruction);
-        }else{
-            this.drawCurrentPath(instruction);
+        this.drawCurrentPath(instruction);
+        this.onChange();
+    }
+
+    public drawRect(instruction: Instruction, rectangle: Rectangle): void{
+        const stateIsTransformable: boolean = this.state.current.isTransformable();
+        if(!stateIsTransformable){
+            instruction = transformInstructionRelatively(instruction);
         }
+        const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
+        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, [rectangle.getPathInstructionToDrawPath()]);
+        pathToDraw.drawPath(instruction, stateToDrawWith);
+        this.drawBeforeCurrentPath(pathToDraw);
         this.onChange();
     }
 
@@ -104,13 +112,6 @@ export class InfiniteCanvasInstructionSet{
     private setInstructionToRestoreState(): void{
         const latestVisibleState: InfiniteCanvasState = this.currentInstructionsWithPath && this.currentInstructionsWithPath.visible ? this.currentInstructionsWithPath.state : this.previousInstructionsWithPath.state;
         this.instructionToRestoreState = latestVisibleState.getInstructionToClearStack();
-    }
-
-    private drawPathInstructions(pathInstructions: PathInstruction[], instruction: Instruction): void{
-        const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
-        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, pathInstructions);
-        pathToDraw.drawPath(instruction, stateToDrawWith);
-        this.drawBeforeCurrentPath(pathToDraw);
     }
 
     private drawBeforeCurrentPath(instruction: StateChangingInstructionSetWithArea): void{

@@ -38,7 +38,7 @@ describe("a rectangle", () => {
         expectedRight: number,
         expectedTop: number,
         expectedBottom: number) => {
-            const newRectangle = rectangle.expandToInclude(rectangleToInclude);
+            const newRectangle = rectangle.expandToIncludeRectangle(rectangleToInclude);
             const expectedRectangle: Area = new Rectangle(expectedLeft, expectedTop, expectedRight - expectedLeft, expectedBottom - expectedTop);
             expect(newRectangle.contains(expectedRectangle)).toBe(true);
             expect(expectedRectangle.contains(newRectangle)).toBe(true);

@@ -7,6 +7,7 @@ import { PathInstruction } from "../interfaces/path-instruction";
 import { transformInstructionAbsolutely } from "../instruction-utils";
 import { Area } from "../areas/area";
 import { PointArea } from "../areas/point-area";
+import { AreaBuilder } from "../areas/area-builder";
 
 export class PathInstructions{
 
@@ -15,7 +16,7 @@ export class PathInstructions{
             instruction:transformInstructionAbsolutely((context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.clearRect(x, y, width, height);
             }),
-            changeArea: AreaChange.to(new Rectangle(x, y, width, height))
+            changeArea: (builder: AreaBuilder) => builder.addRectangle(new Rectangle(x, y, width, height))
         };
     }
 
@@ -25,7 +26,7 @@ export class PathInstructions{
             const {x, y} = transformation.apply({x:_x,y:_y});
             context.arc(x, y, radius * transformation.scale, startAngle + transformationAngle, endAngle + transformationAngle, anticlockwise);
         };
-        const changeArea: AreaChange = AreaChange.to(new Rectangle(_x - radius, _y - radius, 2 * radius, 2 * radius));
+        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addRectangle(new Rectangle(_x - radius, _y - radius, 2 * radius, 2 * radius));
         return {
             instruction: instruction,
             changeArea: changeArea
@@ -35,13 +36,13 @@ export class PathInstructions{
     public static arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): PathInstruction{
         const p1: Point = {x:x1,y:y1};
         const p2: Point = {x:x2,y:y2};
-        const newRectangle: Area = new PointArea(p1).expandToIncludePoint(p2);
+        const newRectangle: Rectangle = new Rectangle(p1.x, p1.y, 0, 0).expandToIncludePoint(p2);
         const instruction: Instruction = (context: CanvasRenderingContext2D, transformation: Transformation) => {
             const tp1: Point = transformation.apply(p1);
             const tp2: Point = transformation.apply(p2);
             context.arcTo(tp1.x, tp1.y, tp2.x, tp2.y, radius * transformation.scale);
         };
-        const changeArea: AreaChange = AreaChange.to(newRectangle);
+        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addRectangle(newRectangle);
         return {
             instruction: instruction,
             changeArea: changeArea
@@ -57,19 +58,19 @@ export class PathInstructions{
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.closePath();
             },
-            changeArea: AreaChange.to()
+            changeArea: () => {}
         };
     }
 
     public static ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): PathInstruction{
-        const newRectangle: Area = new Rectangle(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
+        const newRectangle: Rectangle = new Rectangle(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
         return {
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 const tCenter: Point = transformation.apply({x:x,y:y});
                 const transformationAngle: number = transformation.getRotationAngle();
                 context.ellipse(tCenter.x, tCenter.y, radiusX * transformation.scale, radiusY * transformation.scale, rotation + transformationAngle, startAngle, endAngle, anticlockwise);
             },
-            changeArea: AreaChange.to(newRectangle)
+            changeArea: (builder: AreaBuilder) => builder.addRectangle(newRectangle)
         };
     }
 
@@ -80,7 +81,7 @@ export class PathInstructions{
                 const {x, y} = transformation.apply(point);
                 context.lineTo(x, y);
             },
-            changeArea: AreaChange.to(new PointArea(point))
+            changeArea: (builder: AreaBuilder) => builder.addPoint(point)
         };
     }
 
@@ -91,7 +92,7 @@ export class PathInstructions{
                 const {x, y} = transformation.apply(point);
                 context.moveTo(x, y);
             },
-            changeArea: AreaChange.to(new PointArea(point))
+            changeArea: (builder: AreaBuilder) => builder.addPoint(point)
         };
     }
 
