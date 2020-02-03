@@ -10,6 +10,7 @@ import { ClippingPathInstructionWithState } from "./clipping-path-instruction-wi
 import { DrawingPathInstructionWithState } from "./drawing-path-instruction-with-state";
 import { Area } from "../areas/area";
 import { InfiniteCanvasAreaBuilder } from "../areas/infinite-canvas-area-builder";
+import { Rectangle } from "../areas/rectangle";
 
 export class InstructionsWithPath extends StateChangingInstructionSequence<PathInstructionWithState> implements StateChangingInstructionSetWithAreaAndCurrentPath{
     private areaBuilder: InfiniteCanvasAreaBuilder = new InfiniteCanvasAreaBuilder();
@@ -95,7 +96,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
             this.visible = false;
         }
     }
-    public addClearRect(area: Area, state: InfiniteCanvasState): void{
+    public addClearRect(area: Rectangle, state: InfiniteCanvasState): void{
         this.addPathInstruction(area.getInstructionToClear(), state);
     }
     public recreatePath(): StateChangingInstructionSetWithAreaAndCurrentPath{

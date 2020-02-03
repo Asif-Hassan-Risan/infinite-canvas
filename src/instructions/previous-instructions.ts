@@ -7,6 +7,7 @@ import { StateAndInstruction } from "./state-and-instruction";
 import { ClearRectWithState } from "./clear-rect-with-state";
 import { Drawing } from "../interfaces/drawing";
 import { Area } from "../areas/area";
+import { Rectangle } from "../areas/rectangle";
 
 export class PreviousInstructions extends StateChangingInstructionSequence<StateChangingInstructionSetWithArea> implements Drawing{
     constructor(initiallyWithState: StateAndInstruction){
@@ -21,7 +22,7 @@ export class PreviousInstructions extends StateChangingInstructionSequence<State
     public intersects(area: Area): boolean{
         return this.contains(i => i.intersects(area));
     }
-    public addClearRect(area: Area, state: InfiniteCanvasState): void{
+    public addClearRect(area: Rectangle, state: InfiniteCanvasState): void{
         const clearRect: ClearRectWithState = ClearRectWithState.createClearRect(state, area);
         clearRect.setInitialState(this.state);
         this.add(clearRect);

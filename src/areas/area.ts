@@ -1,7 +1,6 @@
 import { Transformation } from "../transformation";
 import { Rectangle } from "./rectangle";
 import { Point } from "../geometry/point";
-import { PathInstruction } from "../interfaces/path-instruction";
 import { HalfPlane } from "./half-plane";
 
 export interface Area{
@@ -14,5 +13,4 @@ export interface Area{
     isContainedByHalfPlane(halfPlane: HalfPlane): boolean;
     intersects(area: Area): boolean;
     intersectsRectangle(rectangle: Rectangle): boolean;
-    getInstructionToClear(): PathInstruction;
 }

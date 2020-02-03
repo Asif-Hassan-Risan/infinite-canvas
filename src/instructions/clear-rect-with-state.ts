@@ -3,9 +3,10 @@ import { StateChangingInstructionSetWithArea } from "../interfaces/state-changin
 import { InfiniteCanvasState } from "../state/infinite-canvas-state";
 import { Instruction } from "./instruction";
 import { Area } from "../areas/area";
+import { Rectangle } from "../areas/rectangle";
 
 export class ClearRectWithState extends StateAndInstruction implements StateChangingInstructionSetWithArea{
-    constructor(initialState: InfiniteCanvasState, state: InfiniteCanvasState, instruction: Instruction, combinedInstruction: Instruction, public area: Area){
+    constructor(initialState: InfiniteCanvasState, state: InfiniteCanvasState, instruction: Instruction, combinedInstruction: Instruction, public area: Rectangle){
         super(initialState, state, instruction, combinedInstruction);
     }
     public hasDrawingAcrossBorderOf(area: Area): boolean{
@@ -17,7 +18,7 @@ export class ClearRectWithState extends StateAndInstruction implements StateChan
     public isContainedBy(area: Area): boolean {
         return area.contains(this.area);
     }
-    public static createClearRect(initialState: InfiniteCanvasState, area: Area): ClearRectWithState{
+    public static createClearRect(initialState: InfiniteCanvasState, area: Rectangle): ClearRectWithState{
         const instructionToClear: Instruction = area.getInstructionToClear().instruction;
         return new ClearRectWithState(initialState, initialState, instructionToClear, instructionToClear, area);
     }
