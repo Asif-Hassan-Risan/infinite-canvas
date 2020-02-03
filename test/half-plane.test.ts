@@ -33,3 +33,20 @@ describe("two half planes with normals pointing in opposite directions", () => {
         expect(halfPlane2.isContainedByHalfPlane(halfPlane1)).toBe(false);
     });
 });
+
+describe.each([
+    [new HalfPlane(new Point(0, 1), new Point(0, -1)), new HalfPlane(new Point(1, 0), new Point(1, 1)), new Point(0, 1)],
+    [new HalfPlane(new Point(0, 1), new Point(0, -2)), new HalfPlane(new Point(1, 0), new Point(3, 3)), new Point(0, 1)],
+    [new HalfPlane(new Point(0, 1), new Point(0, -2)), new HalfPlane(new Point(1, 0), new Point(-1, -1)), new Point(0, 1)],
+    [new HalfPlane(new Point(0, 1), new Point(0, -1)), new HalfPlane(new Point(1, 0), new Point(-1, 1)), new Point(2, 1)],
+    [new HalfPlane(new Point(0, 1), new Point(0, -1)), new HalfPlane(new Point(2, 0), new Point(-2, 2)), new Point(3, 1)],
+    [new HalfPlane(new Point(0, 1), new Point(0, -1)), new HalfPlane(new Point(1.5, 0), new Point(-1, 0.5)), new Point(2, 1)],
+    [new HalfPlane(new Point(0, 1), new Point(0, -1)), new HalfPlane(new Point(1, 0), new Point(-1, 0)), new Point(1, 1)]
+])("two half planes", (one: HalfPlane, other: HalfPlane, expectedIntersection: Point) => {
+
+    it("should have the right intersection", () => {
+        const intersection: Point = one.getIntersectionWith(other);
+        expect(intersection.x).toBeCloseTo(expectedIntersection.x);
+        expect(intersection.y).toBeCloseTo(expectedIntersection.y);
+    });
+});

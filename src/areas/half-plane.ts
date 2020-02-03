@@ -2,7 +2,6 @@ import { Area } from "./area";
 import { Point } from "../geometry/point";
 import { Rectangle } from "./rectangle";
 import { Transformation } from "../transformation";
-import { PathInstruction } from "../interfaces/path-instruction";
 
 export class HalfPlane implements Area{
     private readonly lengthOfNormal: number;
@@ -21,9 +20,6 @@ export class HalfPlane implements Area{
     public intersectWithRectangle(rectangle: Rectangle): Area {
         throw new Error("Method not implemented.");
     }
-    public contains(area: Area): boolean {
-        throw new Error("Method not implemented.");
-    }
     public containsPoint(point: Point): boolean {
         return this.getDistanceFromEdge(point) >= 0;
     }
@@ -36,7 +32,12 @@ export class HalfPlane implements Area{
     public intersectsRectangle(rectangle: Rectangle): boolean {
         throw new Error("Method not implemented.");
     }
-    public getInstructionToClear(): PathInstruction {
-        throw new Error("Method not implemented.");
+    public getIntersectionWith(other: HalfPlane): Point{
+        const d1: Point = this.normalTowardInterior.getPerpendicular();
+        const d2: Point = other.normalTowardInterior.getPerpendicular();
+        const q: Point = other.base.minus(this.base);
+        const det: number = d2.cross(d1);
+        const s: number = d2.getPerpendicular().dot(q) / det;
+        return this.base.plus(d1.scale(s));
     }
 }
