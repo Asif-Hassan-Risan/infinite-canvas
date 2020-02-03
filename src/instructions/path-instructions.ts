@@ -4,7 +4,7 @@ import { Rectangle } from "../areas/rectangle";
 import { AreaChange } from "../areas/area-change";
 import { Point } from "../geometry/point";
 import { PathInstruction } from "../interfaces/path-instruction";
-import { transformInstructionAbsolutely } from "../instruction-utils";
+import { transformInstructionRelatively } from "../instruction-utils";
 import { Area } from "../areas/area";
 import { PointArea } from "../areas/point-area";
 import { AreaBuilder } from "../areas/area-builder";
@@ -13,7 +13,7 @@ export class PathInstructions{
 
     public static clearRect(x: number, y: number, width: number, height: number): PathInstruction{
         return {
-            instruction:transformInstructionAbsolutely((context: CanvasRenderingContext2D, transformation: Transformation) => {
+            instruction:transformInstructionRelatively((context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.clearRect(x, y, width, height);
             }),
             changeArea: (builder: AreaBuilder) => builder.addRectangle(new Rectangle(x, y, width, height))

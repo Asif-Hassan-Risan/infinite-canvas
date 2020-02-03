@@ -95,8 +95,8 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
             this.visible = false;
         }
     }
-    public addClearRect(area: Area): void{
-        this.addPathInstruction(area.getInstructionToClear(), this.state);
+    public addClearRect(area: Area, state: InfiniteCanvasState): void{
+        this.addPathInstruction(area.getInstructionToClear(), state);
     }
     public recreatePath(): StateChangingInstructionSetWithAreaAndCurrentPath{
         const result: InstructionsWithPath = this.copy();
