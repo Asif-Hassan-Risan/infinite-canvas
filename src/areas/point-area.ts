@@ -32,11 +32,8 @@ export class PointArea implements Area{
     public isContainedByRectangle(rectangle: Rectangle): boolean {
         return rectangle.containsPoint(this.point);
     }
-    public intersects(area: Area): boolean {
-        return area.containsPoint(this.point);
-    }
     public intersectsRectangle(rectangle: Rectangle): boolean {
-        return this.intersects(rectangle);
+        return rectangle.containsPoint(this.point);
     }
     public getInstructionToClear(): PathInstruction {
        return {

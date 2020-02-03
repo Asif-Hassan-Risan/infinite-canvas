@@ -38,7 +38,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
     }
     public drawPath(instruction: Instruction, state: InfiniteCanvasState): void{
         const newlyDrawnArea: Area = this.getCurrentlyDrawableArea();
-        this.drawnArea = !this.drawnArea || newlyDrawnArea.contains(this.drawnArea) ? newlyDrawnArea : this.drawnArea;
+        this.drawnArea = newlyDrawnArea;//!this.drawnArea || newlyDrawnArea.contains(this.drawnArea) ? newlyDrawnArea : this.drawnArea;
         const toAdd: DrawingPathInstructionWithState = DrawingPathInstructionWithState.createDrawing(state, instruction, this.drawnArea);
         toAdd.setInitialState(this.state);
         this.add(toAdd);
@@ -64,35 +64,35 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         }
         super.execute(context, transformation);
     }
-    public hasDrawingAcrossBorderOf(area: Area): boolean{
+    public hasDrawingAcrossBorderOf(area: Rectangle): boolean{
         if(!this.drawnArea || !this.visible){
             return false;
         }
-        if(area.contains(this.drawnArea)){
+        if(this.drawnArea.isContainedByRectangle(area)){
             return false;
         }
-        return area.intersects(this.drawnArea);
+        return this.drawnArea.intersectsRectangle(area);
     }
-    public isContainedBy(area: Area): boolean {
+    public isContainedBy(area: Rectangle): boolean {
         const areaToContain: Area = this.drawnArea || this.area;
-        return area.contains(areaToContain);
+        return areaToContain.isContainedByRectangle(area);
     }
-    public intersects(area: Area): boolean{
+    public intersects(area: Rectangle): boolean{
         if(!this.area || !this.visible){
             return false;
         }
-        return this.area.intersects(area);
+        return this.area.intersectsRectangle(area);
     }
     public getClippedArea(previouslyClipped?: Area): Area {
         return previouslyClipped ? this.area.intersectWith(previouslyClipped): this.area;
     }
 
-    public clearContentsInsideArea(area: Area): void{
+    public clearContentsInsideArea(area: Rectangle): void{
         if(!this.drawnArea || !this.visible){
             return;
         }
-        this.removeAll(i => i instanceof DrawingPathInstructionWithState && area.contains(i.drawnArea));
-        if(area.contains(this.drawnArea)){
+        this.removeAll(i => i instanceof DrawingPathInstructionWithState && i.drawnArea.isContainedByRectangle(area));
+        if(this.drawnArea.isContainedByRectangle(area)){
             this.visible = false;
         }
     }

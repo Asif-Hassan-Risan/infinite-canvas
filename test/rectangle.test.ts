@@ -21,10 +21,10 @@ describe("a rectangle", () => {
         expectedRight: number,
         expectedTop: number,
         expectedBottom: number) => {
-            const newRectangle: Area = rectangle.expandToIncludePoint(pointToInclude);
-            const expectedRectangle: Area = new Rectangle(expectedLeft, expectedTop, expectedRight - expectedLeft, expectedBottom - expectedTop);
-            expect(newRectangle.contains(expectedRectangle)).toBe(true);
-            expect(expectedRectangle.contains(newRectangle)).toBe(true);
+            const newRectangle: Rectangle = rectangle.expandToIncludePoint(pointToInclude);
+            const expectedRectangle: Rectangle = new Rectangle(expectedLeft, expectedTop, expectedRight - expectedLeft, expectedBottom - expectedTop);
+            expect(newRectangle.isContainedByRectangle(expectedRectangle)).toBe(true);
+            expect(expectedRectangle.isContainedByRectangle(newRectangle)).toBe(true);
     });
 
     it.each([
@@ -39,19 +39,19 @@ describe("a rectangle", () => {
         expectedTop: number,
         expectedBottom: number) => {
             const newRectangle = rectangle.expandToIncludeRectangle(rectangleToInclude);
-            const expectedRectangle: Area = new Rectangle(expectedLeft, expectedTop, expectedRight - expectedLeft, expectedBottom - expectedTop);
-            expect(newRectangle.contains(expectedRectangle)).toBe(true);
-            expect(expectedRectangle.contains(newRectangle)).toBe(true);
+            const expectedRectangle: Rectangle = new Rectangle(expectedLeft, expectedTop, expectedRight - expectedLeft, expectedBottom - expectedTop);
+            expect(newRectangle.isContainedByRectangle(expectedRectangle)).toBe(true);
+            expect(expectedRectangle.isContainedByRectangle(newRectangle)).toBe(true);
     });
 
     it("should contain another rectangle", () => {
         const other: Rectangle = new Rectangle(1.5, 1.5, 1, 1);
-        expect(rectangle.contains(other)).toBe(true);
+        expect(other.isContainedByRectangle(rectangle)).toBe(true);
     });
 
     it("should not contain another rectangle", () => {
         const other: Rectangle = new Rectangle(0, 0, 4, 4);
-        expect(rectangle.contains(other)).toBe(false);
+        expect(other.isContainedByRectangle(rectangle)).toBe(false);
     });
 
     it.each([
@@ -60,7 +60,7 @@ describe("a rectangle", () => {
         new Rectangle(1, -3, 2, 2),
         new Rectangle(1, 4, 2, 2)
     ])("should not intersect rectangle %j", (otherRectangle: Rectangle) => {
-        expect(rectangle.intersects(otherRectangle)).toBe(false);
+        expect(rectangle.intersectsRectangle(otherRectangle)).toBe(false);
     });
 
     it.each([
@@ -69,7 +69,7 @@ describe("a rectangle", () => {
         new Rectangle(1, 0, 2, 2),
         new Rectangle(1, 2, 2, 2)
     ])("should intersect rectangle %j", (otherRectangle: Rectangle) => {
-        expect(rectangle.intersects(otherRectangle)).toBe(true);
+        expect(rectangle.intersectsRectangle(otherRectangle)).toBe(true);
     });
 
     describe("that is transformed", () => {
@@ -84,8 +84,8 @@ describe("a rectangle", () => {
         });
 
         it("should result in a new rectangle", () => {
-            const expectedRectangle: Area = new Rectangle(-sqrt2 - 0.05, sqrt2 - 0.05, 2 * sqrt2 + 0.1, 2 * sqrt2 + 0.1);
-            expect(expectedRectangle.contains(transformedRectangle)).toBe(true);
+            const expectedRectangle: Rectangle = new Rectangle(-sqrt2 - 0.05, sqrt2 - 0.05, 2 * sqrt2 + 0.1, 2 * sqrt2 + 0.1);
+            expect(transformedRectangle.isContainedByRectangle(expectedRectangle)).toBe(true);
         });
     });
 });

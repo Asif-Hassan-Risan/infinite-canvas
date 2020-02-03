@@ -69,7 +69,7 @@ export class Rectangle implements Area{
         if(other.contains(this)){
             return this;
         }
-        if(!this.intersects(other)){
+        if(!this.intersectsRectangle(other)){
             return undefined;
         }
         const newTop: number = Math.max(this.top, other.top);
@@ -96,9 +96,6 @@ export class Rectangle implements Area{
         this.right >= other.left &&
         this.bottom >= other.top &&
         this.top <= other.bottom;
-    }
-    public intersects(other: Area): boolean{
-        return other.intersectsRectangle(this);
     }
     private isContainedByArea(area: Area): boolean{
         for(let vertex of this.vertices){

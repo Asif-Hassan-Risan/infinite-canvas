@@ -33,9 +33,6 @@ export class HalfPlane implements Area{
     public isContainedByRectangle(rectangle: Rectangle): boolean {
         return false;
     }
-    public intersects(area: Area): boolean {
-        throw new Error("Method not implemented.");
-    }
     public intersectsRectangle(rectangle: Rectangle): boolean {
         throw new Error("Method not implemented.");
     }

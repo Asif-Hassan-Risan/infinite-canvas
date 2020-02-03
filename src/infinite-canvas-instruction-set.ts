@@ -10,7 +10,7 @@ import { Rectangle } from "./areas/rectangle";
 import { TransformationKind } from "./transformation-kind";
 import { RectangularDrawing } from "./instructions/rectangular-drawing";
 import { Transformation } from "./transformation";
-import { transformInstructionRelatively, transformInstructionAbsolutely, prependToInstruction } from "./instruction-utils";
+import { transformInstructionRelatively, transformInstructionAbsolutely } from "./instruction-utils";
 import { Area } from "./areas/area";
 
 export class InfiniteCanvasInstructionSet{
@@ -58,17 +58,18 @@ export class InfiniteCanvasInstructionSet{
         this.onChange();
     }
 
-    public addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
+    public addDrawing(instruction: Instruction, area: Rectangle, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
         if(transformationKind === TransformationKind.Relative){
 			instruction = transformInstructionRelatively(instruction);
 			area = area.transform(this.state.current.transformation);
 		}else if(transformationKind === TransformationKind.Absolute){
 			instruction = transformInstructionAbsolutely(instruction);
         }
+        let areaToDraw: Area = area;
         if(this.state.current.clippingRegion && takeClippingRegionIntoAccount){
-            area = area.intersectWith(this.state.current.clippingRegion);
+            areaToDraw = area.intersectWith(this.state.current.clippingRegion);
         }
-        const drawing: RectangularDrawing = RectangularDrawing.createDrawing(this.state.currentlyTransformed(false), instruction, area);
+        const drawing: RectangularDrawing = RectangularDrawing.createDrawing(this.state.currentlyTransformed(false), instruction, areaToDraw);
         this.drawBeforeCurrentPath(drawing);
         this.onChange();
     }
@@ -132,15 +133,15 @@ export class InfiniteCanvasInstructionSet{
         }
     }
 
-    public intersects(area: Area): boolean{
+    public intersects(area: Rectangle): boolean{
         return this.previousInstructionsWithPath.intersects(area) || this.currentInstructionsWithPath && this.currentInstructionsWithPath.intersects(area);
     }
 
-    public hasDrawingAcrossBorderOf(area: Area): boolean{
+    public hasDrawingAcrossBorderOf(area: Rectangle): boolean{
         return this.previousInstructionsWithPath.hasDrawingAcrossBorderOf(area) || this.currentInstructionsWithPath && this.currentInstructionsWithPath.hasDrawingAcrossBorderOf(area);
     }
 
-    public clearContentsInsideArea(area: Area): void{
+    public clearContentsInsideArea(area: Rectangle): void{
         if(this.currentInstructionsWithPath){
             this.previousInstructionsWithPath.clearContentsInsideArea(area);
             this.currentInstructionsWithPath.clearContentsInsideArea(area);
