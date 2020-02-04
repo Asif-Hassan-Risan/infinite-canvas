@@ -1,7 +1,5 @@
 import { Point } from "../geometry/point";
 import { Transformation } from "../transformation";
-import { PathInstructions } from "../instructions/path-instructions";
-import { PathInstruction } from "../interfaces/path-instruction";
 import { Area } from "./area";
 import { HalfPlane } from "./half-plane";
 
@@ -31,13 +29,6 @@ export class Rectangle implements Area{
         const top: number = Math.min(rectangle.top, this.top);
         const bottom: number = Math.max(rectangle.bottom, this.bottom);
         return new Rectangle(left, top, right - left, bottom - top);
-    }
-    public getInstructionToClear(): PathInstruction{
-        const x: number = this.left;
-        const y: number = this.top;
-        const width: number = this.right - this.left;
-        const height: number = this.bottom - this.top;
-        return PathInstructions.clearRect(x, y, width, height);
     }
     public intersectWithRectangle(other: Rectangle): Area{
         if(this.contains(other)){

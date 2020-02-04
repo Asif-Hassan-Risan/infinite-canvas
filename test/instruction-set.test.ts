@@ -4,6 +4,7 @@ import { logInstruction } from "./log-instruction";
 import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InfiniteCanvasInstructionSet } from "../src/infinite-canvas-instruction-set";
 import { Rectangle } from "../src/areas/rectangle";
+import { transformInstructionRelatively } from "../src/instruction-utils";
 
 describe("an instruction set", () => {
     let instructionSet: InfiniteCanvasInstructionSet;
@@ -41,7 +42,9 @@ describe("an instruction set", () => {
 
                 beforeEach(() => {
                     onChangeSpy.mockClear();
-                    instructionSet.clearArea(0, 0, 1, 1);
+                    instructionSet.clearArea(new Rectangle(0, 0, 1, 1), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+                        context.clearRect(0, 0, 1, 1);
+                    }));
                 });
 
                 it("should have called onchange", () => {
@@ -80,7 +83,9 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 onChangeSpy.mockClear();
-                instructionSet.clearArea(0.5, 0, 2, 2);
+                instructionSet.clearArea(new Rectangle(0.5, 0, 2, 2), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+                    context.clearRect(0.5, 0, 2, 2);
+                }));
             });
 
             it("should end up with a rectangle followed by a clearRect", () => {
@@ -98,7 +103,9 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 onChangeSpy.mockClear();
-                instructionSet.clearArea(-1, -1, 3, 3);
+                instructionSet.clearArea(new Rectangle(-1, -1, 3, 3), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+                    context.clearRect(-1, -1, 3, 3);
+                }));
             });
 
             it("should no longer have recorded the first rectangle", () => {

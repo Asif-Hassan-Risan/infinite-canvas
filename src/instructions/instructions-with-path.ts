@@ -97,8 +97,11 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
             this.visible = false;
         }
     }
-    public addClearRect(area: Rectangle, state: InfiniteCanvasState): void{
-        this.addPathInstruction(area.getInstructionToClear(), state);
+    public addClearRect(area: Rectangle, state: InfiniteCanvasState, instructionToClear: Instruction): void{
+        this.addPathInstruction({
+            instruction: instructionToClear,
+            changeArea: (builder: AreaBuilder) => builder.addRectangle(area)
+        }, state);
     }
     public recreatePath(): StateChangingInstructionSetWithAreaAndCurrentPath{
         const result: InstructionsWithPath = this.copy();

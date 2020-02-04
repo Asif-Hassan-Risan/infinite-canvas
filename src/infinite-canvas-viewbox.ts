@@ -14,6 +14,7 @@ import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set"
 import { Area } from "./areas/area";
 import { Rectangle } from "./areas/rectangle";
 import { Point } from "./geometry/point";
+import { transformInstructionRelatively } from "./instruction-utils";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -90,12 +91,18 @@ export class InfiniteCanvasViewBox implements ViewBox{
             ({x,y} = transformation.apply(topLeft));
             context.lineTo(x,y);
         };
-    }
+	}
+	private getInstructionToClearRectangle(x: number, y: number, width: number, height: number): Instruction{
+		return transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+			context.clearRect(x, y, width, height);
+		})
+	}
 	public clipPath(instruction: Instruction): void{
 		this.instructionSet.clipPath(instruction);
 	}
 	public clearArea(x: number, y: number, width: number, height: number): void{
-		this.instructionSet.clearArea(x, y, width, height);
+		const area: Rectangle = new Rectangle(x, y, width, height);
+		this.instructionSet.clearArea(area, this.getInstructionToClearRectangle(x, y, width, height));
 	}
 	public createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient{
 		let result: InfiniteCanvasLinearGradient;

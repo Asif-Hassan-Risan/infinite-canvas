@@ -18,8 +18,7 @@ export class ClearRectWithState extends StateAndInstruction implements StateChan
     public isContainedBy(area: Rectangle): boolean {
         return this.area.isContainedByRectangle(area);
     }
-    public static createClearRect(initialState: InfiniteCanvasState, area: Rectangle): ClearRectWithState{
-        const instructionToClear: Instruction = area.getInstructionToClear().instruction;
+    public static createClearRect(initialState: InfiniteCanvasState, area: Rectangle, instructionToClear: Instruction): ClearRectWithState{
         return new ClearRectWithState(initialState, initialState, instructionToClear, instructionToClear, area);
     }
 }

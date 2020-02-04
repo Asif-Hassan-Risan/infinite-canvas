@@ -4,21 +4,9 @@ import { Rectangle } from "../areas/rectangle";
 import { AreaChange } from "../areas/area-change";
 import { Point } from "../geometry/point";
 import { PathInstruction } from "../interfaces/path-instruction";
-import { transformInstructionRelatively } from "../instruction-utils";
-import { Area } from "../areas/area";
-import { PointArea } from "../areas/point-area";
 import { AreaBuilder } from "../areas/area-builder";
 
 export class PathInstructions{
-
-    public static clearRect(x: number, y: number, width: number, height: number): PathInstruction{
-        return {
-            instruction:transformInstructionRelatively((context: CanvasRenderingContext2D, transformation: Transformation) => {
-                context.clearRect(x, y, width, height);
-            }),
-            changeArea: (builder: AreaBuilder) => builder.addRectangle(new Rectangle(x, y, width, height))
-        };
-    }
 
     public static arc(_x: number, _y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean): PathInstruction{
         const instruction: Instruction = (context: CanvasRenderingContext2D, transformation: Transformation) => {
