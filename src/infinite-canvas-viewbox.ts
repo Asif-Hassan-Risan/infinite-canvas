@@ -13,6 +13,7 @@ import { TransformationKind } from "./transformation-kind";
 import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set";
 import { Area } from "./areas/area";
 import { Rectangle } from "./areas/rectangle";
+import { Point } from "./geometry/point";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -69,8 +70,27 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		this.instructionSet.drawPath(instruction);
 	}
 	public drawRect(instruction: Instruction, rectangle: Rectangle): void{
-		this.instructionSet.drawRect(instruction, rectangle);
+		const instructionToDrawRectangularPath: Instruction = this.getInstructionToDrawRectangularPath(rectangle);
+		this.instructionSet.drawRect(instructionToDrawRectangularPath, instruction, rectangle);
 	}
+	public getInstructionToDrawRectangularPath(rectangle: Rectangle): Instruction{
+        const topLeft: Point = new Point(rectangle.left, rectangle.top);
+        const topRight: Point = new Point(rectangle.right, rectangle.top);
+        const bottomRight: Point = new Point(rectangle.right, rectangle.bottom);
+        const bottomLeft: Point = new Point(rectangle.left, rectangle.bottom);
+        return (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            let {x, y} = transformation.apply(topLeft);
+            context.moveTo(x, y);
+            ({x,y} = transformation.apply(topRight));
+            context.lineTo(x,y);
+            ({x,y} = transformation.apply(bottomRight));
+            context.lineTo(x,y);
+            ({x,y} = transformation.apply(bottomLeft));
+            context.lineTo(x,y);
+            ({x,y} = transformation.apply(topLeft));
+            context.lineTo(x,y);
+        };
+    }
 	public clipPath(instruction: Instruction): void{
 		this.instructionSet.clipPath(instruction);
 	}

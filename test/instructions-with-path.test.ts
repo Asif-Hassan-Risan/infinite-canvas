@@ -120,7 +120,13 @@ describe("a set of instructions that describe a rectangle path that is drawn", (
 
     beforeEach(() => {
         currentState = defaultState;
-        instructionsWithPath = InstructionsWithPath.create(currentState, [new Rectangle(0, 0, 1, 1).getPathInstructionToDrawPath()]);
+        instructionsWithPath = InstructionsWithPath.createRectangularPath(currentState, new Rectangle(0, 0, 1, 1), (context: CanvasRenderingContext2D) => {
+            context.moveTo(0, 0);
+            context.lineTo(1, 0);
+            context.lineTo(1, 1);
+            context.lineTo(0, 1);
+            context.lineTo(0, 0);
+        });
         instructionsWithPath.drawPath((context: CanvasRenderingContext2D) => {
             context.fill();
         }, currentState)

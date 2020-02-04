@@ -62,6 +62,12 @@ describe("an instruction set", () => {
         beforeEach(() => {
             instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#f00"));
             instructionSet.drawRect((context: CanvasRenderingContext2D, transformation: Transformation) => {
+                context.moveTo(0, 0);
+                context.lineTo(1, 0);
+                context.lineTo(1, 1);
+                context.lineTo(0, 1);
+                context.lineTo(0, 0);
+            }, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.fill();
             }, new Rectangle(0, 0, 1, 1));
         });
@@ -111,6 +117,12 @@ describe("an instruction set", () => {
             beforeEach(() => {
                 instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#00f"));
                 instructionSet.drawRect((context: CanvasRenderingContext2D, transformation: Transformation) => {
+                    context.moveTo(2, 0);
+                    context.lineTo(3, 0);
+                    context.lineTo(3, 1);
+                    context.lineTo(2, 1);
+                    context.lineTo(2, 0);
+                }, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                     context.fill();
                 }, new Rectangle(2, 0, 1, 1));
             });

@@ -9,6 +9,7 @@ import { fillStyle, strokeStyle } from "../src/state/dimensions/fill-stroke-styl
 import { InstructionsWithPath } from "../src/instructions/instructions-with-path";
 import { Rectangle } from "../src/areas/rectangle";
 import { Point } from "../src/geometry/point";
+import { AreaBuilder } from "../src/areas/area-builder";
 
 function applyChangeToCurrentState(state: InfiniteCanvasState, change: (instance: InfiniteCanvasStateInstance) => InfiniteCanvasStateInstance): InfiniteCanvasState{
     const newInstance: InfiniteCanvasStateInstance = change(state.current);
@@ -24,7 +25,16 @@ describe("a state with a clipped path", () => {
         currentState = defaultState;
         currentPath = InstructionsWithPath.create(defaultState);
         currentState = applyChangeToCurrentState(currentState, s => fillStyle.changeInstanceValue(s, "#f00"));
-        currentPath.addPathInstruction(new Rectangle(0, 0, 3, 3).getPathInstructionToDrawPath(), currentState);
+        currentPath.addPathInstruction({
+            instruction: (context: CanvasRenderingContext2D) => {
+                context.moveTo(0, 0);
+                context.lineTo(3, 0);
+                context.lineTo(3, 3);
+                context.lineTo(0, 3);
+                context.lineTo(0, 0);
+            },
+            changeArea: (builder: AreaBuilder) => builder.addRectangle(new Rectangle(0, 0, 3, 3))
+        }, currentState);
         currentPath.clipPath((context: CanvasRenderingContext2D) => context.clip(), currentState);
         currentState = currentPath.state;
         stateWithOneClippedPath = currentState;

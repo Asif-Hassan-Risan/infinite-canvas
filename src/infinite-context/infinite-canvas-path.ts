@@ -1,6 +1,8 @@
 import { ViewBox } from "../interfaces/viewbox";
 import { PathInstructions } from "../instructions/path-instructions";
 import { Rectangle } from "../areas/rectangle";
+import { AreaBuilder } from "../areas/area-builder";
+import { Instruction } from "../instructions/instruction";
 
 export class InfiniteCanvasPath implements CanvasPath{
 	constructor(private viewBox: ViewBox){}
@@ -26,6 +28,11 @@ export class InfiniteCanvasPath implements CanvasPath{
 	public quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void{}
 
 	public rect(x: number, y: number, w: number, h: number): void{
-		this.viewBox.addPathInstruction(new Rectangle(x, y, w, h).getPathInstructionToDrawPath());
+		const rectangleToDraw: Rectangle = new Rectangle(x, y, w, h);
+		const instructionToDrawRectangularPath: Instruction = this.viewBox.getInstructionToDrawRectangularPath(rectangleToDraw);
+		this.viewBox.addPathInstruction({
+			instruction: instructionToDrawRectangularPath,
+			changeArea: (builder: AreaBuilder) => builder.addRectangle(rectangleToDraw)
+		});
 	}
 }

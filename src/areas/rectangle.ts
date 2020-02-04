@@ -3,9 +3,6 @@ import { Transformation } from "../transformation";
 import { PathInstructions } from "../instructions/path-instructions";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { Area } from "./area";
-import { AreaChange } from "./area-change";
-import { Instruction } from "../instructions/instruction";
-import { AreaBuilder } from "./area-builder";
 import { HalfPlane } from "./half-plane";
 
 export class Rectangle implements Area{
@@ -41,26 +38,6 @@ export class Rectangle implements Area{
         const width: number = this.right - this.left;
         const height: number = this.bottom - this.top;
         return PathInstructions.clearRect(x, y, width, height);
-    }
-    public getInstructionToDrawPath(): Instruction{
-        return (context: CanvasRenderingContext2D, transformation: Transformation) => {
-            let {x, y} = transformation.apply(this.vertices[0]);
-            context.moveTo(x, y);
-            ({x,y} = transformation.apply(this.vertices[1]));
-            context.lineTo(x,y);
-            ({x,y} = transformation.apply(this.vertices[2]));
-            context.lineTo(x,y);
-            ({x,y} = transformation.apply(this.vertices[3]));
-            context.lineTo(x,y);
-            ({x,y} = transformation.apply(this.vertices[0]));
-            context.lineTo(x,y);
-        };
-    }
-    public getPathInstructionToDrawPath(): PathInstruction{
-        return {
-            instruction: this.getInstructionToDrawPath(),
-            changeArea: (builder: AreaBuilder) => builder.addRectangle(this)
-        };
     }
     public intersectWithRectangle(other: Rectangle): Area{
         if(this.contains(other)){

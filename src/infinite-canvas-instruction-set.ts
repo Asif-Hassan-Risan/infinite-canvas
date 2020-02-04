@@ -12,6 +12,7 @@ import { RectangularDrawing } from "./instructions/rectangular-drawing";
 import { Transformation } from "./transformation";
 import { transformInstructionRelatively, transformInstructionAbsolutely } from "./instruction-utils";
 import { Area } from "./areas/area";
+import { Point } from "./geometry/point";
 
 export class InfiniteCanvasInstructionSet{
     private currentInstructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath;
@@ -46,13 +47,13 @@ export class InfiniteCanvasInstructionSet{
         this.onChange();
     }
 
-    public drawRect(instruction: Instruction, rectangle: Rectangle): void{
+    public drawRect(instructionToDrawPath: Instruction, instruction: Instruction, rectangle: Rectangle): void{
         const stateIsTransformable: boolean = this.state.current.isTransformable();
         if(!stateIsTransformable){
             instruction = transformInstructionRelatively(instruction);
         }
         const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
-        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, [rectangle.getPathInstructionToDrawPath()]);
+        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.createRectangularPath(stateToDrawWith, rectangle, instructionToDrawPath);
         pathToDraw.drawPath(instruction, stateToDrawWith);
         this.drawBeforeCurrentPath(pathToDraw);
         this.onChange();
