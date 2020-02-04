@@ -5,6 +5,7 @@ import { Transformation } from "../transformation";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { AreaBuilder } from "./area-builder";
 import { HalfPlane } from "./half-plane";
+import { ConvexPolygon } from "./convex-polygon";
 
 export class PointArea implements Area{
     constructor(private readonly point: Point){}
@@ -19,6 +20,9 @@ export class PointArea implements Area{
     }
     public intersectWithRectangle(rectangle: Rectangle): Area {
         return this.intersectWith(rectangle);
+    }
+    public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area{
+        return this.intersectWith(convexPolygon);
     }
     public contains(area: Area): boolean {
         return area.isContainedByRectangle(new Rectangle(this.point.x, this.point.y, 0, 0));

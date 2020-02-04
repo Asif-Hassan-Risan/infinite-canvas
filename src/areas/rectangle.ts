@@ -2,6 +2,7 @@ import { Point } from "../geometry/point";
 import { Transformation } from "../transformation";
 import { Area } from "./area";
 import { HalfPlane } from "./half-plane";
+import { ConvexPolygon } from "./convex-polygon";
 
 export class Rectangle implements Area{
     private vertices: Point[];
@@ -29,6 +30,9 @@ export class Rectangle implements Area{
         const top: number = Math.min(rectangle.top, this.top);
         const bottom: number = Math.max(rectangle.bottom, this.bottom);
         return new Rectangle(left, top, right - left, bottom - top);
+    }
+    public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area{
+        return undefined;
     }
     public intersectWithRectangle(other: Rectangle): Area{
         if(this.contains(other)){
@@ -72,9 +76,6 @@ export class Rectangle implements Area{
             }
         }
         return true;
-    }
-    public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
-        return this.isContainedByArea(halfPlane);
     }
     public isContainedByRectangle(other: Rectangle): boolean{
         return this.isContainedByArea(other);

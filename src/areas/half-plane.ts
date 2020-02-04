@@ -3,7 +3,7 @@ import { Point } from "../geometry/point";
 import { Rectangle } from "./rectangle";
 import { Transformation } from "../transformation";
 
-export class HalfPlane implements Area{
+export class HalfPlane {
     private readonly lengthOfNormal: number;
     constructor(public readonly base: Point, public readonly normalTowardInterior: Point){
         this.lengthOfNormal = normalTowardInterior.mod();
@@ -11,7 +11,7 @@ export class HalfPlane implements Area{
     public getDistanceFromEdge(point: Point): number{
         return point.minus(this.base).dot(this.normalTowardInterior) / this.lengthOfNormal;
     }
-    public transform(transformation: Transformation): Area {
+    public transform(transformation: Transformation): HalfPlane {
         return new HalfPlane(transformation.apply(this.base), transformation.untranslated().apply(this.normalTowardInterior));
     }
     public intersectWith(area: Area): Area {
