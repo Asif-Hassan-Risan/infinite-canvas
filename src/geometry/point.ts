@@ -15,6 +15,9 @@ export class Point{
 	public cross(other: Point): number{
 		return this.x * other.y - this.y * other.x;
 	}
+	public equals(other: Point): boolean{
+		return this.x === other.x && this.y === other.y;
+	}
 	public getPerpendicular(): Point{
 		return new Point(-this.y, this.x);
 	}

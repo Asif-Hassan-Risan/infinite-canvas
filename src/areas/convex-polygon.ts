@@ -2,13 +2,22 @@ import { Area } from "./area";
 import { HalfPlane } from "./half-plane";
 import { Rectangle } from "./rectangle";
 import { Point } from "../geometry/point";
+import { PolygonVertex } from "./polygon-vertex";
 
 export class ConvexPolygon implements Area{
-    public readonly borderPoints: Point[];
+    public readonly vertices: PolygonVertex[];
     public readonly halfPlanes: HalfPlane[];
     constructor(halfPlanes: HalfPlane[]){
         this.halfPlanes = halfPlanes;
-        this.borderPoints = ConvexPolygon.getBorderPoints(this.halfPlanes);
+        this.vertices = ConvexPolygon.getVertices(this.halfPlanes);
+    }
+    private findVertex(point: Point): PolygonVertex{
+        for(let vertex of this.vertices){
+            if(vertex.point.equals(point)){
+                return vertex;
+            }
+        }
+        return undefined;
     }
     public intersectWith(area: Area): Area {
         return area.intersectWithConvexPolygon(this);
@@ -17,18 +26,30 @@ export class ConvexPolygon implements Area{
         throw new Error("Method not implemented.");
     }
     public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
-        for(let borderPoint of this.borderPoints){
-            if(!halfPlane.containsPoint(borderPoint)){
+        for(let vertex of this.vertices){
+            if(!halfPlane.containsPoint(vertex.point)){
                 return false;
             }
         }
+        const complement: HalfPlane = halfPlane.complement();
         for(let _halfPlane of this.halfPlanes){
+            if(_halfPlane.isContainedByHalfPlane(complement)){
+                return false;
+            }
             if(_halfPlane.isContainedByHalfPlane(halfPlane)){
                 return true;
             }
-            
+            const intersection: Point = _halfPlane.getIntersectionWith(halfPlane);
+            const vertexAtIntersection: PolygonVertex = this.findVertex(intersection);
+            if(vertexAtIntersection){
+                if(!vertexAtIntersection.isContainedByHalfPlaneWithNormal(halfPlane.normalTowardInterior)){
+                    return false;
+                }
+            }else if(this.containsPoint(intersection)){
+                return false;
+            }
         }
-        throw new Error("Method not implemented.");
+        return true;
     }
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area{
         throw new Error("Method not implemented.");
@@ -44,30 +65,38 @@ export class ConvexPolygon implements Area{
     public isContainedByRectangle(rectangle: Rectangle): boolean {
         throw new Error("Method not implemented.");
     }
+    public intersectsConvexPolygon(other: ConvexPolygon): boolean{
+        if(this.isContainedByConvexPolygon(other) || other.isContainedByConvexPolygon(this)){
+            return true;
+        }
+        return !this.isOutsideConvexPolygon(other);
+    }
+    private isOutsideConvexPolygon(other: ConvexPolygon): boolean{
+        for(let otherHalfPlane of other.halfPlanes){
+            if(this.isContainedByHalfPlane(otherHalfPlane.complement())){
+                return true;
+            }
+        }
+        for(let thisHalfPlane of this.halfPlanes){
+            if(other.isContainedByHalfPlane(thisHalfPlane.complement())){
+                return true;
+            }
+        }
+        return false;
+    }
+    public isContainedByConvexPolygon(other: ConvexPolygon){
+        for(let halfPlane of other.halfPlanes){
+            if(!this.isContainedByHalfPlane(halfPlane)){
+                return false;
+            }
+        }
+        return true;
+    }
     public intersectsRectangle(rectangle: Rectangle): boolean {
         throw new Error("Method not implemented.");
     }
-    private static getHalfPlanes(halfPlanes: HalfPlane[]): HalfPlane[]{
-        const result: HalfPlane[] = [];
-        for(let i: number = 0; i < halfPlanes.length; i++){
-            let include: boolean = true;
-            for(let j: number = 0; j < halfPlanes.length; j++){
-                if(i === j){
-                    continue;
-                }
-                if(halfPlanes[j].isContainedByHalfPlane(halfPlanes[i])){
-                    include = false;
-                    break;
-                }
-            }
-            if(include){
-                result.push(halfPlanes[i]);
-            }
-        }
-        return result;
-    }
-    private static getBorderPoints(halfPlanes: HalfPlane[]): Point[]{
-        const result: Point[] = [];
+    private static getVertices(halfPlanes: HalfPlane[]): PolygonVertex[]{
+        const result: PolygonVertex[] = [];
         for(let i: number = 0; i < halfPlanes.length; i++){
             for(let j: number = i + 1; j < halfPlanes.length; j++){
                 const candidate: Point = halfPlanes[i].getIntersectionWith(halfPlanes[j]);
@@ -79,7 +108,7 @@ export class ConvexPolygon implements Area{
                     }
                 }
                 if(include){
-                    result.push(candidate);
+                    result.push(new PolygonVertex(candidate, halfPlanes[i].normalTowardInterior, halfPlanes[j].normalTowardInterior));
                 }
             }
         }

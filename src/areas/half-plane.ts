@@ -14,6 +14,9 @@ export class HalfPlane {
     public transform(transformation: Transformation): HalfPlane {
         return new HalfPlane(transformation.apply(this.base), transformation.untranslated().apply(this.normalTowardInterior));
     }
+    public complement(): HalfPlane{
+        return new HalfPlane(this.base, this.normalTowardInterior.scale(-1));
+    }
     public intersectWith(area: Area): Area {
         throw new Error("Method not implemented.");
     }
@@ -24,7 +27,7 @@ export class HalfPlane {
         return this.getDistanceFromEdge(point) >= 0;
     }
     public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
-        return this.normalTowardInterior.inSameDirectionAs(halfPlane.normalTowardInterior) && halfPlane.getDistanceFromEdge(this.base) > 0;
+        return this.normalTowardInterior.inSameDirectionAs(halfPlane.normalTowardInterior) && halfPlane.getDistanceFromEdge(this.base) >= 0;
     }
     public isContainedByRectangle(rectangle: Rectangle): boolean {
         return false;
