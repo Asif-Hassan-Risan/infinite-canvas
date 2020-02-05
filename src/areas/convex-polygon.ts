@@ -25,11 +25,22 @@ export class ConvexPolygon implements Area{
     public intersectWithRectangle(rectangle: Rectangle): Area {
         throw new Error("Method not implemented.");
     }
+    private containsHalfPlane(halfPlane: HalfPlane): boolean{
+        for(let _halfPlane of this.halfPlanes){
+            if(!halfPlane.isContainedByHalfPlane(_halfPlane)){
+                return false;
+            }
+        }
+        return true;
+    }
     public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
         for(let vertex of this.vertices){
             if(!halfPlane.containsPoint(vertex.point)){
                 return false;
             }
+        }
+        if(this.containsHalfPlane(halfPlane)){
+            return false;
         }
         const complement: HalfPlane = halfPlane.complement();
         for(let _halfPlane of this.halfPlanes){
