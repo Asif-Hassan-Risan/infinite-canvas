@@ -63,15 +63,14 @@ export class ConvexPolygon implements Area{
         return true;
     }
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area{
-        throw new Error("Method not implemented.");
+        const allHalfPlanes: HalfPlane[] = ConvexPolygon.getHalfPlanesNotContainingAnyOther(this.halfPlanes.concat(convexPolygon.halfPlanes));
+        const verticesGroupedByPoint: PolygonVertex[][] = ConvexPolygon.groupVerticesByPoint(ConvexPolygon.getVertices(allHalfPlanes));
+        const notConainingAnyOtherByPoint: PolygonVertex[][] = verticesGroupedByPoint.map(g => ConvexPolygon.getVerticesNotContainingAnyOther(g));
+        const allVertices: PolygonVertex[] = notConainingAnyOtherByPoint.reduce((a, b) => a.concat(b), []);
+        return undefined;
     }
     public containsPoint(point: Point): boolean {
-        for(let halfPlane of this.halfPlanes){
-            if(!halfPlane.containsPoint(point)){
-                return false;
-            }
-        }
-        return true;
+        return ConvexPolygon.pointIsInsideIntersection(point, this.halfPlanes);
     }
     public isContainedByRectangle(rectangle: Rectangle): boolean {
         throw new Error("Method not implemented.");
@@ -106,6 +105,70 @@ export class ConvexPolygon implements Area{
     public intersectsRectangle(rectangle: Rectangle): boolean {
         throw new Error("Method not implemented.");
     }
+    private static getVerticesNotContainingAnyOther(vertices: PolygonVertex[]): PolygonVertex[]{
+        const result: PolygonVertex[] = [];
+        for(let i: number = 0; i < vertices.length; i++){
+            let include: boolean = true;
+            for(let j: number = 0; j < vertices.length; j++){
+                if(i === j){
+                    continue;
+                }
+                if(vertices[j].isContainedByVertex(vertices[i])){
+                    include = false;
+                    break;
+                }
+            }
+            if(include){
+                result.push(vertices[i]);
+            }
+        }
+        return result;
+    }
+    private static getHalfPlanesNotContainingAnyOther(halfPlanes: HalfPlane[]): HalfPlane[]{
+        const result: HalfPlane[] = [];
+        for(let i: number = 0; i < halfPlanes.length; i++){
+            let include: boolean = true;
+            for(let j: number = 0; j < halfPlanes.length; j++){
+                if(i === j){
+                    continue;
+                }
+                if(halfPlanes[j].isContainedByHalfPlane(halfPlanes[i])){
+                    include = false;
+                    break;
+                }
+            }
+            if(include){
+                result.push(halfPlanes[i]);
+            }
+        }
+        return result;
+    }
+    private static pointIsInsideIntersection(point: Point, halfPlanes: HalfPlane[]): boolean{
+        for(let halfPlane of halfPlanes){
+            if(!halfPlane.containsPoint(point)){
+                return false;
+            }
+        }
+        return true;
+    }
+    private static groupVerticesByPoint(vertices: PolygonVertex[]): PolygonVertex[][]{
+        const groups: PolygonVertex[][] = [];
+        for(let vertex of vertices){
+            let group: PolygonVertex[];
+            for(let existingGroup of groups){
+                if(existingGroup[0].point.equals(vertex.point)){
+                    group = existingGroup;
+                    break;
+                }
+            }
+            if(group){
+                group.push(vertex);
+            }else{
+                groups.push([vertex]);
+            }
+        }
+        return groups;
+    }
     private static getVertices(halfPlanes: HalfPlane[]): PolygonVertex[]{
         const result: PolygonVertex[] = [];
         for(let i: number = 0; i < halfPlanes.length; i++){
@@ -122,7 +185,7 @@ export class ConvexPolygon implements Area{
                     }
                 }
                 if(include){
-                    result.push(new PolygonVertex(candidate, halfPlanes[i].normalTowardInterior, halfPlanes[j].normalTowardInterior));
+                    result.push(new PolygonVertex(candidate, halfPlanes[i], halfPlanes[j]));
                 }
             }
         }

@@ -2,6 +2,7 @@ import { ConvexPolygon } from "../src/areas/convex-polygon";
 import { HalfPlane } from "../src/areas/half-plane";
 import { Point } from "../src/geometry/point";
 import { PolygonVertex } from "../src/areas/polygon-vertex";
+import { Area } from "../src/areas/area";
 
 describe("a convex polygon with one half plane", () => {
     let convexPolygon: ConvexPolygon;
@@ -123,6 +124,20 @@ describe("a convex polygon with two half planes and one vertex", () => {
         halfPlane1 = new HalfPlane(new Point(0, 0), new Point(-1, -1));
         halfPlane2 = new HalfPlane(new Point(0, 0), new Point(1, -1));
         convexPolygon = new ConvexPolygon([halfPlane1, halfPlane2]);
+    });
+
+    describe("when intersected with a half plane the goes through the vertex", () => {
+        let other: ConvexPolygon;
+        let intersection: Area;
+
+        beforeEach(() => {
+            other = new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(1, 0))]);
+            intersection = convexPolygon.intersectWithConvexPolygon(other);
+        });
+
+        fit("should", () => {
+
+        });
     });
 
     it.each([
