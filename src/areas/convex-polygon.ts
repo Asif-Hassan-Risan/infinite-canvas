@@ -39,9 +39,6 @@ export class ConvexPolygon implements Area{
                 return false;
             }
         }
-        if(this.containsHalfPlane(halfPlane)){
-            return false;
-        }
         const complement: HalfPlane = halfPlane.complement();
         for(let _halfPlane of this.halfPlanes){
             if(_halfPlane.isContainedByHalfPlane(complement)){
@@ -59,6 +56,9 @@ export class ConvexPolygon implements Area{
             }else if(this.containsPoint(intersection)){
                 return false;
             }
+        }
+        if(this.containsHalfPlane(halfPlane)){
+            return false;
         }
         return true;
     }
