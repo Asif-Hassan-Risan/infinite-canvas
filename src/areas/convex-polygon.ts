@@ -41,7 +41,7 @@ export class ConvexPolygon implements Area{
         }
         const complement: HalfPlane = halfPlane.complement();
         for(let _halfPlane of this.halfPlanes){
-            if(_halfPlane.isContainedByHalfPlane(complement)){
+            if(_halfPlane.isContainedByHalfPlane(complement) || complement.isContainedByHalfPlane(_halfPlane)){
                 return false;
             }
             if(_halfPlane.isContainedByHalfPlane(halfPlane)){
@@ -110,6 +110,9 @@ export class ConvexPolygon implements Area{
         const result: PolygonVertex[] = [];
         for(let i: number = 0; i < halfPlanes.length; i++){
             for(let j: number = i + 1; j < halfPlanes.length; j++){
+                if(halfPlanes[i].complement().isContainedByHalfPlane(halfPlanes[j])){
+                    continue;
+                }
                 const candidate: Point = halfPlanes[i].getIntersectionWith(halfPlanes[j]);
                 let include: boolean = true;
                 for(let k: number = 0; k < halfPlanes.length; k++){

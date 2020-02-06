@@ -12,8 +12,11 @@ describe("a convex polygon with one half plane", () => {
 
     it.each([
         [new HalfPlane(new Point(0, -1), new Point(0, 1)), false],
+        [new HalfPlane(new Point(0, -1), new Point(0, -1)), false],
         [new HalfPlane(new Point(0, -2), new Point(0, 1)), true],
-        [new HalfPlane(new Point(0, -3), new Point(0, 1)), true]
+        [new HalfPlane(new Point(0, -2), new Point(0, -1)), false],
+        [new HalfPlane(new Point(0, -3), new Point(0, 1)), true],
+        [new HalfPlane(new Point(0, -3), new Point(0, -1)), false]
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
         expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
     });
@@ -96,6 +99,18 @@ describe("a convex polygon with three half planes and two vertices", () => {
     ])("should intersect the right convex polygons", (otherConvexPolygon: ConvexPolygon, expectedToIntersect: boolean) => {
         expect(convexPolygon.intersectsConvexPolygon(otherConvexPolygon)).toBe(expectedToIntersect);
         expect(otherConvexPolygon.intersectsConvexPolygon(convexPolygon)).toBe(expectedToIntersect);
+    });
+});
+
+describe("a convex polygon with two half planes and no vertices", () => {
+    let convexPolygon: ConvexPolygon;
+
+    beforeEach(() => {
+        convexPolygon = new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(0, -1)), new HalfPlane(new Point(0, -1), new Point(0, 1))]);
+    });
+
+    it("should have no vertices", () => {
+        expect(convexPolygon.vertices.length).toBe(0);
     });
 });
 
