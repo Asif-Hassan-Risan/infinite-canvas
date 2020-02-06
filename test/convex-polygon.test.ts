@@ -2,7 +2,6 @@ import { ConvexPolygon } from "../src/areas/convex-polygon";
 import { HalfPlane } from "../src/areas/half-plane";
 import { Point } from "../src/geometry/point";
 import { PolygonVertex } from "../src/areas/polygon-vertex";
-import { Area } from "../src/areas/area";
 
 describe("a convex polygon with one half plane", () => {
     let convexPolygon: ConvexPolygon;
@@ -103,6 +102,28 @@ describe("a convex polygon with three half planes and two vertices", () => {
     });
 });
 
+describe("a convex polygon with only one half plane", () => {
+    let convexPolygon: ConvexPolygon;
+
+    beforeEach(() => {
+        convexPolygon = new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(0, 1))]);
+    });
+
+    describe("when intersected with another with only one half plane that is parallel to it", () => {
+        let other: ConvexPolygon;
+        let intersection: ConvexPolygon;
+
+        beforeEach(() => {
+            other = new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(0, -1))]);
+            intersection = convexPolygon.intersectWithConvexPolygon(other);
+        });
+
+        it("should result in one with two half planes", () => {
+            expect(intersection.halfPlanes.length).toBe(2);
+        });
+    });
+});
+
 describe("a convex polygon with two half planes and no vertices", () => {
     let convexPolygon: ConvexPolygon;
 
@@ -128,15 +149,16 @@ describe("a convex polygon with two half planes and one vertex", () => {
 
     describe("when intersected with a half plane the goes through the vertex", () => {
         let other: ConvexPolygon;
-        let intersection: Area;
+        let intersection: ConvexPolygon;
 
         beforeEach(() => {
             other = new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(1, 0))]);
             intersection = convexPolygon.intersectWithConvexPolygon(other);
         });
 
-        fit("should", () => {
-
+        it("should result in the correct convex polygon", () => {
+            expect(intersection.halfPlanes.length).toBe(2);
+            expect(intersection.vertices.length).toBe(1);
         });
     });
 

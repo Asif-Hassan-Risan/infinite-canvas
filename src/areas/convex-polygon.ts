@@ -62,12 +62,22 @@ export class ConvexPolygon implements Area{
         }
         return true;
     }
-    public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area{
+    public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): ConvexPolygon{
+        if(convexPolygon.isContainedByConvexPolygon(this)){
+            return convexPolygon;
+        }
+        if(this.isContainedByConvexPolygon(convexPolygon)){
+            return this;
+        }
         const allHalfPlanes: HalfPlane[] = ConvexPolygon.getHalfPlanesNotContainingAnyOther(this.halfPlanes.concat(convexPolygon.halfPlanes));
         const verticesGroupedByPoint: PolygonVertex[][] = ConvexPolygon.groupVerticesByPoint(ConvexPolygon.getVertices(allHalfPlanes));
         const notConainingAnyOtherByPoint: PolygonVertex[][] = verticesGroupedByPoint.map(g => ConvexPolygon.getVerticesNotContainingAnyOther(g));
         const allVertices: PolygonVertex[] = notConainingAnyOtherByPoint.reduce((a, b) => a.concat(b), []);
-        return undefined;
+        if(allVertices.length === 0){
+            return new ConvexPolygon(allHalfPlanes);
+        }
+        const halfPlanes: HalfPlane[] = ConvexPolygon.getHalfPlanes(allVertices);
+        return new ConvexPolygon(halfPlanes);
     }
     public containsPoint(point: Point): boolean {
         return ConvexPolygon.pointIsInsideIntersection(point, this.halfPlanes);
@@ -104,6 +114,18 @@ export class ConvexPolygon implements Area{
     }
     public intersectsRectangle(rectangle: Rectangle): boolean {
         throw new Error("Method not implemented.");
+    }
+    private static getHalfPlanes(vertices: PolygonVertex[]): HalfPlane[]{
+        const result: HalfPlane[] = [];
+        for(let vertex of vertices){
+            if(result.indexOf(vertex.halfPlane1) === -1){
+                result.push(vertex.halfPlane1);
+            }
+            if(result.indexOf(vertex.halfPlane2) === -1){
+                result.push(vertex.halfPlane2);
+            }
+        }
+        return result;
     }
     private static getVerticesNotContainingAnyOther(vertices: PolygonVertex[]): PolygonVertex[]{
         const result: PolygonVertex[] = [];
