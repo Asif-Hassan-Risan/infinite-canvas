@@ -3,20 +3,61 @@ import { HalfPlane } from "../src/areas/half-plane";
 import { Point } from "../src/geometry/point";
 import { PolygonVertex } from "../src/areas/polygon-vertex";
 
+function halfPlanesAreEqual(one: HalfPlane, other: HalfPlane): boolean{
+    return one.normalTowardInterior.inSameDirectionAs(other.normalTowardInterior) && one.base.minus(other.base).dot(other.normalTowardInterior) === 0;
+}
+function expectPolygonsToBeEqual(one: ConvexPolygon, other: ConvexPolygon): void{
+    expect(one.halfPlanes.length).toBe(other.halfPlanes.length);
+    for(let oneHalfPlane of one.halfPlanes){
+        expect(!!other.halfPlanes.find(p => halfPlanesAreEqual(oneHalfPlane, p))).toBe(true);
+    }
+}
+function hp(builder: (builder: HalfPlaneBuilder) => HalfPlaneBuilder): HalfPlane{
+    return builder(new HalfPlaneBuilder()).build();
+}
+function p(builder: (builder: PolygonBuilder) => PolygonBuilder): ConvexPolygon{
+    return builder(new PolygonBuilder()).build();
+}
+class PolygonBuilder{
+    private halfPlanes: HalfPlane[] = [];
+    public build(): ConvexPolygon{
+        return new ConvexPolygon(this.halfPlanes);
+    }
+    public with(halfPlaneBuilder: (builder: HalfPlaneBuilder) => HalfPlaneBuilder): PolygonBuilder{
+        this.halfPlanes.push(hp(halfPlaneBuilder));
+        return this;
+    }
+}
+class HalfPlaneBuilder{
+    private _base: Point;
+    private normalTowardInterior: Point;
+    public build(): HalfPlane{
+        return new HalfPlane(this._base, this.normalTowardInterior);
+    }
+    public base(x: number, y: number): HalfPlaneBuilder{
+        this._base = new Point(x, y);
+        return this;
+    }
+    public normal(x: number, y: number): HalfPlaneBuilder{
+        this.normalTowardInterior = new Point(x, y);
+        return this;
+    }
+}
+
 describe("a convex polygon with one half plane", () => {
     let convexPolygon: ConvexPolygon;
 
     beforeEach(() => {
-        convexPolygon = new ConvexPolygon([new HalfPlane(new Point(0, -2), new Point(0, 1))]);
+        convexPolygon = new PolygonBuilder().with(hp => hp.base(0, -2).normal(0, 1)).build();
     });
 
     it.each([
-        [new HalfPlane(new Point(0, -1), new Point(0, 1)), false],
-        [new HalfPlane(new Point(0, -1), new Point(0, -1)), false],
-        [new HalfPlane(new Point(0, -2), new Point(0, 1)), true],
-        [new HalfPlane(new Point(0, -2), new Point(0, -1)), false],
-        [new HalfPlane(new Point(0, -3), new Point(0, 1)), true],
-        [new HalfPlane(new Point(0, -3), new Point(0, -1)), false]
+        [hp(b => b.base(0, -1).normal(0, 1)), false],
+        [hp(b => b.base(0, -1).normal(0, -1)), false],
+        [hp(b => b.base(0, -2).normal(0, 1)), true],
+        [hp(b => b.base(0, -2).normal(0, -1)), false],
+        [hp(b => b.base(0, -3).normal(0, 1)), true],
+        [hp(b => b.base(0, -3).normal(0, -1)), false],
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
         expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
     });
@@ -24,15 +65,13 @@ describe("a convex polygon with one half plane", () => {
 
 describe("a convex polygon with three half planes and two vertices", () => {
     let convexPolygon: ConvexPolygon;
-    let halfPlane1: HalfPlane;
-    let halfPlane2: HalfPlane;
-    let halfPlane3: HalfPlane;
 
     beforeEach(() => {
-        halfPlane1 = new HalfPlane(new Point(0, -1), new Point(0, -1));
-        halfPlane2 = new HalfPlane(new Point(-2, -2), new Point(1, -1));
-        halfPlane3 = new HalfPlane(new Point(2, -2), new Point(-1, -1));
-        convexPolygon = new ConvexPolygon([halfPlane1, halfPlane2, halfPlane3]);
+        convexPolygon = new PolygonBuilder()
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1))
+            .build();
     });
 
     it("should have the correct vertices", () => {
@@ -55,47 +94,47 @@ describe("a convex polygon with three half planes and two vertices", () => {
     });
 
     it.each([
-        [new HalfPlane(new Point(-2, -2), new Point(1, -1)), true],
-        [new HalfPlane(new Point(-3, -2), new Point(1, -1)), true],
-        [new HalfPlane(new Point(-1, -2), new Point(1, -1)), false],
-        [new HalfPlane(new Point(0, -1), new Point(0, -1)), true],
-        [new HalfPlane(new Point(0, -1), new Point(0, 1)), false],
-        [new HalfPlane(new Point(0, 1), new Point(0, -1)), true],
-        [new HalfPlane(new Point(0, 1), new Point(0, 1)), false],
-        [new HalfPlane(new Point(0, -2), new Point(0, -1)), false],
-        [new HalfPlane(new Point(0, -2), new Point(0, 1)), false],
-        [new HalfPlane(new Point(-2, 0), new Point(1, 0)), false],
-        [new HalfPlane(new Point(-2, 0), new Point(-1, 0)), false],
-        [new HalfPlane(new Point(-1, 0), new Point(1, 0)), false],
-        [new HalfPlane(new Point(-1, 0), new Point(-1, 0)), false],
-        [new HalfPlane(new Point(0, 0), new Point(1, 0)), false],
-        [new HalfPlane(new Point(0, 0), new Point(-1, 0)), false]
+        [hp(b => b.base(-2, -2).normal(1, -1)), true],
+        [hp(b => b.base(-3, -2).normal(1, -1)), true],
+        [hp(b => b.base(-1, -2).normal(1, -1)), false],
+        [hp(b => b.base(0, -1).normal(0, -1)), true],
+        [hp(b => b.base(0, -1).normal(0, 1)), false],
+        [hp(b => b.base(0, 1).normal(0, -1)), true],
+        [hp(b => b.base(0, 1).normal(0, 1)), false],
+        [hp(b => b.base(0, -2).normal(0, -1)), false],
+        [hp(b => b.base(0, -2).normal(0, 1)), false],
+        [hp(b => b.base(-2, 0).normal(1, 0)), false],
+        [hp(b => b.base(-2, 0).normal(-1, 0)), false],
+        [hp(b => b.base(-1, 0).normal(1, 0)), false],
+        [hp(b => b.base(-1, 0).normal(-1, 0)), false],
+        [hp(b => b.base(0, 0).normal(1, 0)), false],
+        [hp(b => b.base(0, 0).normal(-1, 0)), false],
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
         expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
     });
 
     it.each([
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(0, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(0, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -1), new Point(0, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -1), new Point(0, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -2), new Point(0, 1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -2), new Point(0, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(-1, 1)), new HalfPlane(new Point(0, 0), new Point(1, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -1), new Point(-1, 1)), new HalfPlane(new Point(0, -1), new Point(1, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -1.5), new Point(-1, 1)), new HalfPlane(new Point(0, -1.5), new Point(1, 1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -2), new Point(-1, 1)), new HalfPlane(new Point(0, -2), new Point(1, 1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -3), new Point(-1, 1)), new HalfPlane(new Point(0, -3), new Point(1, 1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(-2, 0), new Point(1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(-2, 0), new Point(-1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(-1, 0), new Point(1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(-1, 0), new Point(-1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(-1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(1, 0), new Point(1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(1, 0), new Point(-1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(2, 0), new Point(1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(2, 0), new Point(-1, 0))]), true]
+        [p(p => p.with(hp => hp.base(0, 0).normal(0, 1))), false],
+        [p(p => p.with(hp => hp.base(0, 0).normal(0, -1))), true],
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, 1))), false],
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, -1))), true],
+        [p(p => p.with(hp => hp.base(0, -2).normal(0, 1))), true],
+        [p(p => p.with(hp => hp.base(0, -2).normal(0, -1))), true],
+        [p(p => p.with(hp => hp.base(0, 0).normal(-1, 1)).with(hp => hp.base(0, 0).normal(1, 1))), false],
+        [p(p => p.with(hp => hp.base(0, -1).normal(-1, 1)).with(hp => hp.base(0, -1).normal(1, 1))), false],
+        [p(p => p.with(hp => hp.base(0, -1.5).normal(-1, 1)).with(hp => hp.base(0, -1.5).normal(1, 1))), true],
+        [p(p => p.with(hp => hp.base(0, -2).normal(-1, 1)).with(hp => hp.base(0, -2).normal(1, 1))), true],
+        [p(p => p.with(hp => hp.base(0, -3).normal(-1, 1)).with(hp => hp.base(0, -3).normal(1, 1))), true],
+        [p(p => p.with(hp => hp.base(-2, 0).normal(1, 0))), true],
+        [p(p => p.with(hp => hp.base(-2, 0).normal(-1, 0))), true],
+        [p(p => p.with(hp => hp.base(-1, 0).normal(1, 0))), true],
+        [p(p => p.with(hp => hp.base(-1, 0).normal(-1, 0))), true],
+        [p(p => p.with(hp => hp.base(0, 0).normal(1, 0))), true],
+        [p(p => p.with(hp => hp.base(0, 0).normal(-1, 0))), true],
+        [p(p => p.with(hp => hp.base(1, 0).normal(1, 0))), true],
+        [p(p => p.with(hp => hp.base(1, 0).normal(-1, 0))), true],
+        [p(p => p.with(hp => hp.base(2, 0).normal(1, 0))), true],
+        [p(p => p.with(hp => hp.base(2, 0).normal(-1, 0))), true],
     ])("should intersect the right convex polygons", (otherConvexPolygon: ConvexPolygon, expectedToIntersect: boolean) => {
         expect(convexPolygon.intersectsConvexPolygon(otherConvexPolygon)).toBe(expectedToIntersect);
         expect(otherConvexPolygon.intersectsConvexPolygon(convexPolygon)).toBe(expectedToIntersect);
@@ -106,21 +145,16 @@ describe("a convex polygon with only one half plane", () => {
     let convexPolygon: ConvexPolygon;
 
     beforeEach(() => {
-        convexPolygon = new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(0, 1))]);
+        convexPolygon = p(p => p.with(hp => hp.base(0, 0).normal(0, 1)));
     });
 
-    describe("when intersected with another with only one half plane that is parallel to it", () => {
-        let other: ConvexPolygon;
-        let intersection: ConvexPolygon;
-
-        beforeEach(() => {
-            other = new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(0, -1))]);
-            intersection = convexPolygon.intersectWithConvexPolygon(other);
-        });
-
-        it("should result in one with two half planes", () => {
-            expect(intersection.halfPlanes.length).toBe(2);
-        });
+    it.each([
+        [p(p => p.with(hp => hp.base(0, 1).normal(0, -1))), p(p => p.with(hp => hp.base(0, 0).normal(0, 1)).with(hp => hp.base(0, 1).normal(0, -1)))],
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, 1))), p(p => p.with(hp => hp.base(0, 0).normal(0, 1)))],
+        [p(p => p.with(hp => hp.base(0, 1).normal(0, 1))), p(p => p.with(hp => hp.base(0, 1).normal(0, 1)))],
+        [p(p => p.with(hp => hp.base(0, 0).normal(1, 0))), p(p => p.with(hp => hp.base(0, 0).normal(0, 1)).with(hp => hp.base(0, 0).normal(1, 0)))]
+    ])("should result in the correct intersections", (other: ConvexPolygon, expectedIntersection: ConvexPolygon) => {
+        expectPolygonsToBeEqual(convexPolygon.intersectWithConvexPolygon(other), expectedIntersection);
     });
 });
 
@@ -138,62 +172,99 @@ describe("a convex polygon with two half planes and no vertices", () => {
 
 describe("a convex polygon with two half planes and one vertex", () => {
     let convexPolygon: ConvexPolygon;
-    let halfPlane1: HalfPlane;
-    let halfPlane2: HalfPlane;
 
     beforeEach(() => {
-        halfPlane1 = new HalfPlane(new Point(0, 0), new Point(-1, -1));
-        halfPlane2 = new HalfPlane(new Point(0, 0), new Point(1, -1));
-        convexPolygon = new ConvexPolygon([halfPlane1, halfPlane2]);
-    });
-
-    describe("when intersected with a half plane the goes through the vertex", () => {
-        let other: ConvexPolygon;
-        let intersection: ConvexPolygon;
-
-        beforeEach(() => {
-            other = new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(1, 0))]);
-            intersection = convexPolygon.intersectWithConvexPolygon(other);
-        });
-
-        it("should result in the correct convex polygon", () => {
-            expect(intersection.halfPlanes.length).toBe(2);
-            expect(intersection.vertices.length).toBe(1);
-        });
+        convexPolygon = p(p => p.with(hp => hp.base(0, 0).normal(-1, -1)).with(hp => hp.base(0, 0).normal(1, -1)));
     });
 
     it.each([
-        [new HalfPlane(new Point(0, 1), new Point(0, -1)), true],
-        [new HalfPlane(new Point(0, 1), new Point(0, 1)), false],
-        [new HalfPlane(new Point(0, 0), new Point(0, -1)), true],
-        [new HalfPlane(new Point(0, 0), new Point(0, 1)), false],
-        [new HalfPlane(new Point(-1, 0), new Point(1, 0)), false],
-        [new HalfPlane(new Point(-1, 0), new Point(-1, 0)), false],
-        [new HalfPlane(new Point(0, 0), new Point(1, 0)), false],
-        [new HalfPlane(new Point(0, 0), new Point(-1, 0)), false],
+        [p(p => p.with(hp => hp.base(0, 1).normal(1, 0))), p(p => p
+                                                            .with(hp => hp.base(0, 0).normal(-1, -1))
+                                                            .with(hp => hp.base(0, 1).normal(1, 0)))],
+        [p(p => p.with(hp => hp.base(-1, 1).normal(1, 0))), p(p => p
+                                                                .with(hp => hp.base(0, 0).normal(-1, -1))
+                                                                .with(hp => hp.base(-1, 1).normal(1, 0))
+                                                                .with(hp => hp.base(0, 0).normal(1, -1)))],
+        [p(p => p.with(hp => hp.base(1, 1).normal(1, 0))), p(p => p
+                                                            .with(hp => hp.base(0, 0).normal(-1, -1))
+                                                            .with(hp => hp.base(1, 1).normal(1, 0)))],
+        [p(p => p.with(hp => hp.base(0, 1).normal(0, -1))), p(p => p
+                                                            .with(hp => hp.base(0, 0).normal(-1, -1))
+                                                            .with(hp => hp.base(0, 0).normal(1, -1)))],
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, -1))), p(p => p
+                                                                .with(hp => hp.base(0, 0).normal(-1, -1))
+                                                                .with(hp => hp.base(0, -1).normal(0, -1))
+                                                                .with(hp => hp.base(0, 0).normal(1, -1)))],
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, 1))), p(p => p
+                                                                    .with(hp => hp.base(0, 0).normal(-1, -1))
+                                                                    .with(hp => hp.base(0, -1).normal(0, 1))
+                                                                    .with(hp => hp.base(0, 0).normal(1, -1)))],
+        [p(p => p
+            .with(hp => hp.base(0, -1).normal(-1, -1))
+            .with(hp => hp.base(0, -1).normal(1, -1))),
+        p(p => p
+            .with(hp => hp.base(0, -1).normal(-1, -1))
+            .with(hp => hp.base(0, -1).normal(1, -1)))],
+
+        [p(p => p
+            .with(hp => hp.base(0, 1).normal(0, -1))
+            .with(hp => hp.base(0, 1).normal(-1, 0))),
+        p(p => p
+            .with(hp => hp.base(0, 0).normal(1, -1))
+            .with(hp => hp.base(0, 1).normal(-1, 0)))],
+
+        [p(p => p
+            .with(hp => hp.base(3, -1).normal(0, -1))
+            .with(hp => hp.base(3, -1).normal(-1, 0))),
+        p(p => p
+            .with(hp => hp.base(0, 0).normal(1, -1))
+            .with(hp => hp.base(0, 0).normal(-1, -1))
+            .with(hp => hp.base(3, -1).normal(0, -1))
+            .with(hp => hp.base(3, -1).normal(-1, 0)))],
+
+        [p(p => p
+            .with(hp => hp.base(1, -1).normal(0, -1))
+            .with(hp => hp.base(1, -1).normal(-1, 0))),
+        p(p => p
+            .with(hp => hp.base(0, 0).normal(1, -1))
+            .with(hp => hp.base(1, -1).normal(0, -1))
+            .with(hp => hp.base(1, -1).normal(-1, 0)))]
+    ])("should result in the correct intersections", (other: ConvexPolygon, expectedIntersection: ConvexPolygon) => {
+        expectPolygonsToBeEqual(convexPolygon.intersectWithConvexPolygon(other), expectedIntersection);
+    });
+
+    it.each([
+        [hp(b => b.base(0, 1).normal(0, -1)), true],
+        [hp(b => b.base(0, 1).normal(0, 1)), false],
+        [hp(b => b.base(0, 0).normal(0, -1)), true],
+        [hp(b => b.base(0, 0).normal(0, 1)), false],
+        [hp(b => b.base(-1, 0).normal(1, 0)), false],
+        [hp(b => b.base(-1, 0).normal(-1, 0)), false],
+        [hp(b => b.base(0, 0).normal(1, 0)), false],
+        [hp(b => b.base(0, 0).normal(-1, 0)), false],
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
         expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
     });
 
     it.each([
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(-1, 1)), new HalfPlane(new Point(0, 0), new Point(1, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(-1, 1)), new HalfPlane(new Point(0, 1), new Point(1, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -1), new Point(-1, 1)), new HalfPlane(new Point(0, -1), new Point(1, 1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(2, -1), new Point(-1, 1)), new HalfPlane(new Point(2, -1), new Point(1, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(2, -2), new Point(-1, 1)), new HalfPlane(new Point(2, -2), new Point(1, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(-1, -1)), new HalfPlane(new Point(0, 0), new Point(1, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(2, 0), new Point(-1, -1)), new HalfPlane(new Point(2, 0), new Point(1, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 2), new Point(-1, -1)), new HalfPlane(new Point(0, 2), new Point(1, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -2), new Point(-1, -1)), new HalfPlane(new Point(0, -2), new Point(1, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(0, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(0, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -1), new Point(0, 1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, -1), new Point(0, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(0, 1))]), false],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(0, -1))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(0, 0), new Point(1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(1, 0), new Point(1, 0))]), true],
-        [new ConvexPolygon([new HalfPlane(new Point(-1, 0), new Point(1, 0))]), true]
+        [p(p => p.with(hp => hp.base(0, 0).normal(-1, 1)).with(hp => hp.base(0, 0).normal(1, 1))), false],
+        [p(p => p.with(hp => hp.base(0, 1).normal(-1, 1)).with(hp => hp.base(0, 1).normal(1, 1))), false],
+        [p(p => p.with(hp => hp.base(0, -1).normal(-1, 1)).with(hp => hp.base(0, -1).normal(1, 1))), true],
+        [p(p => p.with(hp => hp.base(2, -1).normal(-1, 1)).with(hp => hp.base(2, -1).normal(1, 1))), false],
+        [p(p => p.with(hp => hp.base(2, -2).normal(-1, 1)).with(hp => hp.base(2, -2).normal(1, 1))), false],
+        [p(p => p.with(hp => hp.base(0, 0).normal(-1, -1)).with(hp => hp.base(0, 0).normal(1, -1))), true],
+        [p(p => p.with(hp => hp.base(2, 0).normal(-1, -1)).with(hp => hp.base(2, 0).normal(1, -1))), true],
+        [p(p => p.with(hp => hp.base(0, 2).normal(-1, -1)).with(hp => hp.base(0, 2).normal(1, -1))), true],
+        [p(p => p.with(hp => hp.base(0, -2).normal(-1, -1)).with(hp => hp.base(0, -2).normal(1, -1))), true],
+        [p(p => p.with(hp => hp.base(0, 0).normal(0, 1))), false],
+        [p(p => p.with(hp => hp.base(0, 0).normal(0, -1))), true],
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, 1))), true],
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, -1))), true],
+        [p(p => p.with(hp => hp.base(0, 1).normal(0, 1))), false],
+        [p(p => p.with(hp => hp.base(0, 1).normal(0, -1))), true],
+        [p(p => p.with(hp => hp.base(0, 0).normal(1, 0))), true],
+        [p(p => p.with(hp => hp.base(1, 0).normal(1, 0))), true],
+        [p(p => p.with(hp => hp.base(-1, 0).normal(1, 0))), true],
     ])("should intersect the right convex polygons", (otherConvexPolygon: ConvexPolygon, expectedToIntersect: boolean) => {
         expect(convexPolygon.intersectsConvexPolygon(otherConvexPolygon)).toBe(expectedToIntersect);
         expect(otherConvexPolygon.intersectsConvexPolygon(convexPolygon)).toBe(expectedToIntersect);

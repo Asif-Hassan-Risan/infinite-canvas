@@ -80,7 +80,12 @@ export class ConvexPolygon implements Area{
         return new ConvexPolygon(halfPlanes);
     }
     public containsPoint(point: Point): boolean {
-        return ConvexPolygon.pointIsInsideIntersection(point, this.halfPlanes);
+        for(let halfPlane of this.halfPlanes){
+            if(!halfPlane.containsPoint(point)){
+                return false;
+            }
+        }
+        return true;
     }
     public isContainedByRectangle(rectangle: Rectangle): boolean {
         throw new Error("Method not implemented.");
@@ -165,14 +170,7 @@ export class ConvexPolygon implements Area{
         }
         return result;
     }
-    private static pointIsInsideIntersection(point: Point, halfPlanes: HalfPlane[]): boolean{
-        for(let halfPlane of halfPlanes){
-            if(!halfPlane.containsPoint(point)){
-                return false;
-            }
-        }
-        return true;
-    }
+
     private static groupVerticesByPoint(vertices: PolygonVertex[]): PolygonVertex[][]{
         const groups: PolygonVertex[][] = [];
         for(let vertex of vertices){
