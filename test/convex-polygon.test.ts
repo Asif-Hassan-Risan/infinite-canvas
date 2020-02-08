@@ -94,6 +94,71 @@ describe("a convex polygon with three half planes and two vertices", () => {
     });
 
     it.each([
+        [p(p => p
+            .with(hp => hp.base(-2, 0).normal(-1, 0))),
+        p(p => p
+            .with(hp => hp.base(-2, 0).normal(-1, 0))
+            .with(hp => hp.base(-2, -2).normal(1, -1)))],
+        
+        [p(p => p
+            .with(hp => hp.base(-1, 0).normal(-1, 0))),
+        p(p => p
+            .with(hp => hp.base(-1, 0).normal(-1, 0))
+            .with(hp => hp.base(-2, -2).normal(1, -1)))],
+
+        [p(p => p
+            .with(hp => hp.base(0, 0).normal(-1, 0))),
+        p(p => p
+            .with(hp => hp.base(0, 0).normal(-1, 0))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(0, -1).normal(0, -1)))],
+        
+        [p(p => p
+            .with(hp => hp.base(1, 0).normal(-1, 0))),
+        p(p => p
+            .with(hp => hp.base(1, 0).normal(-1, 0))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(0, -1).normal(0, -1)))],
+        
+        [p(p => p
+            .with(hp => hp.base(2, 0).normal(-1, 0))),
+        p(p => p
+            .with(hp => hp.base(2, 0).normal(-1, 0))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))],
+        
+        [p(p => p
+            .with(hp => hp.base(0, -1).normal(1, 1))
+            .with(hp => hp.base(0, -1).normal(-1, 1))), undefined],
+
+        [p(p => p
+            .with(hp => hp.base(0, -2).normal(1, 1))
+            .with(hp => hp.base(0, -2).normal(-1, 1))),
+        p(p => p
+            .with(hp => hp.base(0, -2).normal(1, 1))
+            .with(hp => hp.base(0, -2).normal(-1, 1))
+            .with(hp => hp.base(0, -1).normal(0, -1)))],
+
+        [p(p => p
+            .with(hp => hp.base(0, -3).normal(1, 1))
+            .with(hp => hp.base(0, -3).normal(-1, 1))),
+        p(p => p
+            .with(hp => hp.base(0, -3).normal(1, 1))
+            .with(hp => hp.base(0, -3).normal(-1, 1))
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))]
+    ])("should result in the correct intersections", (other: ConvexPolygon, expectedIntersection: ConvexPolygon) => {
+        const intersection: ConvexPolygon = convexPolygon.intersectWithConvexPolygon(other);
+        if(!expectedIntersection){
+            expect(intersection).toBeUndefined();
+        }else{
+            expectPolygonsToBeEqual(intersection, expectedIntersection);
+        }
+    });
+
+    it.each([
         [hp(b => b.base(-2, -2).normal(1, -1)), true],
         [hp(b => b.base(-3, -2).normal(1, -1)), true],
         [hp(b => b.base(-1, -2).normal(1, -1)), false],
@@ -152,9 +217,15 @@ describe("a convex polygon with only one half plane", () => {
         [p(p => p.with(hp => hp.base(0, 1).normal(0, -1))), p(p => p.with(hp => hp.base(0, 0).normal(0, 1)).with(hp => hp.base(0, 1).normal(0, -1)))],
         [p(p => p.with(hp => hp.base(0, -1).normal(0, 1))), p(p => p.with(hp => hp.base(0, 0).normal(0, 1)))],
         [p(p => p.with(hp => hp.base(0, 1).normal(0, 1))), p(p => p.with(hp => hp.base(0, 1).normal(0, 1)))],
-        [p(p => p.with(hp => hp.base(0, 0).normal(1, 0))), p(p => p.with(hp => hp.base(0, 0).normal(0, 1)).with(hp => hp.base(0, 0).normal(1, 0)))]
+        [p(p => p.with(hp => hp.base(0, 0).normal(1, 0))), p(p => p.with(hp => hp.base(0, 0).normal(0, 1)).with(hp => hp.base(0, 0).normal(1, 0)))],
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, -1))), undefined]
     ])("should result in the correct intersections", (other: ConvexPolygon, expectedIntersection: ConvexPolygon) => {
-        expectPolygonsToBeEqual(convexPolygon.intersectWithConvexPolygon(other), expectedIntersection);
+        const intersection: ConvexPolygon = convexPolygon.intersectWithConvexPolygon(other);
+        if(!expectedIntersection){
+            expect(intersection).toBeUndefined();
+        }else{
+            expectPolygonsToBeEqual(intersection, expectedIntersection);
+        }
     });
 });
 
@@ -162,11 +233,32 @@ describe("a convex polygon with two half planes and no vertices", () => {
     let convexPolygon: ConvexPolygon;
 
     beforeEach(() => {
-        convexPolygon = new ConvexPolygon([new HalfPlane(new Point(0, 1), new Point(0, -1)), new HalfPlane(new Point(0, -1), new Point(0, 1))]);
+        convexPolygon = p(p => p
+            .with(hp => hp.base(0, 1).normal(0, -1))
+            .with(hp => hp.base(0, -1).normal(0, 1)));
     });
 
     it("should have no vertices", () => {
         expect(convexPolygon.vertices.length).toBe(0);
+    });
+
+    it.each([
+        [p(p => p
+            .with(hp => hp.base(0, 0).normal(1, 0))),
+        p(p => p
+            .with(hp => hp.base(0, 1).normal(0, -1))
+            .with(hp => hp.base(0, -1).normal(0, 1))
+            .with(hp => hp.base(0, 0).normal(1, 0)))],
+        
+        [p(p => p.with(hp => hp.base(0, 2).normal(0, 1))), undefined],
+        [p(p => p.with(hp => hp.base(0, -2).normal(0, -1))), undefined],
+    ])("should result in the correct intersections", (other: ConvexPolygon, expectedIntersection: ConvexPolygon) => {
+        const intersection: ConvexPolygon = convexPolygon.intersectWithConvexPolygon(other);
+        if(!expectedIntersection){
+            expect(intersection).toBeUndefined();
+        }else{
+            expectPolygonsToBeEqual(intersection, expectedIntersection);
+        }
     });
 });
 
@@ -228,9 +320,26 @@ describe("a convex polygon with two half planes and one vertex", () => {
         p(p => p
             .with(hp => hp.base(0, 0).normal(1, -1))
             .with(hp => hp.base(1, -1).normal(0, -1))
-            .with(hp => hp.base(1, -1).normal(-1, 0)))]
+            .with(hp => hp.base(1, -1).normal(-1, 0)))],
+
+        [p(p => p
+            .with(hp => hp.base(0, 1).normal(0, 1))
+            .with(hp => hp.base(0, 1).normal(1, 0))), undefined],
+
+        [p(p => p
+            .with(hp => hp.base(0, 1).normal(-1, -1))
+            .with(hp => hp.base(0, 1).normal(-1, 1))), undefined],
+
+        [p(p => p
+            .with(hp => hp.base(0, 1).normal(-1, 1))
+            .with(hp => hp.base(0, 1).normal(1, 1))), undefined]
     ])("should result in the correct intersections", (other: ConvexPolygon, expectedIntersection: ConvexPolygon) => {
-        expectPolygonsToBeEqual(convexPolygon.intersectWithConvexPolygon(other), expectedIntersection);
+        const intersection: ConvexPolygon = convexPolygon.intersectWithConvexPolygon(other);
+        if(!expectedIntersection){
+            expect(intersection).toBeUndefined();
+        }else{
+            expectPolygonsToBeEqual(intersection, expectedIntersection);
+        }
     });
 
     it.each([

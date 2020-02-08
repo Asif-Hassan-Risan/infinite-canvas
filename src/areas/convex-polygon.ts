@@ -69,6 +69,9 @@ export class ConvexPolygon implements Area{
         if(this.isContainedByConvexPolygon(convexPolygon)){
             return this;
         }
+        if(this.isOutsideConvexPolygon(convexPolygon)){
+            return undefined;
+        }
         const allHalfPlanes: HalfPlane[] = ConvexPolygon.getHalfPlanesNotContainingAnyOther(this.halfPlanes.concat(convexPolygon.halfPlanes));
         const verticesGroupedByPoint: PolygonVertex[][] = ConvexPolygon.groupVerticesByPoint(ConvexPolygon.getVertices(allHalfPlanes));
         const notConainingAnyOtherByPoint: PolygonVertex[][] = verticesGroupedByPoint.map(g => ConvexPolygon.getVerticesNotContainingAnyOther(g));
