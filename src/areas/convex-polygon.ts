@@ -3,6 +3,7 @@ import { HalfPlane } from "./half-plane";
 import { Rectangle } from "./rectangle";
 import { Point } from "../geometry/point";
 import { PolygonVertex } from "./polygon-vertex";
+import { plane } from "./plane";
 
 export class ConvexPolygon implements Area{
     public readonly vertices: PolygonVertex[];
@@ -115,6 +116,43 @@ export class ConvexPolygon implements Area{
         }
         return false;
     }
+    private hasAtMostOneVertex(halfPlane: HalfPlane): boolean{
+        let count: number = 0;
+        for(let vertex of this.vertices){
+            if(vertex.halfPlane1 === halfPlane || vertex.halfPlane2 === halfPlane){
+                count++;
+                if(count > 1){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public getTangentPlanesThroughPoint(point: Point): HalfPlane[]{
+        const result: HalfPlane[] = [];
+        if(this.containsPoint(point)){
+            for(let halfPlane of this.halfPlanes){
+                if(halfPlane.containsPoint(point)){
+                    result.push(halfPlane);
+                }
+            }
+            return result;
+        }
+        for(let vertex of this.vertices){
+            const throughVertex: HalfPlane[] = HalfPlane.withBorderPoints(vertex.point, point);
+            for(let planeThroughVertex of throughVertex){
+                if(this.isContainedByHalfPlane(planeThroughVertex)){
+                    result.push(planeThroughVertex);
+                }
+            }
+        }
+        for(let halfPlane of this.halfPlanes){
+            if(this.hasAtMostOneVertex(halfPlane) && !halfPlane.containsPoint(point)){
+                result.push(halfPlane.expandToIncludePoint(point));
+            }
+        }
+        return result;
+    }
     public isContainedByConvexPolygon(other: ConvexPolygon){
         for(let halfPlane of other.halfPlanes){
             if(!this.isContainedByHalfPlane(halfPlane)){
@@ -138,15 +176,6 @@ export class ConvexPolygon implements Area{
         }
         return result;
     }
-    private static getPointsNotContainedBy(polygon: ConvexPolygon, points: Point[]): Point[]{
-        const result: Point[] = [];
-        for(let point of points){
-            if(!polygon.containsPoint(point)){
-                result.push(point);
-            }
-        }
-        return result;
-    }
 
     private static combinePolygons(one: ConvexPolygon, other: ConvexPolygon): Area{
         if(one.isContainedByConvexPolygon(other)){
@@ -155,6 +184,28 @@ export class ConvexPolygon implements Area{
         if(other.isContainedByConvexPolygon(one)){
             return one;
         }
+        let halfPlanes: HalfPlane[] = one.halfPlanes.concat(other.halfPlanes).filter(hp => one.isContainedByHalfPlane(hp) && other.isContainedByHalfPlane(hp));
+        for(let vertex1 of one.vertices){
+            const tangentPlanes: HalfPlane[] = other.getTangentPlanesThroughPoint(vertex1.point);
+            for(let tangentPlane of tangentPlanes){
+                if(one.isContainedByHalfPlane(tangentPlane)){
+                    halfPlanes.push(tangentPlane);
+                }
+            }
+        }
+        for(let vertex2 of other.vertices){
+            const tangentPlanes: HalfPlane[] = one.getTangentPlanesThroughPoint(vertex2.point);
+            for(let tangentPlane of tangentPlanes){
+                if(other.isContainedByHalfPlane(tangentPlane)){
+                    halfPlanes.push(tangentPlane);
+                }
+            }
+        }
+        halfPlanes = ConvexPolygon.getHalfPlanesNotContainingAnyOther(halfPlanes);
+        if(halfPlanes.length === 0){
+            return plane;
+        }
+        return new ConvexPolygon(halfPlanes);
     }
     private static getVerticesNotContainingAnyOther(vertices: PolygonVertex[]): PolygonVertex[]{
         const result: PolygonVertex[] = [];
@@ -177,19 +228,16 @@ export class ConvexPolygon implements Area{
     }
     private static getHalfPlanesNotContainingAnyOther(halfPlanes: HalfPlane[]): HalfPlane[]{
         const result: HalfPlane[] = [];
-        for(let i: number = 0; i < halfPlanes.length; i++){
+        for(let halfPlane of halfPlanes){
             let include: boolean = true;
-            for(let j: number = 0; j < halfPlanes.length; j++){
-                if(i === j){
-                    continue;
-                }
-                if(halfPlanes[j].isContainedByHalfPlane(halfPlanes[i])){
+            for(let _halfPlane of result){
+                if(_halfPlane.isContainedByHalfPlane(halfPlane)){
                     include = false;
                     break;
                 }
             }
             if(include){
-                result.push(halfPlanes[i]);
+                result.push(halfPlane);
             }
         }
         return result;

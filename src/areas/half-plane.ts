@@ -32,14 +32,6 @@ export class HalfPlane {
     public containsPoint(point: Point): boolean {
         return this.getDistanceFromEdge(point) >= 0;
     }
-    public containsPoints(points: Point[]): boolean{
-        for(let point of points){
-            if(!this.containsPoint(point)){
-                return false;
-            }
-        }
-        return true;
-    }
     public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
         return this.normalTowardInterior.inSameDirectionAs(halfPlane.normalTowardInterior) && halfPlane.getDistanceFromEdge(this.base) >= 0;
     }
