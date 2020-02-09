@@ -94,6 +94,32 @@ describe("a convex polygon with three half planes and two vertices", () => {
     });
 
     it.each([
+        //intersect with a half-plane with a horizontal border
+        [p(p => p.with(hp => hp.base(0, 0).normal(0, 1))), undefined],
+
+        [p(p => p.with(hp => hp.base(0, 0).normal(0, -1))), p(p => p
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))],
+
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, 1))), undefined],
+
+        [p(p => p.with(hp => hp.base(0, -1).normal(0, -1))), p(p => p
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))],
+
+        [p(p => p.with(hp => hp.base(0, -2).normal(0, 1))), p(p => p
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1))
+            .with(hp => hp.base(0, -2).normal(0, 1)))],
+
+        [p(p => p.with(hp => hp.base(0, -2).normal(0, -1))), p(p => p
+            .with(hp => hp.base(0, -2).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))],
+        //intersect with a half-plane with a vertical border
         [p(p => p
             .with(hp => hp.base(-2, 0).normal(-1, 0))),
         p(p => p
@@ -127,10 +153,49 @@ describe("a convex polygon with three half planes and two vertices", () => {
             .with(hp => hp.base(-2, -2).normal(1, -1))
             .with(hp => hp.base(0, -1).normal(0, -1))
             .with(hp => hp.base(2, -2).normal(-1, -1)))],
+        //two half planes, vertex directed upwards
+        [p(p => p
+            .with(hp => hp.base(0, -2).normal(-1, -1))
+            .with(hp => hp.base(0, -2).normal(1, -1))),
+        p(p => p
+            .with(hp => hp.base(0, -2).normal(-1, -1))
+            .with(hp => hp.base(0, -2).normal(1, -1)))],
         
+        [p(p => p
+            .with(hp => hp.base(0, -1).normal(-1, -1))
+            .with(hp => hp.base(0, -1).normal(1, -1))),
+        p(p => p
+            .with(hp => hp.base(0, -1).normal(-1, -1))
+            .with(hp => hp.base(0, -1).normal(1, -1)))],
+
+        [p(p => p
+            .with(hp => hp.base(0, -0.5).normal(-1, -1))
+            .with(hp => hp.base(0, -0.5).normal(1, -1))),
+        p(p => p
+            .with(hp => hp.base(0, -0.5).normal(-1, -1))
+            .with(hp => hp.base(0, -0.5).normal(1, -1))
+            .with(hp => hp.base(0, -1).normal(0, -1)))],
+
+        [p(p => p
+            .with(hp => hp.base(0, 0).normal(-1, -1))
+            .with(hp => hp.base(0, 0).normal(1, -1))),
+        p(p => p
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))],
+        
+        // two half planes, vertex directed downwards
         [p(p => p
             .with(hp => hp.base(0, -1).normal(1, 1))
             .with(hp => hp.base(0, -1).normal(-1, 1))), undefined],
+
+        [p(p => p
+            .with(hp => hp.base(0, -1.5).normal(1, 1))
+            .with(hp => hp.base(0, -1.5).normal(-1, 1))),
+        p(p => p
+            .with(hp => hp.base(0, -1.5).normal(1, 1))
+            .with(hp => hp.base(0, -1.5).normal(-1, 1))
+            .with(hp => hp.base(0, -1).normal(0, -1)))],
 
         [p(p => p
             .with(hp => hp.base(0, -2).normal(1, 1))
@@ -270,6 +335,7 @@ describe("a convex polygon with two half planes and one vertex", () => {
     });
 
     it.each([
+        //intersect with a half-plane with a vertical border
         [p(p => p.with(hp => hp.base(0, 1).normal(1, 0))), p(p => p
                                                             .with(hp => hp.base(0, 0).normal(-1, -1))
                                                             .with(hp => hp.base(0, 1).normal(1, 0)))],
@@ -280,6 +346,8 @@ describe("a convex polygon with two half planes and one vertex", () => {
         [p(p => p.with(hp => hp.base(1, 1).normal(1, 0))), p(p => p
                                                             .with(hp => hp.base(0, 0).normal(-1, -1))
                                                             .with(hp => hp.base(1, 1).normal(1, 0)))],
+
+        //intersect with a half-plane with a horizontal border
         [p(p => p.with(hp => hp.base(0, 1).normal(0, -1))), p(p => p
                                                             .with(hp => hp.base(0, 0).normal(-1, -1))
                                                             .with(hp => hp.base(0, 0).normal(1, -1)))],
@@ -291,6 +359,7 @@ describe("a convex polygon with two half planes and one vertex", () => {
                                                                     .with(hp => hp.base(0, 0).normal(-1, -1))
                                                                     .with(hp => hp.base(0, -1).normal(0, 1))
                                                                     .with(hp => hp.base(0, 0).normal(1, -1)))],
+        //intersect with two half-planes, vertex pointing upwards
         [p(p => p
             .with(hp => hp.base(0, -1).normal(-1, -1))
             .with(hp => hp.base(0, -1).normal(1, -1))),
@@ -298,6 +367,7 @@ describe("a convex polygon with two half planes and one vertex", () => {
             .with(hp => hp.base(0, -1).normal(-1, -1))
             .with(hp => hp.base(0, -1).normal(1, -1)))],
 
+        //intersect with two half-planes forming a 'top-right' corner
         [p(p => p
             .with(hp => hp.base(0, 1).normal(0, -1))
             .with(hp => hp.base(0, 1).normal(-1, 0))),
@@ -322,17 +392,26 @@ describe("a convex polygon with two half planes and one vertex", () => {
             .with(hp => hp.base(1, -1).normal(0, -1))
             .with(hp => hp.base(1, -1).normal(-1, 0)))],
 
+        //intersect with two half-planes forming a 'bottom-left' corner
         [p(p => p
             .with(hp => hp.base(0, 1).normal(0, 1))
             .with(hp => hp.base(0, 1).normal(1, 0))), undefined],
 
+        //intersect with two half-planes, vertex pointing right
         [p(p => p
             .with(hp => hp.base(0, 1).normal(-1, -1))
             .with(hp => hp.base(0, 1).normal(-1, 1))), undefined],
-
+        
+        //intersect with two half-planes, vertex pointing down
         [p(p => p
             .with(hp => hp.base(0, 1).normal(-1, 1))
-            .with(hp => hp.base(0, 1).normal(1, 1))), undefined]
+            .with(hp => hp.base(0, 1).normal(1, 1))), undefined],
+        
+        //intersect with one half-plane parallel to one of the borders
+        [p(p => p.with(hp => hp.base(-1, -1).normal(-1, -1))),
+        p(p => p
+            .with(hp => hp.base(-1, -1).normal(-1, -1))
+            .with(hp => hp.base(0, 0).normal(1, -1)))]
     ])("should result in the correct intersections", (other: ConvexPolygon, expectedIntersection: ConvexPolygon) => {
         const intersection: ConvexPolygon = convexPolygon.intersectWithConvexPolygon(other);
         if(!expectedIntersection){
