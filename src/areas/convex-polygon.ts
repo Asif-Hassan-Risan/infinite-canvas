@@ -62,8 +62,8 @@ export class ConvexPolygon implements Area{
         }
         return true;
     }
-    public expandToIncludePoints(points: Point[]): ConvexPolygon{
-        return ConvexPolygon.combinePolygonWithPoints(this, points);
+    public expandToIncludePolygon(other: ConvexPolygon): Area{
+        return ConvexPolygon.combinePolygons(this, other);
     }
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): ConvexPolygon{
         if(convexPolygon.isContainedByConvexPolygon(this)){
@@ -148,22 +148,13 @@ export class ConvexPolygon implements Area{
         return result;
     }
 
-    private static combinePolygonWithPoints(polygon: ConvexPolygon, points: Point[]): ConvexPolygon{
-        points = ConvexPolygon.getPointsNotContainedBy(polygon, points);
-        if(points.length === 0){
-            return polygon;
+    private static combinePolygons(one: ConvexPolygon, other: ConvexPolygon): Area{
+        if(one.isContainedByConvexPolygon(other)){
+            return other;
         }
-        const halfPlanesNotIncluded: HalfPlane[] = polygon.halfPlanes.filter(hp => !hp.containsPoints(points));
-        const halfPlanes: HalfPlane[] = polygon.halfPlanes.filter(hp => hp.containsPoints(points));
-        for(let point of points){
-            const otherPoints: Point[] = points.filter(p => !p.equals(point)).concat(polygon.vertices.map(v => v.point));
-            const halfPlanesThroughOtherPoints: HalfPlane[] = otherPoints.map(p => HalfPlane.withBorderPoints(point, p)).reduce((a, b) => a.concat(b), []);
-            const candidateHalfPlanes: HalfPlane[] = 
-                halfPlanesNotIncluded.map(hp => hp.expandToIncludePoint(point))
-                .concat(halfPlanesThroughOtherPoints)
-                .filter(hp => polygon.isContainedByHalfPlane(hp) && hp.containsPoints(points));
+        if(other.isContainedByConvexPolygon(one)){
+            return one;
         }
-        return new ConvexPolygon(halfPlanes);
     }
     private static getVerticesNotContainingAnyOther(vertices: PolygonVertex[]): PolygonVertex[]{
         const result: PolygonVertex[] = [];

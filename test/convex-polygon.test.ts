@@ -2,6 +2,7 @@ import { ConvexPolygon } from "../src/areas/convex-polygon";
 import { HalfPlane } from "../src/areas/half-plane";
 import { Point } from "../src/geometry/point";
 import { PolygonVertex } from "../src/areas/polygon-vertex";
+import { Area } from "../src/areas/area";
 
 function halfPlanesAreEqual(one: HalfPlane, other: HalfPlane): boolean{
     return one.normalTowardInterior.inSameDirectionAs(other.normalTowardInterior) && one.base.minus(other.base).dot(other.normalTowardInterior) === 0;
@@ -10,6 +11,14 @@ function expectPolygonsToBeEqual(one: ConvexPolygon, other: ConvexPolygon): void
     expect(one.halfPlanes.length).toBe(other.halfPlanes.length);
     for(let oneHalfPlane of one.halfPlanes){
         expect(!!other.halfPlanes.find(p => halfPlanesAreEqual(oneHalfPlane, p))).toBe(true);
+    }
+}
+function expectAreasToBeEqual(one: Area, other: Area): void{
+    if(one instanceof ConvexPolygon){
+        expect(other instanceof ConvexPolygon).toBe(true);
+        expectPolygonsToBeEqual(one, other as ConvexPolygon);
+    }else if(!one){
+        expect(other).toBeUndefined();
     }
 }
 function hp(builder: (builder: HalfPlaneBuilder) => HalfPlaneBuilder): HalfPlane{
@@ -335,15 +344,21 @@ describe("a convex polygon with two half planes and one vertex", () => {
     });
 
     it.each([
-        [[new Point(0, -1)], p(p => p
+        [p(p => p
+            .with(hp => hp.base(0, -1).normal(-1, -1))
+            .with(hp => hp.base(0, -1).normal(1, -1))),
+        p(p => p
             .with(hp => hp.base(0, 0).normal(-1, -1))
             .with(hp => hp.base(0, 0).normal(1, -1)))],
-        [[new Point(-1, 0)], p(p => p
+        [p(p => p
+            .with(hp => hp.base(-1, 0).normal(-1, -1))
+            .with(hp => hp.base(-1, 0).normal(1, -1))),
+        p(p => p
             .with(hp => hp.base(0, 0).normal(0, -1))
             .with(hp => hp.base(-1, 0).normal(1, -1))
             .with(hp => hp.base(0, 0).normal(-1, -1)))]
-    ])("should result in the correct expansions", (points: Point[], expectedExpansion: ConvexPolygon) => {
-        expectPolygonsToBeEqual(convexPolygon.expandToIncludePoints(points), expectedExpansion);
+    ])("should result in the correct expansions", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
+        expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
     });
 
     it.each([
