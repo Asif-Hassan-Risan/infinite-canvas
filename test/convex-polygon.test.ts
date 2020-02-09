@@ -335,6 +335,18 @@ describe("a convex polygon with two half planes and one vertex", () => {
     });
 
     it.each([
+        [[new Point(0, -1)], p(p => p
+            .with(hp => hp.base(0, 0).normal(-1, -1))
+            .with(hp => hp.base(0, 0).normal(1, -1)))],
+        [[new Point(-1, 0)], p(p => p
+            .with(hp => hp.base(0, 0).normal(0, -1))
+            .with(hp => hp.base(-1, 0).normal(1, -1))
+            .with(hp => hp.base(0, 0).normal(-1, -1)))]
+    ])("should result in the correct expansions", (points: Point[], expectedExpansion: ConvexPolygon) => {
+        expectPolygonsToBeEqual(convexPolygon.expandToIncludePoints(points), expectedExpansion);
+    });
+
+    it.each([
         //intersect with a half-plane with a vertical border
         [p(p => p.with(hp => hp.base(0, 1).normal(1, 0))), p(p => p
                                                             .with(hp => hp.base(0, 0).normal(-1, -1))

@@ -23,8 +23,22 @@ export class HalfPlane {
     public intersectWithRectangle(rectangle: Rectangle): Area {
         throw new Error("Method not implemented.");
     }
+    public expandToIncludePoint(point: Point): HalfPlane{
+        if(this.containsPoint(point)){
+            return this;
+        }
+        return new HalfPlane(point, this.normalTowardInterior);
+    }
     public containsPoint(point: Point): boolean {
         return this.getDistanceFromEdge(point) >= 0;
+    }
+    public containsPoints(points: Point[]): boolean{
+        for(let point of points){
+            if(!this.containsPoint(point)){
+                return false;
+            }
+        }
+        return true;
     }
     public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
         return this.normalTowardInterior.inSameDirectionAs(halfPlane.normalTowardInterior) && halfPlane.getDistanceFromEdge(this.base) >= 0;
@@ -42,5 +56,12 @@ export class HalfPlane {
         const det: number = d2.cross(d1);
         const s: number = d2.getPerpendicular().dot(q) / det;
         return this.base.plus(d1.scale(s));
+    }
+    public static withBorderPoints(point1: Point, point2: Point): HalfPlane[]{
+        const perpendicular: Point = point2.minus(point1).getPerpendicular();
+        return [
+            new HalfPlane(point1, perpendicular),
+            new HalfPlane(point1, perpendicular.scale(-1))
+        ];
     }
 }
