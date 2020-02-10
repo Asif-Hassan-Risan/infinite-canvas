@@ -66,6 +66,11 @@ export class ConvexPolygon implements Area{
     public expandToIncludePolygon(other: ConvexPolygon): Area{
         return ConvexPolygon.combinePolygons(this, other);
     }
+    public expandToIncludePoint(point: Point): ConvexPolygon{
+        let halfPlanes: HalfPlane[] = this.halfPlanes.filter(hp => hp.containsPoint(point)).concat(this.getTangentPlanesThroughPoint(point));
+        halfPlanes = ConvexPolygon.getHalfPlanesNotContainingAnyOther(halfPlanes);
+        return new ConvexPolygon(halfPlanes);
+    }
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): ConvexPolygon{
         if(convexPolygon.isContainedByConvexPolygon(this)){
             return convexPolygon;

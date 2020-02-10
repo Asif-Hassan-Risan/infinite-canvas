@@ -106,6 +106,63 @@ describe("a convex polygon with three half planes and two vertices", () => {
     });
 
     it.each([
+        [p(p => p
+            .with(hp => hp.base(0, -0.5).normal(-1, -1))
+            .with(hp => hp.base(0, -0.5).normal(1, -1))),
+        p(p => p
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1))
+            .with(hp => hp.base(0, -0.5).normal(0.5, -1))
+            .with(hp => hp.base(0, -0.5).normal(-0.5, -1)))],
+
+        [p(p => p
+            .with(hp => hp.base(0, 0).normal(-1, -1))
+            .with(hp => hp.base(0, 0).normal(1, -1))),
+        p(p => p
+            .with(hp => hp.base(0, 0).normal(-1, -1))
+            .with(hp => hp.base(0, 0).normal(1, -1)))],
+
+        [p(p => p
+            .with(hp => hp.base(-2, -1).normal(-1, -1))
+            .with(hp => hp.base(-2, -1).normal(1, -1))),
+        p(p => p
+            .with(hp => hp.base(-2, -1).normal(1, -1))
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))],
+
+        [p(p => p
+            .with(hp => hp.base(-2, 0).normal(-1, -1))
+            .with(hp => hp.base(-2, 0).normal(1, -1))),
+        p(p => p
+            .with(hp => hp.base(-2, 0).normal(1, -1))
+            .with(hp => hp.base(-2, 0).normal(-1, -3))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))]
+    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
+        expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
+        expectAreasToBeEqual(expandWith.expandToIncludePolygon(convexPolygon), expectedExpansion);
+    });
+
+    it.each([
+        [new Point(-2, -1), p(p => p
+            .with(hp => hp.base(-3, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1))
+            .with(hp => hp.base(0, -1).normal(0, -1)))],
+        [new Point(0, -0.5), p(p => p
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1))
+            .with(hp => hp.base(0, -0.5).normal(0.5, -1))
+            .with(hp => hp.base(0, -0.5).normal(-0.5, -1)))],
+        [new Point(0, 0), p(p => p
+            .with(hp => hp.base(0, 0).normal(-1, -1))
+            .with(hp => hp.base(0, 0).normal(1, -1)))],
+        [new Point(0, 1), p(p => p
+            .with(hp => hp.base(0, 1).normal(-1, -1))
+            .with(hp => hp.base(0, 1).normal(1, -1)))]
+    ])("should result in the correct expansions with a point", (expandWith: Point, expectedExpansion: ConvexPolygon) => {
+        expectPolygonsToBeEqual(convexPolygon.expandToIncludePoint(expandWith), expectedExpansion);
+    });
+
+    it.each([
         //intersect with a half-plane with a horizontal border
         [p(p => p.with(hp => hp.base(0, 0).normal(0, 1))), undefined],
 
@@ -305,9 +362,18 @@ describe("a convex polygon with only one half plane", () => {
         [p(p => p
             .with(hp => hp.base(0, -1).normal(1, 1))
             .with(hp => hp.base(0, -1).normal(-1, 1))),
-        p(p => p.with(hp => hp.base(0, -1).normal(0, 1)))]
-    ])("should result in the correct expansions", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
+        p(p => p.with(hp => hp.base(0, -1).normal(0, 1)))],
+        [p(p => p
+            .with(hp => hp.base(0, -1).normal(0, 1))
+            .with(hp => hp.base(0, -1).normal(1, 0))),
+        p(p => p.with(hp => hp.base(0, -1).normal(0, 1)))],
+        [p(p => p
+            .with(hp => hp.base(0, -1).normal(1, 10))
+            .with(hp => hp.base(0, -1).normal(1, 0))),
+        plane]
+    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
         expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
+        expectAreasToBeEqual(expandWith.expandToIncludePolygon(convexPolygon), expectedExpansion);
     });
 
     it.each([
@@ -379,9 +445,32 @@ describe("a convex polygon with two half planes and one vertex", () => {
         p(p => p
             .with(hp => hp.base(0, 0).normal(0, -1))
             .with(hp => hp.base(-1, 0).normal(1, -1))
-            .with(hp => hp.base(0, 0).normal(-1, -1)))]
-    ])("should result in the correct expansions", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
+            .with(hp => hp.base(0, 0).normal(-1, -1)))],
+        [p(p => p
+            .with(hp => hp.base(-1, 0).normal(-1, -1))
+            .with(hp => hp.base(-1, 0).normal(1, 0))),
+        p(p => p
+            .with(hp => hp.base(0, 0).normal(0, -1))
+            .with(hp => hp.base(-1, 0).normal(1, -1))
+            .with(hp => hp.base(0, 0).normal(-1, -1)))],
+        [p(p => p
+            .with(hp => hp.base(0, 1).normal(-2, -1))
+            .with(hp => hp.base(0, 1).normal(2, -1))),
+        p(p => p
+            .with(hp => hp.base(0, 1).normal(1, -1))
+            .with(hp => hp.base(0, 1).normal(-1, -1)))]
+    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
         expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
+        expectAreasToBeEqual(expandWith.expandToIncludePolygon(convexPolygon), expectedExpansion);
+    });
+
+    it.each([
+        [new Point(-1, 0), p(p => p
+            .with(hp => hp.base(0, 0).normal(0, -1))
+            .with(hp => hp.base(-1, 0).normal(1, -1))
+            .with(hp => hp.base(0, 0).normal(-1, -1)))]
+    ])("should result in the correct expansions with a point", (expandWith: Point, expectedExpansion: ConvexPolygon) => {
+        expectPolygonsToBeEqual(convexPolygon.expandToIncludePoint(expandWith), expectedExpansion);
     });
 
     it.each([
