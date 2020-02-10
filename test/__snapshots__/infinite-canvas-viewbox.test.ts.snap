@@ -1537,6 +1537,8 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that draws a triangular path and then clears a rect outside the triangle should not have added a clearRect 1`] = `Array []`;
+
 exports[`an infinite canvas context that fills a rect, begins a new path, translates and then clears a rect should add a clearRect with the right arguments 1`] = `
 Array [
   "context.restore()",

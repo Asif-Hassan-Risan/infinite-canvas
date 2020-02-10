@@ -124,6 +124,23 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
+	describe("that draws a triangular path and then clears a rect outside the triangle", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.moveTo(0, 0);
+			infiniteContext.lineTo(4, 0);
+			infiniteContext.lineTo(0, 4);
+			infiniteContext.fill();
+			contextMock.clear();
+			infiniteContext.clearRect(3, 3, 2, 2);
+		});
+
+		it("should not have added a clearRect", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
 	describe("whose state is changed and who draws something", () => {
 		let red: string;
 		let blue: string;
