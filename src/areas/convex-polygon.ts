@@ -42,11 +42,13 @@ export class ConvexPolygon implements Area{
         }
         const complement: HalfPlane = halfPlane.complement();
         for(let _halfPlane of this.halfPlanes){
-            if(_halfPlane.isContainedByHalfPlane(complement) || complement.isContainedByHalfPlane(_halfPlane)){
-                return false;
-            }
             if(_halfPlane.isContainedByHalfPlane(halfPlane)){
                 return true;
+            }
+        }
+        for(let _halfPlane of this.halfPlanes){
+            if(this.hasAtMostOneVertex(_halfPlane) && (_halfPlane.isContainedByHalfPlane(complement) || complement.isContainedByHalfPlane(_halfPlane))){
+                return false;
             }
             const intersection: Point = _halfPlane.getIntersectionWith(halfPlane);
             const vertexAtIntersection: PolygonVertex = this.findVertex(intersection);

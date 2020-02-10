@@ -340,6 +340,24 @@ describe("a convex polygon with three half planes and two vertices", () => {
     });
 });
 
+describe("a convex polygon with three half planes and three vertices", () => {
+    let convexPolygon: ConvexPolygon;
+
+    beforeEach(() => {
+        convexPolygon = p(p => p
+            .with(hp => hp.base(0, 0).normal(0, 1))
+            .with(hp => hp.base(-1, 0).normal(1, -1))
+            .with(hp => hp.base(1, 0).normal(-1, -1)))
+    });
+
+    it.each([
+        [hp(hp => hp.base(0, 2).normal(0, -1)), true],
+        [hp(hp => hp.base(0, -2).normal(0, 1)), true]
+    ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
+        expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
+    });
+});
+
 describe("a convex polygon with only one half plane", () => {
     let convexPolygon: ConvexPolygon;
 
@@ -403,6 +421,15 @@ describe("a convex polygon with two half planes and no vertices", () => {
 
     it("should have no vertices", () => {
         expect(convexPolygon.vertices.length).toBe(0);
+    });
+
+    it.each([
+        [hp(hp => hp.base(0, 2).normal(0, -1)), true],
+        [hp(hp => hp.base(0, 2).normal(0, 1)), false],
+        [hp(hp => hp.base(0, -2).normal(0, 1)), true],
+        [hp(hp => hp.base(0, -2).normal(0, -1)), false]
+    ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
+        expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
     });
 
     it.each([
@@ -569,6 +596,14 @@ describe("a convex polygon with two half planes and one vertex", () => {
         [hp(b => b.base(-1, 0).normal(-1, 0)), false],
         [hp(b => b.base(0, 0).normal(1, 0)), false],
         [hp(b => b.base(0, 0).normal(-1, 0)), false],
+        [hp(b => b.base(1, 0).normal(1, -1)), false],
+        [hp(b => b.base(1, 0).normal(-1, 1)), false],
+        [hp(b => b.base(1, 0).normal(1, 1)), false],
+        [hp(b => b.base(1, 0).normal(-1, -1)), true],
+        [hp(b => b.base(-1, 0).normal(-1, -1)), false],
+        [hp(b => b.base(-1, 0).normal(1, 1)), false],
+        [hp(b => b.base(-1, 0).normal(1, -1)), true],
+        [hp(b => b.base(-1, 0).normal(-1, 1)), false],
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
         expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
     });
