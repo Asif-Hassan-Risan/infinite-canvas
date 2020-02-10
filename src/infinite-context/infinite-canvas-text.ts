@@ -26,6 +26,6 @@ export class InfiniteCanvasText implements CanvasText{
 		const measured: TextMetrics = this.viewBox.measureText(text);
 		const width: number = Math.abs(measured.actualBoundingBoxRight - measured.actualBoundingBoxLeft);
 		const height: number = measured.actualBoundingBoxAscent + measured.actualBoundingBoxDescent;
-		return new Rectangle(x, y - measured.actualBoundingBoxAscent, width, height);
+		return Rectangle.create(x, y - measured.actualBoundingBoxAscent, width, height);
 	}
 }

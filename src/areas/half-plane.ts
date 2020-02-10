@@ -49,6 +49,14 @@ export class HalfPlane {
         const s: number = d2.getPerpendicular().dot(q) / det;
         return this.base.plus(d1.scale(s));
     }
+    public static throughPointsAndContainingPoint(throughPoint1: Point, throughPoint2: Point, containingPoint: Point): HalfPlane{
+        const throughPoints: HalfPlane[] = HalfPlane.withBorderPoints(throughPoint1, throughPoint2);
+        for(let halfPlaneThroughPoints of throughPoints){
+            if(halfPlaneThroughPoints.containsPoint(containingPoint)){
+                return halfPlaneThroughPoints;
+            }
+        }
+    }
     public static withBorderPoints(point1: Point, point2: Point): HalfPlane[]{
         const perpendicular: Point = point2.minus(point1).getPerpendicular();
         return [

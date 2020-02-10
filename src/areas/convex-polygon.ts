@@ -23,9 +23,6 @@ export class ConvexPolygon implements Area{
     public intersectWith(area: Area): Area {
         return area.intersectWithConvexPolygon(this);
     }
-    public intersectWithRectangle(rectangle: Rectangle): Area {
-        throw new Error("Method not implemented.");
-    }
     private containsHalfPlane(halfPlane: HalfPlane): boolean{
         for(let _halfPlane of this.halfPlanes){
             if(!halfPlane.isContainedByHalfPlane(_halfPlane)){
@@ -102,7 +99,7 @@ export class ConvexPolygon implements Area{
         return true;
     }
     public isContainedByRectangle(rectangle: Rectangle): boolean {
-        throw new Error("Method not implemented.");
+        return this.isContainedByConvexPolygon(rectangle);
     }
     public intersectsConvexPolygon(other: ConvexPolygon): boolean{
         if(this.isContainedByConvexPolygon(other) || other.isContainedByConvexPolygon(this)){
@@ -169,7 +166,7 @@ export class ConvexPolygon implements Area{
         return true;
     }
     public intersectsRectangle(rectangle: Rectangle): boolean {
-        throw new Error("Method not implemented.");
+        return this.intersectsConvexPolygon(rectangle);
     }
     private static getHalfPlanes(vertices: PolygonVertex[]): HalfPlane[]{
         const result: HalfPlane[] = [];

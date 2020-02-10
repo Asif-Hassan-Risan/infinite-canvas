@@ -33,7 +33,7 @@ describe("a state with a clipped path", () => {
                 context.lineTo(0, 3);
                 context.lineTo(0, 0);
             },
-            changeArea: (builder: AreaBuilder) => builder.addRectangle(new Rectangle(0, 0, 3, 3))
+            changeArea: (builder: AreaBuilder) => builder.addRectangle(Rectangle.create(0, 0, 3, 3))
         }, currentState);
         currentPath.clipPath((context: CanvasRenderingContext2D) => context.clip(), currentState);
         currentState = currentPath.state;

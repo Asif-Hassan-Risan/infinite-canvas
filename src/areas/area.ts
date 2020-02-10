@@ -4,9 +4,10 @@ import { ConvexPolygon } from "./convex-polygon";
 
 export interface Area{
     intersectWith(area: Area): Area;
-    intersectWithRectangle(rectangle: Rectangle): Area;
     intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area;
     containsPoint(point: Point): boolean;
     isContainedByRectangle(rectangle: Rectangle): boolean;
     intersectsRectangle(rectangle: Rectangle): boolean;
+    expandToIncludePoint(point: Point): Area;
+    expandToIncludePolygon(polygon: ConvexPolygon): Area;
 }

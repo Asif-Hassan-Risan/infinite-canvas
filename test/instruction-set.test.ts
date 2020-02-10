@@ -42,7 +42,7 @@ describe("an instruction set", () => {
 
                 beforeEach(() => {
                     onChangeSpy.mockClear();
-                    instructionSet.clearArea(new Rectangle(0, 0, 1, 1), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+                    instructionSet.clearArea(Rectangle.create(0, 0, 1, 1), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
                         context.clearRect(0, 0, 1, 1);
                     }));
                 });
@@ -72,7 +72,7 @@ describe("an instruction set", () => {
                 context.lineTo(0, 0);
             }, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.fill();
-            }, new Rectangle(0, 0, 1, 1));
+            }, Rectangle.create(0, 0, 1, 1));
         });
 
         it("should have called onchange", () => {
@@ -83,7 +83,7 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 onChangeSpy.mockClear();
-                instructionSet.clearArea(new Rectangle(0.5, 0, 2, 2), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+                instructionSet.clearArea(Rectangle.create(0.5, 0, 2, 2), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
                     context.clearRect(0.5, 0, 2, 2);
                 }));
             });
@@ -103,7 +103,7 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 onChangeSpy.mockClear();
-                instructionSet.clearArea(new Rectangle(-1, -1, 3, 3), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+                instructionSet.clearArea(Rectangle.create(-1, -1, 3, 3), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
                     context.clearRect(-1, -1, 3, 3);
                 }));
             });
@@ -131,7 +131,7 @@ describe("an instruction set", () => {
                     context.lineTo(2, 0);
                 }, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                     context.fill();
-                }, new Rectangle(2, 0, 1, 1));
+                }, Rectangle.create(2, 0, 1, 1));
             });
 
             it("should have recorded everything in the right order", () => {

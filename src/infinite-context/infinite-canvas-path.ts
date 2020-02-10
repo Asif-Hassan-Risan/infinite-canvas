@@ -28,7 +28,7 @@ export class InfiniteCanvasPath implements CanvasPath{
 	public quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void{}
 
 	public rect(x: number, y: number, w: number, h: number): void{
-		const rectangleToDraw: Rectangle = new Rectangle(x, y, w, h);
+		const rectangleToDraw: Rectangle = Rectangle.create(x, y, w, h);
 		const instructionToDrawRectangularPath: Instruction = this.viewBox.getInstructionToDrawRectangularPath(rectangleToDraw);
 		this.viewBox.addPathInstruction({
 			instruction: instructionToDrawRectangularPath,

@@ -3,87 +3,52 @@ import { Transformation } from "../transformation";
 import { Area } from "./area";
 import { HalfPlane } from "./half-plane";
 import { ConvexPolygon } from "./convex-polygon";
+import { Instruction } from "../instructions/instruction";
 
-export class Rectangle implements Area{
-    private vertices: Point[];
-    public left: number;
-    public right: number;
-    public top: number;
-    public bottom: number;
-    constructor(x: number, y: number, width: number, height: number){
-        this.vertices = [new Point(x, y), new Point(x + width, y), new Point(x + width, y + height), new Point(x, y + height)];
-        this.left = x;
-        this.right = x + width;
-        this.top = y;
-        this.bottom = y + height;
+export class Rectangle extends ConvexPolygon{
+    private corners: Point[];
+    constructor(private left: HalfPlane, private top: HalfPlane, private right: HalfPlane, private bottom: HalfPlane){
+        super([left, top, right, bottom]);
+        this.corners = [
+            left.getIntersectionWith(top),
+            top.getIntersectionWith(right),
+            right.getIntersectionWith(bottom),
+            bottom.getIntersectionWith(left)
+        ];
     }
-    public expandToIncludePoint(point: Point): Rectangle{
-        const left: number = Math.min(point.x, this.left);
-        const right: number = Math.max(point.x, this.right);
-        const top: number = Math.min(point.y, this.top);
-        const bottom: number = Math.max(point.y, this.bottom);
-        return new Rectangle(left, top, right - left, bottom - top);
-    }
-    public expandToIncludeRectangle(rectangle: Rectangle): Rectangle{
-        const left: number = Math.min(rectangle.left, this.left);
-        const right: number = Math.max(rectangle.right, this.right);
-        const top: number = Math.min(rectangle.top, this.top);
-        const bottom: number = Math.max(rectangle.bottom, this.bottom);
-        return new Rectangle(left, top, right - left, bottom - top);
-    }
-    public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area{
-        return undefined;
-    }
-    public intersectWithRectangle(other: Rectangle): Area{
-        if(this.contains(other)){
-            return other;
-        }
-        if(other.contains(this)){
-            return this;
-        }
-        if(!this.intersectsRectangle(other)){
-            return undefined;
-        }
-        const newTop: number = Math.max(this.top, other.top);
-        const newBottom: number = Math.min(this.bottom, other.bottom);
-        const newLeft: number = Math.max(this.left, other.left);
-        const newRight: number = Math.min(this.right, other.right);
-        return new Rectangle(newLeft, newTop, newRight - newLeft, newBottom - newTop);
-    }
-    public intersectWith(other: Area): Area{
-        return other.intersectWithRectangle(this);
+    public getInstructionToDrawPath(): Instruction{
+        return (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            let {x, y} = transformation.apply(this.corners[0]);
+            context.moveTo(x, y);
+            ({x,y} = transformation.apply(this.corners[1]));
+            context.lineTo(x,y);
+            ({x,y} = transformation.apply(this.corners[2]));
+            context.lineTo(x,y);
+            ({x,y} = transformation.apply(this.corners[3]));
+            context.lineTo(x,y);
+            ({x,y} = transformation.apply(this.corners[0]));
+            context.lineTo(x,y);
+        };
     }
     public transform(transformation: Transformation): Rectangle{
-        const transformedVertices: Point[] = this.vertices.map(p => transformation.apply(p));
-        const transformedX: number[] = transformedVertices.map(p => p.x);
-        const transformedY: number[] = transformedVertices.map(p => p.y);
-        const x: number = Math.min(...transformedX);
-        const y: number = Math.min(...transformedY);
-        const width: number = Math.max(...transformedX) - x;
-        const height: number = Math.max(...transformedY) - y;
-        return new Rectangle(x, y, width, height);
+        return new Rectangle(
+            this.left.transform(transformation),
+            this.top.transform(transformation),
+            this.right.transform(transformation),
+            this.bottom.transform(transformation));
     }
-    public intersectsRectangle(other: Rectangle): boolean{
-        return this.left <= other.right && 
-        this.right >= other.left &&
-        this.bottom >= other.top &&
-        this.top <= other.bottom;
+    public static create(x: number, y: number, width: number, height: number): Rectangle{
+        const left: HalfPlane = new HalfPlane(new Point(x, y), new Point(1, 0));
+        const top: HalfPlane = new HalfPlane(new Point(x, y), new Point(0, 1));
+        const right: HalfPlane = new HalfPlane(new Point(x + width, y + height), new Point(-1, 0));
+        const bottom: HalfPlane = new HalfPlane(new Point(x + width, y + height), new Point(0, -1));
+        return new Rectangle(left, top, right, bottom);
     }
-    private isContainedByArea(area: Area): boolean{
-        for(let vertex of this.vertices){
-            if(!area.containsPoint(vertex)){
-                return false;
-            }
-        }
-        return true;
-    }
-    public isContainedByRectangle(other: Rectangle): boolean{
-        return this.isContainedByArea(other);
-    }
-    public containsPoint(point: Point): boolean{
-        return this.top <= point.y && this.bottom >= point.y && this.left <= point.x && this.right >= point.x;
-    }
-    public contains(other: Area): boolean{
-        return other.isContainedByRectangle(this);
+    public static createBetweenPoints(point1: Point, point2: Point){
+        const x: number = Math.min(point1.x, point2.x);
+        const y: number = Math.min(point1.y, point2.y);
+        const width: number = Math.abs(point1.x - point2.x);
+        const height: number = Math.abs(point1.y - point2.y);
+        return Rectangle.create(x, y, width, height);
     }
 }

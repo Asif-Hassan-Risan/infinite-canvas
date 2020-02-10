@@ -23,7 +23,7 @@ export class InfiniteCanvasDrawImage implements CanvasDrawImage{
 		}
 		const drawnWidth: number = this.getDrawnLength(image.width, sx, sw, dw);
 		const drawnHeight: number = this.getDrawnLength(image.height, sy, sh, dh);
-		const drawnRectangle: Rectangle = new Rectangle(dx, dy, drawnWidth, drawnHeight);
+		const drawnRectangle: Rectangle = Rectangle.create(dx, dy, drawnWidth, drawnHeight);
 		const drawingInstruction: Instruction = this.getDrawImageInstruction(arguments.length, image, sx, sy, sw, sh, dx, dy, dw, dh);
 		this.viewBox.addDrawing(drawingInstruction, drawnRectangle, TransformationKind.Relative, true);
 	}

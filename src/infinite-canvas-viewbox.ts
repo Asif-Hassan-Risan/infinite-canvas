@@ -75,22 +75,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		this.instructionSet.drawRect(instructionToDrawRectangularPath, instruction, rectangle);
 	}
 	public getInstructionToDrawRectangularPath(rectangle: Rectangle): Instruction{
-        const topLeft: Point = new Point(rectangle.left, rectangle.top);
-        const topRight: Point = new Point(rectangle.right, rectangle.top);
-        const bottomRight: Point = new Point(rectangle.right, rectangle.bottom);
-        const bottomLeft: Point = new Point(rectangle.left, rectangle.bottom);
-        return (context: CanvasRenderingContext2D, transformation: Transformation) => {
-            let {x, y} = transformation.apply(topLeft);
-            context.moveTo(x, y);
-            ({x,y} = transformation.apply(topRight));
-            context.lineTo(x,y);
-            ({x,y} = transformation.apply(bottomRight));
-            context.lineTo(x,y);
-            ({x,y} = transformation.apply(bottomLeft));
-            context.lineTo(x,y);
-            ({x,y} = transformation.apply(topLeft));
-            context.lineTo(x,y);
-        };
+        return rectangle.getInstructionToDrawPath();
 	}
 	private getInstructionToClearRectangle(x: number, y: number, width: number, height: number): Instruction{
 		return transformInstructionRelatively((context: CanvasRenderingContext2D) => {
@@ -101,7 +86,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		this.instructionSet.clipPath(instruction);
 	}
 	public clearArea(x: number, y: number, width: number, height: number): void{
-		const area: Rectangle = new Rectangle(x, y, width, height);
+		const area: Rectangle = Rectangle.create(x, y, width, height);
 		this.instructionSet.clearArea(area, this.getInstructionToClearRectangle(x, y, width, height));
 	}
 	public createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient{

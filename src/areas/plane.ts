@@ -4,6 +4,12 @@ import { ConvexPolygon } from "./convex-polygon";
 import { Point } from "../geometry/point";
 
 class Plane implements Area{
+    public expandToIncludePoint(point: Point): Area {
+        return this;
+    }
+    public expandToIncludePolygon(polygon: ConvexPolygon): Area {
+        return this;
+    }
     public intersectWith(area: Area): Area {
         return area;
     }

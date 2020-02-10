@@ -14,7 +14,7 @@ export class PathInstructions{
             const {x, y} = transformation.apply(new Point(_x, _y));
             context.arc(x, y, radius * transformation.scale, startAngle + transformationAngle, endAngle + transformationAngle, anticlockwise);
         };
-        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addRectangle(new Rectangle(_x - radius, _y - radius, 2 * radius, 2 * radius));
+        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addRectangle(Rectangle.create(_x - radius, _y - radius, 2 * radius, 2 * radius));
         return {
             instruction: instruction,
             changeArea: changeArea
@@ -24,7 +24,7 @@ export class PathInstructions{
     public static arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): PathInstruction{
         const p1: Point = new Point(x1, y1);
         const p2: Point = new Point(x2, y2);
-        const newRectangle: Rectangle = new Rectangle(p1.x, p1.y, 0, 0).expandToIncludePoint(p2);
+        const newRectangle: Rectangle = Rectangle.createBetweenPoints(p1, p2);
         const instruction: Instruction = (context: CanvasRenderingContext2D, transformation: Transformation) => {
             const tp1: Point = transformation.apply(p1);
             const tp2: Point = transformation.apply(p2);
@@ -51,7 +51,7 @@ export class PathInstructions{
     }
 
     public static ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): PathInstruction{
-        const newRectangle: Rectangle = new Rectangle(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
+        const newRectangle: Rectangle = Rectangle.create(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
         return {
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 const tCenter: Point = transformation.apply(new Point(x, y));
