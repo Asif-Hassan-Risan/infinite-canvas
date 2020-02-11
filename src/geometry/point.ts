@@ -1,7 +1,10 @@
 export class Point{
 	constructor(public readonly x: number, public readonly y: number){}
 	public mod(): number{
-		return Math.sqrt(this.x * this.x + this.y * this.y);
+		return Math.sqrt(this.modSq());
+	}
+	public modSq(): number{
+		return this.x * this.x + this.y * this.y;
 	}
 	public minus(other: Point): Point{
 		return new Point(this.x - other.x, this.y - other.y);
@@ -23,6 +26,9 @@ export class Point{
 	}
 	public scale(r: number): Point{
 		return new Point(r * this.x, r * this.y);
+	}
+	public projectOn(other: Point): Point{
+		return other.scale(this.dot(other) / other.modSq());
 	}
 	public matrix(a: number, b: number, c: number, d: number): Point{
 		return new Point(a * this.x + b * this.y, c * this.x + d * this.y);
