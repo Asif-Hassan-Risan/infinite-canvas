@@ -23,6 +23,22 @@ describe("a viewbox infinity for an untransformed context", () => {
     });
 });
 
+describe("a viewbox infinity for skewed context", () => {
+    let infinity: ViewBoxInfinity;
+
+    beforeEach(() => {
+        infinity = new ViewBoxInfinity(10, 10, new Transformation(1, 0.2, 0, 1, 0, 0));
+    });
+
+    it.each([
+        [new Point(0, 0), new Point(0, 1), Transformation.identity, new Point(0, 10)],
+    ])("should return the right infinities along the x and y axes", (fromPoint: Point, inDirection: Point, viewboxTransformation: Transformation, expected: Point) => {
+        const calculated: Point = infinity.getInfinityFromPointInDirection(fromPoint, inDirection, viewboxTransformation);
+        expect(calculated.x).toBeCloseTo(expected.x);
+        expect(calculated.y).toBeCloseTo(expected.y);
+    });
+});
+
 describe("a viewbox infinity for a scaled context", () => {
     let infinity: ViewBoxInfinity;
 

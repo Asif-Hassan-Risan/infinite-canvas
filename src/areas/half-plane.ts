@@ -13,7 +13,10 @@ export class HalfPlane {
         return point.minus(this.base).dot(this.normalTowardInterior) / this.lengthOfNormal;
     }
     public transform(transformation: Transformation): HalfPlane {
-        return new HalfPlane(transformation.apply(this.base), transformation.untranslated().apply(this.normalTowardInterior));
+        const baseTransformed: Point = transformation.apply(this.base);
+        const otherPointOnBorderTransformed: Point = transformation.apply(this.base.plus(this.normalTowardInterior.getPerpendicular()));
+        const pointInInteriorTransformed: Point = transformation.apply(this.base.plus(this.normalTowardInterior));
+        return HalfPlane.throughPointsAndContainingPoint(baseTransformed, otherPointOnBorderTransformed, pointInInteriorTransformed);
     }
     public complement(): HalfPlane{
         return new HalfPlane(this.base, this.normalTowardInterior.scale(-1));

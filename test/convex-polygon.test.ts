@@ -4,6 +4,8 @@ import { Point } from "../src/geometry/point";
 import { PolygonVertex } from "../src/areas/polygon-vertex";
 import { Area } from "../src/areas/area";
 import { plane } from "../src/areas/plane";
+import { Rectangle } from "../src/areas/rectangle";
+import { Transformation } from "../src/transformation";
 
 function halfPlanesAreEqual(one: HalfPlane, other: HalfPlane): boolean{
     return one.normalTowardInterior.inSameDirectionAs(other.normalTowardInterior) && one.base.minus(other.base).dot(other.normalTowardInterior) === 0;
@@ -55,6 +57,23 @@ class HalfPlaneBuilder{
         return this;
     }
 }
+
+describe("a rectangle", () => {
+    let rectangle: ConvexPolygon;
+
+    beforeEach(() => {
+        rectangle = Rectangle.create(0, 0, 1, 1);
+    });
+
+    it("should be transformed the right way", () => {
+        const transformed: ConvexPolygon = rectangle.transform(new Transformation(1, 1, 0, 1, 0, 0));
+        expectPolygonsToBeEqual(transformed, p(p => p
+            .with(hp => hp.base(0, 0).normal(1, 0))
+            .with(hp => hp.base(0, 0).normal(-1, 1))
+            .with(hp => hp.base(1, 2).normal(-1, 0))
+            .with(hp => hp.base(1, 2).normal(1, -1))));
+    });
+});
 
 describe("a convex polygon with one half plane", () => {
     let convexPolygon: ConvexPolygon;
