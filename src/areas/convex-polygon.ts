@@ -80,7 +80,7 @@ export class ConvexPolygon implements Area{
     public expandToInclude(area: Area): Area{
         return area.expandToIncludePolygon(this);
     }
-    public transform(transformation: Transformation): Area{
+    public transform(transformation: Transformation): ConvexPolygon{
         return new ConvexPolygon(this.halfPlanes.map(hp => hp.transform(transformation)));
     }
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): ConvexPolygon{

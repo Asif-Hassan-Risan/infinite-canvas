@@ -15,6 +15,8 @@ import { Area } from "./areas/area";
 import { Rectangle } from "./areas/rectangle";
 import { Point } from "./geometry/point";
 import { transformInstructionRelatively } from "./instruction-utils";
+import { RectangularPolygon } from "./areas/rectangular-polygon";
+import { ViewBoxInfinity } from "./viewbox-infinity";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -74,8 +76,8 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		const instructionToDrawRectangularPath: Instruction = this.getInstructionToDrawRectangularPath(rectangle);
 		this.instructionSet.drawRect(instructionToDrawRectangularPath, instruction, rectangle);
 	}
-	public getInstructionToDrawRectangularPath(rectangle: Rectangle): Instruction{
-        return rectangle.getInstructionToDrawPath();
+	public getInstructionToDrawRectangularPath(rectangle: RectangularPolygon): Instruction{
+        return rectangle.getInstructionToDrawPath(new ViewBoxInfinity(this.width, this.height, this.state.current.transformation));
 	}
 	private getInstructionToClearRectangle(x: number, y: number, width: number, height: number): Instruction{
 		return transformInstructionRelatively((context: CanvasRenderingContext2D) => {

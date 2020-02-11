@@ -3,8 +3,9 @@ import { Transformation } from "../transformation";
 import { HalfPlane } from "./half-plane";
 import { ConvexPolygon } from "./convex-polygon";
 import { Instruction } from "../instructions/instruction";
+import { RectangularPolygon } from "./rectangular-polygon";
 
-export class Rectangle extends ConvexPolygon{
+export class Rectangle extends ConvexPolygon implements RectangularPolygon{
     private corners: Point[];
     constructor(private left: HalfPlane, private top: HalfPlane, private right: HalfPlane, private bottom: HalfPlane){
         super([left, top, right, bottom]);
