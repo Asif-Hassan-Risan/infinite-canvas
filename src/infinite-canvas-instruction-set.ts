@@ -12,7 +12,7 @@ import { RectangularDrawing } from "./instructions/rectangular-drawing";
 import { Transformation } from "./transformation";
 import { transformInstructionRelatively, transformInstructionAbsolutely } from "./instruction-utils";
 import { Area } from "./areas/area";
-import { Point } from "./geometry/point";
+import { RectangularPolygon } from "./areas/rectangular-polygon";
 
 export class InfiniteCanvasInstructionSet{
     private currentInstructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath;
@@ -47,7 +47,7 @@ export class InfiniteCanvasInstructionSet{
         this.onChange();
     }
 
-    public drawRect(instructionToDrawPath: Instruction, instruction: Instruction, rectangle: Rectangle): void{
+    public drawRect(instructionToDrawPath: Instruction, instruction: Instruction, rectangle: RectangularPolygon): void{
         const stateIsTransformable: boolean = this.state.current.isTransformable();
         if(!stateIsTransformable){
             instruction = transformInstructionRelatively(instruction);

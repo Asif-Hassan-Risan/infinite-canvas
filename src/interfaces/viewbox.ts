@@ -5,12 +5,13 @@ import { Rectangle } from "../areas/rectangle";
 import { DrawingLock } from "../drawing-lock";
 import { TransformationKind } from "../transformation-kind";
 import { TransformableBox } from "./transformable-box";
+import { RectangularPolygon } from "../areas/rectangular-polygon";
 
 export interface ViewBox extends TransformableBox, CurrentState{
     measureText(text: string): TextMetrics;
     drawPath(instruction: Instruction): void;
-    drawRect(instruction: Instruction, rectangle: Rectangle): void;
-    addDrawing(instruction: Instruction, area: Rectangle, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void;
+    drawRect(instruction: Instruction, rectangle: RectangularPolygon): void;
+    addDrawing(instruction: Instruction, area: RectangularPolygon, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void;
     createPatternFromImageData(imageData: ImageData): Promise<CanvasPattern>;
     createPattern(image: CanvasImageSource, repetition: string): CanvasPattern;
     getDrawingLock(): DrawingLock;

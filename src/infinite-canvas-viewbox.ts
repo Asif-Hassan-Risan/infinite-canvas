@@ -11,9 +11,7 @@ import { DrawingLock } from "./drawing-lock";
 import { InfiniteCanvasPattern } from "./styles/infinite-canvas-pattern";
 import { TransformationKind } from "./transformation-kind";
 import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set";
-import { Area } from "./areas/area";
 import { Rectangle } from "./areas/rectangle";
-import { Point } from "./geometry/point";
 import { transformInstructionRelatively } from "./instruction-utils";
 import { RectangularPolygon } from "./areas/rectangular-polygon";
 import { ViewBoxInfinity } from "./viewbox-infinity";
@@ -63,7 +61,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		const bitmap: ImageBitmap = await createImageBitmap(imageData);
 		return this.context.createPattern(bitmap, 'no-repeat');
 	}
-	public addDrawing(instruction: Instruction, area: Rectangle, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
+	public addDrawing(instruction: Instruction, area: RectangularPolygon, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
 		this.instructionSet.addDrawing(instruction, area, transformationKind, takeClippingRegionIntoAccount);
 	}
 	public addPathInstruction(pathInstruction: PathInstruction): void{
@@ -72,7 +70,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public drawPath(instruction: Instruction): void{
 		this.instructionSet.drawPath(instruction);
 	}
-	public drawRect(instruction: Instruction, rectangle: Rectangle): void{
+	public drawRect(instruction: Instruction, rectangle: RectangularPolygon): void{
 		const instructionToDrawRectangularPath: Instruction = this.getInstructionToDrawRectangularPath(rectangle);
 		this.instructionSet.drawRect(instructionToDrawRectangularPath, instruction, rectangle);
 	}

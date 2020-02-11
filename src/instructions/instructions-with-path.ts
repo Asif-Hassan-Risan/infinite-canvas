@@ -10,8 +10,8 @@ import { ClippingPathInstructionWithState } from "./clipping-path-instruction-wi
 import { DrawingPathInstructionWithState } from "./drawing-path-instruction-with-state";
 import { Area } from "../areas/area";
 import { InfiniteCanvasAreaBuilder } from "../areas/infinite-canvas-area-builder";
-import { Rectangle } from "../areas/rectangle";
 import { AreaBuilder } from "../areas/area-builder";
+import { RectangularPolygon } from "../areas/rectangular-polygon";
 
 export class InstructionsWithPath extends StateChangingInstructionSequence<PathInstructionWithState> implements StateChangingInstructionSetWithAreaAndCurrentPath{
     private areaBuilder: InfiniteCanvasAreaBuilder = new InfiniteCanvasAreaBuilder();
@@ -115,7 +115,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         result.areaBuilder = this.areaBuilder.copy();
         return result;
     }
-    public static createRectangularPath(initialState: InfiniteCanvasState, rectangle: Rectangle, instruction: Instruction): InstructionsWithPath{
+    public static createRectangularPath(initialState: InfiniteCanvasState, rectangle: RectangularPolygon, instruction: Instruction): InstructionsWithPath{
         const result: InstructionsWithPath = new InstructionsWithPath(StateAndInstruction.create(initialState, (context: CanvasRenderingContext2D) => {context.beginPath();}));
         result.addPathInstruction({
             instruction: instruction,
