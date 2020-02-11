@@ -1,7 +1,7 @@
 import { Area } from "./area";
-import { Rectangle } from "./rectangle";
 import { ConvexPolygon } from "./convex-polygon";
 import { Point } from "../geometry/point";
+import { Transformation } from "../transformation";
 
 class Plane implements Area{
     public expandToIncludePoint(point: Point): Area {
@@ -10,11 +10,20 @@ class Plane implements Area{
     public expandToIncludePolygon(polygon: ConvexPolygon): Area {
         return this;
     }
+    public intersects(area: Area): boolean{
+        return true;
+    }
+    public expandToInclude(area: Area): Area{
+        return this;
+    }
+    public transform(transformation: Transformation): Area{
+        return this;
+    }
+    public contains(other: Area): boolean{
+        return true;
+    }
     public intersectWith(area: Area): Area {
         return area;
-    }
-    public intersectWithRectangle(rectangle: Rectangle): Area {
-        return rectangle;
     }
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area {
         return convexPolygon;
@@ -22,10 +31,10 @@ class Plane implements Area{
     public containsPoint(point: Point): boolean {
         return true;
     }
-    public isContainedByRectangle(rectangle: Rectangle): boolean {
+    public isContainedByConvexPolygon(other: ConvexPolygon): boolean{
         return false;
     }
-    public intersectsRectangle(rectangle: Rectangle): boolean {
+    public intersectsConvexPolygon(other: ConvexPolygon): boolean{
         return true;
     }
 }

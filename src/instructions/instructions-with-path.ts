@@ -65,42 +65,42 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         }
         super.execute(context, transformation);
     }
-    public hasDrawingAcrossBorderOf(area: Rectangle): boolean{
+    public hasDrawingAcrossBorderOf(area: Area): boolean{
         if(!this.drawnArea || !this.visible){
             return false;
         }
-        if(this.drawnArea.isContainedByRectangle(area)){
+        if(area.contains(this.drawnArea)){
             return false;
         }
-        return this.drawnArea.intersectsRectangle(area);
+        return this.drawnArea.intersects(area);
     }
-    public isContainedBy(area: Rectangle): boolean {
+    public isContainedBy(area: Area): boolean {
         const areaToContain: Area = this.drawnArea || this.area;
-        return areaToContain.isContainedByRectangle(area);
+        return area.contains(areaToContain);
     }
-    public intersects(area: Rectangle): boolean{
+    public intersects(area: Area): boolean{
         if(!this.area || !this.visible){
             return false;
         }
-        return this.area.intersectsRectangle(area);
+        return this.area.intersects(area);
     }
     public getClippedArea(previouslyClipped?: Area): Area {
         return previouslyClipped ? this.area.intersectWith(previouslyClipped): this.area;
     }
 
-    public clearContentsInsideArea(area: Rectangle): void{
+    public clearContentsInsideArea(area: Area): void{
         if(!this.drawnArea || !this.visible){
             return;
         }
-        this.removeAll(i => i instanceof DrawingPathInstructionWithState && i.drawnArea.isContainedByRectangle(area));
-        if(this.drawnArea.isContainedByRectangle(area)){
+        this.removeAll(i => i instanceof DrawingPathInstructionWithState && area.contains(i.drawnArea));
+        if(area.contains(this.drawnArea)){
             this.visible = false;
         }
     }
-    public addClearRect(area: Rectangle, state: InfiniteCanvasState, instructionToClear: Instruction): void{
+    public addClearRect(area: Area, state: InfiniteCanvasState, instructionToClear: Instruction): void{
         this.addPathInstruction({
             instruction: instructionToClear,
-            changeArea: (builder: AreaBuilder) => builder.addRectangle(area)
+            changeArea: (builder: AreaBuilder) => builder.addArea(area)
         }, state);
     }
     public recreatePath(): StateChangingInstructionSetWithAreaAndCurrentPath{
@@ -119,7 +119,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         const result: InstructionsWithPath = new InstructionsWithPath(StateAndInstruction.create(initialState, (context: CanvasRenderingContext2D) => {context.beginPath();}));
         result.addPathInstruction({
             instruction: instruction,
-            changeArea: (builder: AreaBuilder) => builder.addRectangle(rectangle)
+            changeArea: (builder: AreaBuilder) => builder.addArea(rectangle)
         }, initialState);
         return result;
     }

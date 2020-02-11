@@ -4,6 +4,7 @@ import { Rectangle } from "./rectangle";
 import { Point } from "../geometry/point";
 import { PolygonVertex } from "./polygon-vertex";
 import { plane } from "./plane";
+import { Transformation } from "../transformation";
 
 export class ConvexPolygon implements Area{
     public readonly vertices: PolygonVertex[];
@@ -20,8 +21,14 @@ export class ConvexPolygon implements Area{
         }
         return undefined;
     }
+    public intersects(other: Area): boolean{
+        return other.intersectsConvexPolygon(this);
+    }
     public intersectWith(area: Area): Area {
         return area.intersectWithConvexPolygon(this);
+    }
+    public contains(other: Area): boolean{
+        return other.isContainedByConvexPolygon(this);
     }
     private containsHalfPlane(halfPlane: HalfPlane): boolean{
         for(let _halfPlane of this.halfPlanes){
@@ -70,6 +77,12 @@ export class ConvexPolygon implements Area{
         halfPlanes = ConvexPolygon.getHalfPlanesNotContainingAnyOther(halfPlanes);
         return new ConvexPolygon(halfPlanes);
     }
+    public expandToInclude(area: Area): Area{
+        return area.expandToIncludePolygon(this);
+    }
+    public transform(transformation: Transformation): Area{
+        return new ConvexPolygon(this.halfPlanes.map(hp => hp.transform(transformation)));
+    }
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): ConvexPolygon{
         if(convexPolygon.isContainedByConvexPolygon(this)){
             return convexPolygon;
@@ -97,9 +110,6 @@ export class ConvexPolygon implements Area{
             }
         }
         return true;
-    }
-    public isContainedByRectangle(rectangle: Rectangle): boolean {
-        return this.isContainedByConvexPolygon(rectangle);
     }
     public intersectsConvexPolygon(other: ConvexPolygon): boolean{
         if(this.isContainedByConvexPolygon(other) || other.isContainedByConvexPolygon(this)){
@@ -164,9 +174,6 @@ export class ConvexPolygon implements Area{
             }
         }
         return true;
-    }
-    public intersectsRectangle(rectangle: Rectangle): boolean {
-        return this.intersectsConvexPolygon(rectangle);
     }
     private static getHalfPlanes(vertices: PolygonVertex[]): HalfPlane[]{
         const result: HalfPlane[] = [];

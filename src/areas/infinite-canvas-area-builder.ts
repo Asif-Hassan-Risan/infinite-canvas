@@ -24,11 +24,11 @@ export class InfiniteCanvasAreaBuilder {
             this._area = this._area.expandToIncludePoint(point);
         }
     }
-    public addRectangle(rectangle: Rectangle): void{
+    public addArea(area: Area): void{
         if(!this._area){
-            this._area = rectangle;
+            this._area = area;
         }else{
-            this._area = this._area.expandToIncludePolygon(rectangle);
+            this._area = this._area.expandToInclude(area);
         }
     }
     public transformedWith(transformation: Transformation): AreaBuilder{

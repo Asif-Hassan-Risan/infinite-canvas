@@ -8,6 +8,7 @@ import { ClearRectWithState } from "./clear-rect-with-state";
 import { Drawing } from "../interfaces/drawing";
 import { Rectangle } from "../areas/rectangle";
 import { Instruction } from "./instruction";
+import { Area } from "../areas/area";
 
 export class PreviousInstructions extends StateChangingInstructionSequence<StateChangingInstructionSetWithArea> implements Drawing{
     constructor(initiallyWithState: StateAndInstruction){
@@ -16,10 +17,10 @@ export class PreviousInstructions extends StateChangingInstructionSequence<State
     protected reconstructState(fromState: InfiniteCanvasState, toInstructionSet: StateChangingInstructionSetWithArea): void{
         toInstructionSet.setInitialStateWithClippedPaths(fromState);
     }
-    public hasDrawingAcrossBorderOf(area: Rectangle): boolean{
+    public hasDrawingAcrossBorderOf(area: Area): boolean{
         return this.contains(i => i.hasDrawingAcrossBorderOf(area));
     }
-    public intersects(area: Rectangle): boolean{
+    public intersects(area: Area): boolean{
         return this.contains(i => i.intersects(area));
     }
     public addClearRect(area: Rectangle, state: InfiniteCanvasState, instructionToClear: Instruction): void{
@@ -27,7 +28,7 @@ export class PreviousInstructions extends StateChangingInstructionSequence<State
         clearRect.setInitialState(this.state);
         this.add(clearRect);
     }
-    public clearContentsInsideArea(area: Rectangle): void{
+    public clearContentsInsideArea(area: Area): void{
         this.removeAll(i => i.isContainedBy(area));
     }
     public isContainedBy(area: Rectangle): boolean {

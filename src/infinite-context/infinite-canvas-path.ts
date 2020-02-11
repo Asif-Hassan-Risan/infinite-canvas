@@ -32,7 +32,7 @@ export class InfiniteCanvasPath implements CanvasPath{
 		const instructionToDrawRectangularPath: Instruction = this.viewBox.getInstructionToDrawRectangularPath(rectangleToDraw);
 		this.viewBox.addPathInstruction({
 			instruction: instructionToDrawRectangularPath,
-			changeArea: (builder: AreaBuilder) => builder.addRectangle(rectangleToDraw)
+			changeArea: (builder: AreaBuilder) => builder.addArea(rectangleToDraw)
 		});
 	}
 }

@@ -59,7 +59,7 @@ export class InfiniteCanvasInstructionSet{
         this.onChange();
     }
 
-    public addDrawing(instruction: Instruction, area: Rectangle, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
+    public addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
         if(transformationKind === TransformationKind.Relative){
 			instruction = transformInstructionRelatively(instruction);
 			area = area.transform(this.state.current.transformation);
@@ -134,7 +134,7 @@ export class InfiniteCanvasInstructionSet{
         }
     }
 
-    public intersects(area: Rectangle): boolean{
+    public intersects(area: Area): boolean{
         return this.previousInstructionsWithPath.intersects(area) || this.currentInstructionsWithPath && this.currentInstructionsWithPath.intersects(area);
     }
 
@@ -142,7 +142,7 @@ export class InfiniteCanvasInstructionSet{
         return this.previousInstructionsWithPath.hasDrawingAcrossBorderOf(area) || this.currentInstructionsWithPath && this.currentInstructionsWithPath.hasDrawingAcrossBorderOf(area);
     }
 
-    public clearContentsInsideArea(area: Rectangle): void{
+    public clearContentsInsideArea(area: Area): void{
         if(this.currentInstructionsWithPath){
             this.previousInstructionsWithPath.clearContentsInsideArea(area);
             this.currentInstructionsWithPath.clearContentsInsideArea(area);
@@ -153,7 +153,7 @@ export class InfiniteCanvasInstructionSet{
     }
 
     public clearArea(rectangle: Rectangle, instructionToClear: Instruction): void{
-        const transformedRectangle: Rectangle = rectangle.transform(this.state.current.transformation)
+        const transformedRectangle: Area = rectangle.transform(this.state.current.transformation)
         if(!this.intersects(transformedRectangle)){
             return;
         }

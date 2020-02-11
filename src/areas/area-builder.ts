@@ -1,7 +1,7 @@
 import { Point } from "../geometry/point";
-import { Rectangle } from "./rectangle";
+import { Area } from "./area";
 
 export interface AreaBuilder{
     addPoint(point: Point): void;
-    addRectangle(rectangle: Rectangle): void;
+    addArea(area: Area): void;
 }

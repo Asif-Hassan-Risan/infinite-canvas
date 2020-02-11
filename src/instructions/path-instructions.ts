@@ -5,6 +5,7 @@ import { AreaChange } from "../areas/area-change";
 import { Point } from "../geometry/point";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { AreaBuilder } from "../areas/area-builder";
+import { Area } from "../areas/area";
 
 export class PathInstructions{
 
@@ -14,7 +15,7 @@ export class PathInstructions{
             const {x, y} = transformation.apply(new Point(_x, _y));
             context.arc(x, y, radius * transformation.scale, startAngle + transformationAngle, endAngle + transformationAngle, anticlockwise);
         };
-        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addRectangle(Rectangle.create(_x - radius, _y - radius, 2 * radius, 2 * radius));
+        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addArea(Rectangle.create(_x - radius, _y - radius, 2 * radius, 2 * radius));
         return {
             instruction: instruction,
             changeArea: changeArea
@@ -30,7 +31,7 @@ export class PathInstructions{
             const tp2: Point = transformation.apply(p2);
             context.arcTo(tp1.x, tp1.y, tp2.x, tp2.y, radius * transformation.scale);
         };
-        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addRectangle(newRectangle);
+        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addArea(newRectangle);
         return {
             instruction: instruction,
             changeArea: changeArea
@@ -51,14 +52,14 @@ export class PathInstructions{
     }
 
     public static ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): PathInstruction{
-        const newRectangle: Rectangle = Rectangle.create(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
+        const newRectangle: Area = Rectangle.create(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
         return {
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 const tCenter: Point = transformation.apply(new Point(x, y));
                 const transformationAngle: number = transformation.getRotationAngle();
                 context.ellipse(tCenter.x, tCenter.y, radiusX * transformation.scale, radiusY * transformation.scale, rotation + transformationAngle, startAngle, endAngle, anticlockwise);
             },
-            changeArea: (builder: AreaBuilder) => builder.addRectangle(newRectangle)
+            changeArea: (builder: AreaBuilder) => builder.addArea(newRectangle)
         };
     }
 

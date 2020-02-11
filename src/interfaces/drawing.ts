@@ -1,9 +1,9 @@
 import { PartOfDrawing } from "./part-of-drawing";
 import { InfiniteCanvasState } from "../state/infinite-canvas-state";
-import { Rectangle } from "../areas/rectangle";
 import { Instruction } from "../instructions/instruction";
+import { Area } from "../areas/area";
 
 export interface Drawing extends PartOfDrawing{
-    clearContentsInsideArea(area: Rectangle): void;
-    addClearRect(area: Rectangle, state: InfiniteCanvasState, instructionToClear: Instruction): void;
+    clearContentsInsideArea(area: Area): void;
+    addClearRect(area: Area, state: InfiniteCanvasState, instructionToClear: Instruction): void;
 }

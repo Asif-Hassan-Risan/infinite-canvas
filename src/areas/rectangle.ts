@@ -1,6 +1,5 @@
 import { Point } from "../geometry/point";
 import { Transformation } from "../transformation";
-import { Area } from "./area";
 import { HalfPlane } from "./half-plane";
 import { ConvexPolygon } from "./convex-polygon";
 import { Instruction } from "../instructions/instruction";
@@ -29,13 +28,6 @@ export class Rectangle extends ConvexPolygon{
             ({x,y} = transformation.apply(this.corners[0]));
             context.lineTo(x,y);
         };
-    }
-    public transform(transformation: Transformation): Rectangle{
-        return new Rectangle(
-            this.left.transform(transformation),
-            this.top.transform(transformation),
-            this.right.transform(transformation),
-            this.bottom.transform(transformation));
     }
     public static create(x: number, y: number, width: number, height: number): Rectangle{
         const left: HalfPlane = new HalfPlane(new Point(x, y), new Point(1, 0));

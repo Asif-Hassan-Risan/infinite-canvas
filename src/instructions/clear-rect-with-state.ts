@@ -12,11 +12,11 @@ export class ClearRectWithState extends StateAndInstruction implements StateChan
     public hasDrawingAcrossBorderOf(area: Area): boolean{
         return false;
     }
-    public intersects(area: Rectangle): boolean{
-        return this.area.intersectsRectangle(area);
+    public intersects(area: Area): boolean{
+        return this.area.intersects(area);
     }
     public isContainedBy(area: Rectangle): boolean {
-        return this.area.isContainedByRectangle(area);
+        return area.contains(this.area);
     }
     public static createClearRect(initialState: InfiniteCanvasState, area: Rectangle, instructionToClear: Instruction): ClearRectWithState{
         return new ClearRectWithState(initialState, initialState, instructionToClear, instructionToClear, area);
