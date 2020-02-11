@@ -2,6 +2,7 @@ import { Area } from "./area";
 import { Point } from "../geometry/point";
 import { Rectangle } from "./rectangle";
 import { Transformation } from "../transformation";
+import { intersectLines } from "../geometry/intersect-lines";
 
 export class HalfPlane {
     private readonly lengthOfNormal: number;
@@ -16,12 +17,6 @@ export class HalfPlane {
     }
     public complement(): HalfPlane{
         return new HalfPlane(this.base, this.normalTowardInterior.scale(-1));
-    }
-    public intersectWith(area: Area): Area {
-        throw new Error("Method not implemented.");
-    }
-    public intersectWithRectangle(rectangle: Rectangle): Area {
-        throw new Error("Method not implemented.");
     }
     public expandToIncludePoint(point: Point): HalfPlane{
         if(this.containsPoint(point)){
@@ -38,16 +33,8 @@ export class HalfPlane {
     public isContainedByRectangle(rectangle: Rectangle): boolean {
         return false;
     }
-    public intersectsRectangle(rectangle: Rectangle): boolean {
-        throw new Error("Method not implemented.");
-    }
     public getIntersectionWith(other: HalfPlane): Point{
-        const d1: Point = this.normalTowardInterior.getPerpendicular();
-        const d2: Point = other.normalTowardInterior.getPerpendicular();
-        const q: Point = other.base.minus(this.base);
-        const det: number = d2.cross(d1);
-        const s: number = d2.getPerpendicular().dot(q) / det;
-        return this.base.plus(d1.scale(s));
+        return intersectLines(this.base, this.normalTowardInterior.getPerpendicular(), other.base, other.normalTowardInterior.getPerpendicular());
     }
     public static throughPointsAndContainingPoint(throughPoint1: Point, throughPoint2: Point, containingPoint: Point): HalfPlane{
         const throughPoints: HalfPlane[] = HalfPlane.withBorderPoints(throughPoint1, throughPoint2);

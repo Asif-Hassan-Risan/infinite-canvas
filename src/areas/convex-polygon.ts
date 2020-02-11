@@ -5,6 +5,7 @@ import { Point } from "../geometry/point";
 import { PolygonVertex } from "./polygon-vertex";
 import { plane } from "./plane";
 import { Transformation } from "../transformation";
+import { intersectLines } from "../geometry/intersect-lines";
 
 export class ConvexPolygon implements Area{
     public readonly vertices: PolygonVertex[];
@@ -76,6 +77,16 @@ export class ConvexPolygon implements Area{
         let halfPlanes: HalfPlane[] = this.halfPlanes.filter(hp => hp.containsPoint(point)).concat(this.getTangentPlanesThroughPoint(point));
         halfPlanes = ConvexPolygon.getHalfPlanesNotContainingAnyOther(halfPlanes);
         return new ConvexPolygon(halfPlanes);
+    }
+    public intersectWithLine(point: Point, direction: Point): Point[]{
+        const result: Point[] = [];
+        for(let halfPlane of this.halfPlanes){
+            const intersection: Point = intersectLines(point, direction, halfPlane.base, halfPlane.normalTowardInterior.getPerpendicular());
+            if(this.containsPoint(intersection)){
+                result.push(intersection);
+            }
+        }
+        return result;
     }
     public expandToInclude(area: Area): Area{
         return area.expandToIncludePolygon(this);
