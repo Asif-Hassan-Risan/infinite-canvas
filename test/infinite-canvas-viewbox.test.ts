@@ -49,6 +49,28 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
+	describe("that makes a path with zero area and strokes it", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.moveTo(20, 20);
+			infiniteContext.lineTo(30, 30);
+			infiniteContext.stroke();
+		});
+
+		describe("and then clears an area overlapping but not covering the path", () => {
+
+			beforeEach(() => {
+				contextMock.clear();
+				infiniteContext.clearRect(25, 25, 30, 30);
+			});
+
+			xit("should have added a clearRect", () => {
+				console.log(contextMock.getLog());
+			});
+		});
+	});
+
 	describe("that makes a path, fills it and then fills an overlapping rect", () => {
 
 		beforeEach(() => {
