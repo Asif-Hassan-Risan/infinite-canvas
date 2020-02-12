@@ -74,11 +74,31 @@ describe("a rectangle", () => {
             .with(hp => hp.base(1, 2).normal(1, -1))));
     });
 
-    it("should not contain infinity in any direction", () => {
-        expect(rectangle.containsInfinityInDirection(new Point(0, 1))).toBe(false);
-        expect(rectangle.containsInfinityInDirection(new Point(0, -1))).toBe(false);
-        expect(rectangle.containsInfinityInDirection(new Point(1, 0))).toBe(false);
-        expect(rectangle.containsInfinityInDirection(new Point(-1, 0))).toBe(false);
+    it.each([
+        [new Point(0, 1), false],
+        [new Point(-1, 0), false],
+        [new Point(1, 1), false],
+        [new Point(-1, 1), false],
+        [new Point(1, 0), false],
+        [new Point(1, -1), false],
+        [new Point(-1, -1), false],
+        [new Point(0, -1), false]
+    ])("should contain infinity in the right directions", (direction: Point, expectedToContainInfinityInDirection: boolean) => {
+        expect(rectangle.containsInfinityInDirection(direction)).toBe(expectedToContainInfinityInDirection);
+    });
+
+    it.each([
+        [new Point(0, 1), p(p => p
+            .with(hp => hp.base(0, 0).normal(0, 1))
+            .with(hp => hp.base(0, 0).normal(1, 0))
+            .with(hp => hp.base(1, 0).normal(-1, 0)))],
+        [new Point(1, 1), p(p => p
+            .with(hp => hp.base(0, 0).normal(0, 1))
+            .with(hp => hp.base(0, 0).normal(1, 0))
+            .with(hp => hp.base(1, 0).normal(-1, 1))
+            .with(hp => hp.base(0, 1).normal(1, -1)))]
+    ])("should result in the correct expansions with infinity in a direction", (directionOfInfinity: Point, expectedExpansion: ConvexPolygon) => {
+        expectAreasToBeEqual(rectangle.expandToIncludeInfinityInDirection(directionOfInfinity), expectedExpansion);
     });
 });
 
@@ -98,6 +118,18 @@ describe("a convex polygon with one half plane", () => {
         [hp(b => b.base(0, -3).normal(0, -1)), false],
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
         expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
+    });
+
+    it.each([
+        [new Point(0, 1), p(p => p
+            .with(hp => hp.base(0, -2).normal(0, 1)))],
+        [new Point(1, 0), p(p => p
+            .with(hp => hp.base(0, -2).normal(0, 1)))],
+        [new Point(-1, 0), p(p => p
+            .with(hp => hp.base(0, -2).normal(0, 1)))],
+        [new Point(0, -1), plane],
+    ])("should result in the correct expansions with infinity in a direction", (directionOfInfinity: Point, expectedExpansion: ConvexPolygon) => {
+        expectAreasToBeEqual(convexPolygon.expandToIncludeInfinityInDirection(directionOfInfinity), expectedExpansion);
     });
 
     it.each([
@@ -138,6 +170,32 @@ describe("a convex polygon with three half planes and two vertices", () => {
         const pointRightOfYAxis: PolygonVertex = borderPointsRightOfYAxis[0];
         expect(pointRightOfYAxis.point.x).toBeCloseTo(1);
         expect(pointRightOfYAxis.point.y).toBeCloseTo(-1);
+    });
+
+    it.each([
+        [new Point(2, -1), p(p => p
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(1, -1).normal(-1, -2)))],
+        [new Point(1, -1), p(p => p
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))],
+        [new Point(0, -1), p(p => p
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1))
+            .with(hp => hp.base(2, -2).normal(-1, -1)))],
+        [new Point(1, 0), p(p => p
+            .with(hp => hp.base(0, -1).normal(0, -1))
+            .with(hp => hp.base(-2, -2).normal(1, -1)))],
+        [new Point(2, 1), p(p => p
+            .with(hp => hp.base(-1, -1).normal(1, -2))
+            .with(hp => hp.base(-1, -1).normal(1, -1)))],
+        [new Point(1, 1), p(p => p
+            .with(hp => hp.base(-1, -1).normal(1, -1)))],
+        [new Point(0, 1), plane],
+    ])("should result in the correct expansions with infinity in a direction", (directionOfInfinity: Point, expectedExpansion: ConvexPolygon) => {
+        expectAreasToBeEqual(convexPolygon.expandToIncludeInfinityInDirection(directionOfInfinity), expectedExpansion);
     });
 
     it.each([
@@ -188,7 +246,14 @@ describe("a convex polygon with three half planes and two vertices", () => {
         p(p => p
             .with(hp => hp.base(-2, 0).normal(1, -1))
             .with(hp => hp.base(-2, 0).normal(-1, -3))
-            .with(hp => hp.base(2, -2).normal(-1, -1)))]
+            .with(hp => hp.base(2, -2).normal(-1, -1)))],
+
+        [p(p => p
+            .with(hp => hp.base(-1, -1).normal(0, -1))
+            .with(hp => hp.base(-1, -1).normal(-1, 0))),
+        p(p => p
+            .with(hp => hp.base(2, -2).normal(-1, -1))
+            .with(hp => hp.base(0, -1).normal(0, -1)))]
     ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
         expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
         expectAreasToBeEqual(expandWith.expandToIncludePolygon(convexPolygon), expectedExpansion);
@@ -400,6 +465,21 @@ describe("a convex polygon with three half planes and three vertices", () => {
             .with(hp => hp.base(0, 0).normal(0, 1))
             .with(hp => hp.base(-1, 0).normal(1, -1))
             .with(hp => hp.base(1, 0).normal(-1, -1)))
+    });
+
+    it.each([
+        [p(p => p
+            .with(hp => hp.base(0, 0).normal(0, -1))
+            .with(hp => hp.base(-1, 0).normal(1, 1))
+            .with(hp => hp.base(1, 0).normal(-1, 1))),
+        p(p => p
+            .with(hp => hp.base(-1, 0).normal(1, -1))
+            .with(hp => hp.base(1, 0).normal(-1, -1))
+            .with(hp => hp.base(-1, 0).normal(1, 1))
+            .with(hp => hp.base(1, 0).normal(-1, 1)))]
+    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
+        expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
+        expectAreasToBeEqual(expandWith.expandToIncludePolygon(convexPolygon), expectedExpansion);
     });
 
     it.each([

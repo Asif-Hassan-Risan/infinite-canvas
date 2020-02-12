@@ -77,6 +77,17 @@ export class ConvexPolygon implements Area{
         halfPlanes = ConvexPolygon.getHalfPlanesNotContainingAnyOther(halfPlanes);
         return new ConvexPolygon(halfPlanes);
     }
+    public expandToIncludeInfinityInDirection(direction: Point): Area{
+        if(this.containsInfinityInDirection(direction)){
+            return this;
+        }
+        let halfPlanes: HalfPlane[] = this.halfPlanes.filter(hp => hp.containsInfinityInDirection(direction)).concat(this.getTangentPlanesThroughInfinityInDirection(direction));
+        halfPlanes = ConvexPolygon.getHalfPlanesNotContainingAnyOther(halfPlanes);
+        if(halfPlanes.length === 0){
+            return plane;
+        }
+        return new ConvexPolygon(halfPlanes);
+    }
     public intersectWithLine(point: Point, direction: Point): Point[]{
         const result: Point[] = [];
         for(let halfPlane of this.halfPlanes){
@@ -115,7 +126,7 @@ export class ConvexPolygon implements Area{
     }
     public containsInfinityInDirection(direction: Point): boolean{
         for(let halfPlane of this.halfPlanes){
-            if(halfPlane.normalTowardInterior.dot(direction) < 0){
+            if(!halfPlane.containsInfinityInDirection(direction)){
                 return false;
             }
         }
@@ -160,7 +171,19 @@ export class ConvexPolygon implements Area{
         }
         return true;
     }
-    public getTangentPlanesThroughPoint(point: Point): HalfPlane[]{
+    private getTangentPlanesThroughInfinityInDirection(direction: Point): HalfPlane[]{
+        const result: HalfPlane[] = [];
+        for(let vertex of this.vertices){
+            const throughVertex: HalfPlane[] = HalfPlane.withBorderPointAndInfinityInDirection(vertex.point, direction);
+            for(let planeThroughVertex of throughVertex){
+                if(this.isContainedByHalfPlane(planeThroughVertex)){
+                    result.push(planeThroughVertex);
+                }
+            }
+        }
+        return result;
+    }
+    private getTangentPlanesThroughPoint(point: Point): HalfPlane[]{
         const result: HalfPlane[] = [];
         if(this.containsPoint(point)){
             for(let halfPlane of this.halfPlanes){

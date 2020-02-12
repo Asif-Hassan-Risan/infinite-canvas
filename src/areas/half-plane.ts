@@ -28,6 +28,9 @@ export class HalfPlane {
     public containsPoint(point: Point): boolean {
         return this.getDistanceFromEdge(point) >= 0;
     }
+    public containsInfinityInDirection(direction: Point): boolean{
+        return direction.dot(this.normalTowardInterior) >= 0;
+    }
     public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
         return this.normalTowardInterior.inSameDirectionAs(halfPlane.normalTowardInterior) && halfPlane.getDistanceFromEdge(this.base) >= 0;
     }
@@ -41,6 +44,9 @@ export class HalfPlane {
                 return halfPlaneThroughPoints;
             }
         }
+    }
+    public static withBorderPointAndInfinityInDirection(borderPoint: Point, direction: Point): HalfPlane[]{
+        return HalfPlane.withBorderPoints(borderPoint, borderPoint.plus(direction));
     }
     public static withBorderPoints(point1: Point, point2: Point): HalfPlane[]{
         const perpendicular: Point = point2.minus(point1).getPerpendicular();
