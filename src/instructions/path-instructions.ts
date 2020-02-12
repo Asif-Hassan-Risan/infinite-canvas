@@ -74,6 +74,16 @@ export class PathInstructions{
         };
     }
 
+    public static drawRect(x: number, y: number, w: number, h: number): PathInstruction[]{
+        return [
+            PathInstructions.moveTo(x, y),
+            PathInstructions.lineTo(x + w, y),
+            PathInstructions.lineTo(x + w, y + h),
+            PathInstructions.lineTo(x, y + h),
+            PathInstructions.lineTo(x, y)
+        ];
+    }
+
     public static moveTo(_x: number, _y: number): PathInstruction{
         const point: Point = new Point(_x, _y);
         return {

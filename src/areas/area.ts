@@ -1,4 +1,3 @@
-import { Rectangle } from "./rectangle";
 import { Point } from "../geometry/point";
 import { ConvexPolygon } from "./convex-polygon";
 import { Transformation } from "../transformation";

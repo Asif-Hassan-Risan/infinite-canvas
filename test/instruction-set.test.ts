@@ -64,15 +64,9 @@ describe("an instruction set", () => {
 
         beforeEach(() => {
             instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#f00"));
-            instructionSet.drawRect((context: CanvasRenderingContext2D, transformation: Transformation) => {
-                context.moveTo(0, 0);
-                context.lineTo(1, 0);
-                context.lineTo(1, 1);
-                context.lineTo(0, 1);
-                context.lineTo(0, 0);
-            }, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            instructionSet.drawPath((context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.fill();
-            }, Rectangle.create(0, 0, 1, 1));
+            }, PathInstructions.drawRect(0, 0, 1, 1));
         });
 
         it("should have called onchange", () => {
@@ -123,15 +117,9 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#00f"));
-                instructionSet.drawRect((context: CanvasRenderingContext2D, transformation: Transformation) => {
-                    context.moveTo(2, 0);
-                    context.lineTo(3, 0);
-                    context.lineTo(3, 1);
-                    context.lineTo(2, 1);
-                    context.lineTo(2, 0);
-                }, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                instructionSet.drawPath((context: CanvasRenderingContext2D, transformation: Transformation) => {
                     context.fill();
-                }, Rectangle.create(2, 0, 1, 1));
+                }, PathInstructions.drawRect(2, 0, 1, 1));
             });
 
             it("should have recorded everything in the right order", () => {

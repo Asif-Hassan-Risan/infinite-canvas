@@ -1,6 +1,6 @@
 import { ViewBox } from "../interfaces/viewbox";
 import { Instruction } from "../instructions/instruction";
-import { Rectangle } from "../areas/rectangle";
+import { PathInstructions } from "../instructions/path-instructions";
 
 export class InfiniteCanvasRect implements CanvasRect{
     constructor(private viewBox: ViewBox){}
@@ -9,10 +9,10 @@ export class InfiniteCanvasRect implements CanvasRect{
     }
     public fillRect(x: number, y: number, w: number, h: number): void{
         let instruction: Instruction = (context: CanvasRenderingContext2D) => context.fill();
-        this.viewBox.drawRect(instruction, Rectangle.create(x, y, w, h))
+        this.viewBox.drawPath(instruction, PathInstructions.drawRect(x, y, w, h));
     }
     public strokeRect(x: number, y: number, w: number, h: number): void{
         let instruction: Instruction = (context: CanvasRenderingContext2D) => context.stroke();
-        this.viewBox.drawRect(instruction, Rectangle.create(x, y, w, h));
+        this.viewBox.drawPath(instruction, PathInstructions.drawRect(x, y, w, h));
     }
 }

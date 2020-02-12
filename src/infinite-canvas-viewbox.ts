@@ -13,8 +13,7 @@ import { TransformationKind } from "./transformation-kind";
 import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set";
 import { Rectangle } from "./areas/rectangle";
 import { transformInstructionRelatively } from "./instruction-utils";
-import { RectangularPolygon } from "./areas/rectangular-polygon";
-import { ViewBoxInfinity } from "./viewbox-infinity";
+import { Area } from "./areas/area";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -61,21 +60,14 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		const bitmap: ImageBitmap = await createImageBitmap(imageData);
 		return this.context.createPattern(bitmap, 'no-repeat');
 	}
-	public addDrawing(instruction: Instruction, area: RectangularPolygon, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
+	public addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
 		this.instructionSet.addDrawing(instruction, area, transformationKind, takeClippingRegionIntoAccount);
 	}
 	public addPathInstruction(pathInstruction: PathInstruction): void{
 		this.instructionSet.addPathInstruction(pathInstruction);
 	}
-	public drawPath(instruction: Instruction): void{
-		this.instructionSet.drawPath(instruction);
-	}
-	public drawRect(instruction: Instruction, rectangle: RectangularPolygon): void{
-		const instructionToDrawRectangularPath: Instruction = this.getInstructionToDrawRectangularPath(rectangle);
-		this.instructionSet.drawRect(instructionToDrawRectangularPath, instruction, rectangle);
-	}
-	public getInstructionToDrawRectangularPath(rectangle: RectangularPolygon): Instruction{
-        return rectangle.getInstructionToDrawPath(new ViewBoxInfinity(this.width, this.height, this.state.current.transformation));
+	public drawPath(instruction: Instruction, pathInstructions?: PathInstruction[]): void{
+		this.instructionSet.drawPath(instruction, pathInstructions);
 	}
 	private getInstructionToClearRectangle(x: number, y: number, width: number, height: number): Instruction{
 		return transformInstructionRelatively((context: CanvasRenderingContext2D) => {

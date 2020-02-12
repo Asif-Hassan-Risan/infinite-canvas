@@ -1,6 +1,4 @@
-import { Area } from "./area";
 import { Point } from "../geometry/point";
-import { Rectangle } from "./rectangle";
 import { Transformation } from "../transformation";
 import { intersectLines } from "../geometry/intersect-lines";
 
@@ -32,9 +30,6 @@ export class HalfPlane {
     }
     public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
         return this.normalTowardInterior.inSameDirectionAs(halfPlane.normalTowardInterior) && halfPlane.getDistanceFromEdge(this.base) >= 0;
-    }
-    public isContainedByRectangle(rectangle: Rectangle): boolean {
-        return false;
     }
     public getIntersectionWith(other: HalfPlane): Point{
         return intersectLines(this.base, this.normalTowardInterior.getPerpendicular(), other.base, other.normalTowardInterior.getPerpendicular());

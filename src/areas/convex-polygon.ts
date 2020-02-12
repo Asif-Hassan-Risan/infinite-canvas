@@ -1,6 +1,5 @@
 import { Area } from "./area";
 import { HalfPlane } from "./half-plane";
-import { Rectangle } from "./rectangle";
 import { Point } from "../geometry/point";
 import { PolygonVertex } from "./polygon-vertex";
 import { plane } from "./plane";

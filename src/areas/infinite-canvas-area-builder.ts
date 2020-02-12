@@ -1,6 +1,5 @@
 import { Area } from "./area";
 import { Point } from "../geometry/point";
-import { Rectangle } from "./rectangle";
 import { Transformation } from "../transformation";
 import { AreaBuilder } from "./area-builder";
 import { TransformedAreaBuilder } from "./transformed-area-builder";
