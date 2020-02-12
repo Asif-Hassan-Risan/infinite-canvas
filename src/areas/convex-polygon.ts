@@ -91,7 +91,11 @@ export class ConvexPolygon implements Area{
     public intersectWithLine(point: Point, direction: Point): Point[]{
         const result: Point[] = [];
         for(let halfPlane of this.halfPlanes){
-            const intersection: Point = intersectLines(point, direction, halfPlane.base, halfPlane.normalTowardInterior.getPerpendicular());
+            const alongBorder: Point = halfPlane.normalTowardInterior.getPerpendicular();
+            if(alongBorder.cross(direction) === 0){
+                continue;
+            }
+            const intersection: Point = intersectLines(point, direction, halfPlane.base, alongBorder);
             if(this.containsPoint(intersection)){
                 result.push(intersection);
             }
