@@ -113,7 +113,15 @@ export class ConvexPolygon implements Area{
         const halfPlanes: HalfPlane[] = ConvexPolygon.getHalfPlanes(allVertices);
         return new ConvexPolygon(halfPlanes);
     }
-    public containsPoint(point: Point): boolean {
+    public containsInfinityInDirection(direction: Point): boolean{
+        for(let halfPlane of this.halfPlanes){
+            if(halfPlane.normalTowardInterior.dot(direction) < 0){
+                return false;
+            }
+        }
+        return true;
+    }
+    private containsPoint(point: Point): boolean {
         for(let halfPlane of this.halfPlanes){
             if(!halfPlane.containsPoint(point)){
                 return false;

@@ -73,6 +73,13 @@ describe("a rectangle", () => {
             .with(hp => hp.base(1, 2).normal(-1, 0))
             .with(hp => hp.base(1, 2).normal(1, -1))));
     });
+
+    it("should not contain infinity in any direction", () => {
+        expect(rectangle.containsInfinityInDirection(new Point(0, 1))).toBe(false);
+        expect(rectangle.containsInfinityInDirection(new Point(0, -1))).toBe(false);
+        expect(rectangle.containsInfinityInDirection(new Point(1, 0))).toBe(false);
+        expect(rectangle.containsInfinityInDirection(new Point(-1, 0))).toBe(false);
+    });
 });
 
 describe("a convex polygon with one half plane", () => {
@@ -91,6 +98,19 @@ describe("a convex polygon with one half plane", () => {
         [hp(b => b.base(0, -3).normal(0, -1)), false],
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
         expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
+    });
+
+    it.each([
+        [new Point(0, 1), true],
+        [new Point(-1, 0), true],
+        [new Point(1, 1), true],
+        [new Point(-1, 1), true],
+        [new Point(1, 0), true],
+        [new Point(1, -1), false],
+        [new Point(-1, -1), false],
+        [new Point(0, -1), false]
+    ])("should contain infinity in the right directions", (direction: Point, expectedToContainInfinityInDirection: boolean) => {
+        expect(convexPolygon.containsInfinityInDirection(direction)).toBe(expectedToContainInfinityInDirection);
     });
 });
 
@@ -118,6 +138,19 @@ describe("a convex polygon with three half planes and two vertices", () => {
         const pointRightOfYAxis: PolygonVertex = borderPointsRightOfYAxis[0];
         expect(pointRightOfYAxis.point.x).toBeCloseTo(1);
         expect(pointRightOfYAxis.point.y).toBeCloseTo(-1);
+    });
+
+    it.each([
+        [new Point(0, 1), false],
+        [new Point(-1, 0), false],
+        [new Point(1, 1), false],
+        [new Point(-1, 1), false],
+        [new Point(1, 0), false],
+        [new Point(1, -1), true],
+        [new Point(-1, -1), true],
+        [new Point(0, -1), true]
+    ])("should contain infinity in the right directions", (direction: Point, expectedToContainInfinityInDirection: boolean) => {
+        expect(convexPolygon.containsInfinityInDirection(direction)).toBe(expectedToContainInfinityInDirection);
     });
 
     it("should have the correct half planes", () => {
@@ -443,6 +476,19 @@ describe("a convex polygon with two half planes and no vertices", () => {
     });
 
     it.each([
+        [new Point(0, 1), false],
+        [new Point(-1, 0), true],
+        [new Point(1, 1), false],
+        [new Point(-1, 1), false],
+        [new Point(1, 0), true],
+        [new Point(1, -1), false],
+        [new Point(-1, -1), false],
+        [new Point(0, -1), false]
+    ])("should contain infinity in the right directions", (direction: Point, expectedToContainInfinityInDirection: boolean) => {
+        expect(convexPolygon.containsInfinityInDirection(direction)).toBe(expectedToContainInfinityInDirection);
+    });
+
+    it.each([
         [hp(hp => hp.base(0, 2).normal(0, -1)), true],
         [hp(hp => hp.base(0, 2).normal(0, 1)), false],
         [hp(hp => hp.base(0, -2).normal(0, 1)), true],
@@ -468,6 +514,30 @@ describe("a convex polygon with two half planes and no vertices", () => {
         }else{
             expectPolygonsToBeEqual(intersection, expectedIntersection);
         }
+    });
+});
+
+describe("a convex polygon with two parallel half planes and two vertices", () => {
+    let convexPolygon: ConvexPolygon;
+
+    beforeEach(() => {
+        convexPolygon = p(p => p
+            .with(hp => hp.base(0, -1).normal(0, 1))
+            .with(hp => hp.base(0, 1).normal(0, -1))
+            .with(hp => hp.base(-1, 0).normal(1, 0)));
+    });
+
+    it.each([
+        [new Point(0, 1), false],
+        [new Point(-1, 0), false],
+        [new Point(1, 1), false],
+        [new Point(-1, 1), false],
+        [new Point(1, 0), true],
+        [new Point(1, -1), false],
+        [new Point(-1, -1), false],
+        [new Point(0, -1), false]
+    ])("should contain infinity in the right directions", (direction: Point, expectedToContainInfinityInDirection: boolean) => {
+        expect(convexPolygon.containsInfinityInDirection(direction)).toBe(expectedToContainInfinityInDirection);
     });
 });
 
