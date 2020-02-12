@@ -10,9 +10,6 @@ class Empty implements Area{
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area {
         return this;
     }
-    public containsPoint(point: Point): boolean {
-        return false;
-    }
     public intersects(area: Area): boolean{
         return false;
     }

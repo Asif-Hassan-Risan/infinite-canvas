@@ -28,9 +28,6 @@ class Plane implements Area{
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area {
         return convexPolygon;
     }
-    public containsPoint(point: Point): boolean {
-        return true;
-    }
     public isContainedByConvexPolygon(other: ConvexPolygon): boolean{
         return false;
     }

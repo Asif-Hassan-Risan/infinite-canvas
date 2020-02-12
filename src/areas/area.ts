@@ -5,7 +5,6 @@ import { Transformation } from "../transformation";
 export interface Area{
     intersectWith(area: Area): Area;
     intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area;
-    containsPoint(point: Point): boolean;
     isContainedByConvexPolygon(other: ConvexPolygon): boolean;
     contains(other: Area): boolean;
     intersectsConvexPolygon(other: ConvexPolygon): boolean;
