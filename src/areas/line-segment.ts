@@ -2,9 +2,10 @@ import { Ray } from "./ray";
 import { Area } from "./area";
 import { ConvexPolygon } from "./convex-polygon";
 import { Point } from "../geometry/point";
+import { Transformation } from "../transformation";
 
 export class LineSegment implements Area{
-    constructor(private ray1: Ray, private ray2?: Ray){}
+    private constructor(private rays: Ray[]){}
     public intersectWith(area: Area): Area {
         throw new Error("Method not implemented.");
     }
@@ -32,7 +33,13 @@ export class LineSegment implements Area{
     public expandToInclude(other: Area): Area {
         throw new Error("Method not implemented.");
     }
-    public transform(transformation: import("../transformation").Transformation): Area {
+    public transform(transformation: Transformation): Area {
         throw new Error("Method not implemented.");
+    }
+    public static createWithStartAndEnd(start: Point, end: Point): LineSegment{
+        return new LineSegment([new Ray(start, end.minus(start)), new Ray(end, start.minus(end))]);
+    }
+    public static createWithStart(start: Point, direction: Point): LineSegment{
+        return new LineSegment([new Ray(start, direction)]);
     }
 }

@@ -88,19 +88,30 @@ export class ConvexPolygon implements Area{
         }
         return new ConvexPolygon(halfPlanes);
     }
-    public intersectWithLine(point: Point, direction: Point): Point[]{
+    private getAllHalfPlaneIntersectionsWithLine(point: Point, direction: Point): Point[]{
         const result: Point[] = [];
         for(let halfPlane of this.halfPlanes){
-            const alongBorder: Point = halfPlane.normalTowardInterior.getPerpendicular();
-            if(alongBorder.cross(direction) === 0){
+            if(halfPlane.isParallelToLine(point, direction)){
                 continue;
             }
-            const intersection: Point = intersectLines(point, direction, halfPlane.base, alongBorder);
-            if(this.containsPoint(intersection)){
-                result.push(intersection);
-            }
+            result.push(halfPlane.intersectWithLine(point, direction));
         }
         return result;
+    }
+    public intersectsLine(point: Point, direction: Point): boolean{
+        for(let halfPlane of this.halfPlanes){
+            if(halfPlane.isParallelToLine(point, direction) && !halfPlane.containsPoint(point)){
+                return false;
+            }
+        }
+        const intersections: Point[] = this.getAllHalfPlaneIntersectionsWithLine(point, direction);
+        if(intersections.length === 0){
+            return true;
+        }
+        return !!intersections.find(p => this.containsPoint(p));
+    }
+    public intersectWithLine(point: Point, direction: Point): Point[]{
+        return this.getAllHalfPlaneIntersectionsWithLine(point, direction).filter(p => this.containsPoint(p));
     }
     public expandToInclude(area: Area): Area{
         return area.expandToIncludePolygon(this);

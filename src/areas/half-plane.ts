@@ -34,8 +34,14 @@ export class HalfPlane {
     public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
         return this.normalTowardInterior.inSameDirectionAs(halfPlane.normalTowardInterior) && halfPlane.getDistanceFromEdge(this.base) >= 0;
     }
+    public intersectWithLine(point: Point, direction: Point): Point{
+        return intersectLines(this.base, this.normalTowardInterior.getPerpendicular(), point, direction);
+    }
+    public isParallelToLine(point: Point, direction: Point): boolean{
+        return this.normalTowardInterior.getPerpendicular().cross(direction) === 0;
+    }
     public getIntersectionWith(other: HalfPlane): Point{
-        return intersectLines(this.base, this.normalTowardInterior.getPerpendicular(), other.base, other.normalTowardInterior.getPerpendicular());
+        return this.intersectWithLine(other.base, other.normalTowardInterior.getPerpendicular());
     }
     public static throughPointsAndContainingPoint(throughPoint1: Point, throughPoint2: Point, containingPoint: Point): HalfPlane{
         const throughPoints: HalfPlane[] = HalfPlane.withBorderPoints(throughPoint1, throughPoint2);

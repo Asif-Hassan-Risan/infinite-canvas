@@ -75,6 +75,18 @@ describe("a rectangle", () => {
     });
 
     it.each([
+        [new Point(0, 0), new Point(1, 0), true],
+        [new Point(0, 0.5), new Point(1, 0), true],
+        [new Point(0, -1), new Point(1, 0), false],
+        [new Point(0, 0), new Point(1, 1), true],
+        [new Point(0, 1), new Point(1, 1), true],
+        [new Point(-1, -1), new Point(1, 1), true],
+        [new Point(0, 2), new Point(1, 1), false]
+    ])("should intersect the right lines", (point: Point, direction: Point, expectedToIntersect: boolean) => {
+        expect(rectangle.intersectsLine(point, direction)).toBe(expectedToIntersect);
+    });
+
+    it.each([
         [new Point(0, 1), false],
         [new Point(-1, 0), false],
         [new Point(1, 1), false],
@@ -118,6 +130,16 @@ describe("a convex polygon with one half plane", () => {
         [hp(b => b.base(0, -3).normal(0, -1)), false],
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
         expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
+    });
+
+    it.each([
+        [new Point(0, 0), new Point(1, 0), true],
+        [new Point(0, -2), new Point(1, 0), true],
+        [new Point(0, -3), new Point(1, 0), false],
+        [new Point(0, -3), new Point(1, 1), true],
+        [new Point(0, -3), new Point(1, -1), true],
+    ])("should intersect the right lines", (point: Point, direction: Point, expectedToIntersect: boolean) => {
+        expect(convexPolygon.intersectsLine(point, direction)).toBe(expectedToIntersect);
     });
 
     it.each([
@@ -556,6 +578,18 @@ describe("a convex polygon with two half planes and no vertices", () => {
     });
 
     it.each([
+        [new Point(0, 0), new Point(1, 0), true],
+        [new Point(0, -1), new Point(1, 0), true],
+        [new Point(0, 1), new Point(1, 0), true],
+        [new Point(0, -2), new Point(1, 0), false],
+        [new Point(0, 2), new Point(1, 0), false],
+        [new Point(0, 2), new Point(1, 1), true],
+        [new Point(0, 2), new Point(1, -1), true],
+    ])("should intersect the right lines", (point: Point, direction: Point, expectedToIntersect: boolean) => {
+        expect(convexPolygon.intersectsLine(point, direction)).toBe(expectedToIntersect);
+    });
+
+    it.each([
         [new Point(0, 1), false],
         [new Point(-1, 0), true],
         [new Point(1, 1), false],
@@ -605,6 +639,18 @@ describe("a convex polygon with two parallel half planes and two vertices", () =
             .with(hp => hp.base(0, -1).normal(0, 1))
             .with(hp => hp.base(0, 1).normal(0, -1))
             .with(hp => hp.base(-1, 0).normal(1, 0)));
+    });
+
+    it.each([
+        [new Point(0, 0), new Point(1, 0), true],
+        [new Point(0, -1), new Point(1, 0), true],
+        [new Point(0, 1), new Point(1, 0), true],
+        [new Point(0, -2), new Point(1, 0), false],
+        [new Point(-2, 0), new Point(1, 1), true],
+        [new Point(-1, 0), new Point(1, 1), true],
+        [new Point(-3, 0), new Point(1, 1), false],
+    ])("should intersect the right lines", (point: Point, direction: Point, expectedToIntersect: boolean) => {
+        expect(convexPolygon.intersectsLine(point, direction)).toBe(expectedToIntersect);
     });
 
     it.each([
