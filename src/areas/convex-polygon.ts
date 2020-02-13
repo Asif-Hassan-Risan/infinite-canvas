@@ -147,7 +147,7 @@ export class ConvexPolygon implements Area{
         }
         return true;
     }
-    private containsPoint(point: Point): boolean {
+    public containsPoint(point: Point): boolean {
         for(let halfPlane of this.halfPlanes){
             if(!halfPlane.containsPoint(point)){
                 return false;
