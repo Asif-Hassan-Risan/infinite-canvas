@@ -4,7 +4,6 @@ import { Transformation } from "../transformation";
 import { AreaBuilder } from "./area-builder";
 import { TransformedAreaBuilder } from "./transformed-area-builder";
 import { ConvexPolygon } from "./convex-polygon";
-import { HalfPlane } from "./half-plane";
 import { empty } from "./empty";
 
 export class InfiniteCanvasAreaBuilder {
@@ -17,7 +16,7 @@ export class InfiniteCanvasAreaBuilder {
             }else if(!this.secondPoint){
                 this.secondPoint = point;
             }else{
-                this._area = InfiniteCanvasAreaBuilder.createTriangle(this.firstPoint, this.secondPoint, point);
+                this._area = ConvexPolygon.createTriangle(this.firstPoint, this.secondPoint, point);
             }
         }else{
             this._area = this._area.expandToIncludePoint(point);
@@ -35,12 +34,5 @@ export class InfiniteCanvasAreaBuilder {
     }
     public copy(): InfiniteCanvasAreaBuilder{
         return new InfiniteCanvasAreaBuilder(this._area, this.firstPoint, this.secondPoint);
-    }
-    private static createTriangle(point1: Point, point2: Point, point3: Point): ConvexPolygon{
-        return new ConvexPolygon([
-            HalfPlane.throughPointsAndContainingPoint(point1, point2, point3),
-            HalfPlane.throughPointsAndContainingPoint(point1, point3, point2),
-            HalfPlane.throughPointsAndContainingPoint(point2, point3, point1),
-        ])
     }
 }

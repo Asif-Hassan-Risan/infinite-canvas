@@ -6,12 +6,42 @@ import { empty } from "./empty";
 import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
 
 export class LineSegment implements Area{
-    private direction: Point;
+    public direction: Point;
     constructor(public point1: Point, public point2: Point){
         this.direction = point2.minus(point1);
     }
     public intersectWith(area: Area): Area {
-        throw new Error("Method not implemented.");
+        return area.intersectWithLineSegment(this);
+    }
+    public intersectWithLineSegment(other: LineSegment): Area{
+        if(this.isContainedByLineSegment(other)){
+            return this;
+        }
+        if(other.isContainedByLineSegment(this)){
+            return other;
+        }
+        if(!this.lineSegmentIsOnSameLine(other)){
+            return empty;
+        }
+        let otherPoint1: Point = other.point1;
+        let otherPoint2: Point = other.point2;
+        if(this.comesBefore(otherPoint2, otherPoint1)){
+            ({otherPoint1, otherPoint2} = {otherPoint2, otherPoint1});
+        }
+        if(this.comesBefore(this.point2, otherPoint1) || this.comesBefore(otherPoint2, this.point1)){
+            return empty;
+        }
+        if(this.comesBefore(this.point1, otherPoint1)){
+            // if(this.comesBefore(otherP)){
+
+            // }
+        }
+    }
+    private comesBefore(point1: Point, point2: Point): boolean{
+        return point2.minus(point1).dot(this.direction) >= 0;
+    }
+    public isContainedByLineSegment(other: LineSegment): boolean{
+        return other.containsPoint(this.point1) && other.containsPoint(this.point2);
     }
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area {
         if(!this.intersectsConvexPolygon(convexPolygon)){
@@ -46,24 +76,43 @@ export class LineSegment implements Area{
     private pointIsBetweenPoints(point: Point, one: Point, other: Point): boolean{
         return point.minus(one).dot(this.direction) * point.minus(other).dot(this.direction) <= 0;
     }
+    private pointIsOnSameLine(point: Point): boolean{
+        return point.minus(this.point1).cross(this.direction) === 0;
+    }
+    private lineSegmentIsOnSameLine(other: LineSegment): boolean{
+        return this.direction.cross(other.direction) === 0 && this.pointIsOnSameLine(other.point1)
+    }
+    public containsPoint(point: Point): boolean{
+        return this.pointIsOnSameLine(point) && this.pointIsBetweenPoints(point, this.point1, this.point2)
+    }
+    public intersectsLineSegment(other: LineSegment): boolean{
+        if(this.isContainedByLineSegment(other) || other.isContainedByLineSegment(this)){
+            return true;
+        }
+        if(!this.lineSegmentIsOnSameLine(other)){
+            return false;
+        }
+    }
     public intersectsConvexPolygon(other: ConvexPolygon): boolean {
         if(this.isContainedByConvexPolygon(other)){
             return true;
         }
         const intersections: HalfPlaneLineIntersection[] = other.intersectWithLine(this.point1, this.point2.minus(this.point1));
         for(let intersection of intersections){
-            if(this.pointIsBetweenPoints(intersection.point, this.point1, this.point2)){
+            if(this.containsPoint(intersection.point)){
                 return true;
             }
         }
         return false;
-        //return other.containsPoint(this.point1) || other.containsPoint(this.point2);
     }
     public intersects(other: Area): boolean {
         throw new Error("Method not implemented.");
     }
     public expandToIncludePoint(point: Point): Area {
-        throw new Error("Method not implemented.");
+        if(this.containsPoint(point)){
+            return this;
+        }
+        return ConvexPolygon.createTriangle(this.point1, point, this.point2);
     }
     public expandToIncludePolygon(polygon: ConvexPolygon): Area {
         return this.expandToInclude(polygon);

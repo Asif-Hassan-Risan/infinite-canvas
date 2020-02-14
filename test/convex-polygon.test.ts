@@ -177,6 +177,30 @@ describe("a convex polygon with one half plane", () => {
     });
 
     it.each([
+        [ls(ls => ls.from(0, -3).to(0, 3)), ls(ls => ls.from(0, -2).to(0, 3))],
+        [ls(ls => ls.from(0, -3).to(0, -6)), empty],
+        [ls(ls => ls.from(0, -3).to(1, -6)), empty],
+        [ls(ls => ls.from(0, -3).to(1, -3)), empty],
+        [ls(ls => ls.from(0, -2).to(1, -2)), ls(ls => ls.from(0, -2).to(1, -2))],
+        [ls(ls => ls.from(0, 1).to(1, 1)), ls(ls => ls.from(0, 1).to(1, 1))],
+        [ls(ls => ls.from(0, 1).to(1, 2)), ls(ls => ls.from(0, 1).to(1, 2))],
+    ])("should lead to the correct intersections with line segments", (lineSegment: LineSegment, expectedIntersection: Area) => {
+        expectAreasToBeEqual(lineSegment.intersectWithConvexPolygon(convexPolygon), expectedIntersection);
+    });
+
+    it.each([
+        [ls(ls => ls.from(0, -3).to(0, 3)), true],
+        [ls(ls => ls.from(0, -3).to(0, -6)), false],
+        [ls(ls => ls.from(0, -3).to(1, -6)), false],
+        [ls(ls => ls.from(0, -3).to(1, -3)), false],
+        [ls(ls => ls.from(0, -2).to(1, -2)), true],
+        [ls(ls => ls.from(0, 1).to(1, 1)), true],
+        [ls(ls => ls.from(0, 1).to(1, 2)), true],
+    ])("should intersect the right line segments", (lineSegment: LineSegment, expectedToIntersect: boolean) => {
+        expect(lineSegment.intersectsConvexPolygon(convexPolygon)).toBe(expectedToIntersect);
+    });
+
+    it.each([
         [new Point(0, 1), p(p => p
             .with(hp => hp.base(0, -2).normal(0, 1)))],
         [new Point(1, 0), p(p => p

@@ -2,6 +2,7 @@ import { Area } from "./area";
 import { ConvexPolygon } from "./convex-polygon";
 import { Point } from "../geometry/point";
 import { Transformation } from "../transformation";
+import { LineSegment } from "./line-segment";
 
 class Empty implements Area{
     public intersectWith(area: Area): Area {
@@ -12,6 +13,9 @@ class Empty implements Area{
     }
     public intersects(area: Area): boolean{
         return false;
+    }
+    public intersectWithLineSegment(other: LineSegment): Area{
+        return this;
     }
     public expandToInclude(area: Area): Area{
         return area;

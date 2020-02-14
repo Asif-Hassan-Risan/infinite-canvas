@@ -2,6 +2,7 @@ import { Area } from "./area";
 import { ConvexPolygon } from "./convex-polygon";
 import { Point } from "../geometry/point";
 import { Transformation } from "../transformation";
+import { LineSegment } from "./line-segment";
 
 class Plane implements Area{
     public expandToIncludePoint(point: Point): Area {
@@ -18,6 +19,9 @@ class Plane implements Area{
     }
     public transform(transformation: Transformation): Area{
         return this;
+    }
+    public intersectWithLineSegment(other: LineSegment): Area{
+        return other;
     }
     public contains(other: Area): boolean{
         return true;

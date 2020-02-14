@@ -4,8 +4,8 @@ import { Point } from "../geometry/point";
 import { PolygonVertex } from "./polygon-vertex";
 import { plane } from "./plane";
 import { Transformation } from "../transformation";
-import { intersectLines } from "../geometry/intersect-lines";
 import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
+import { LineSegment } from "./line-segment";
 
 export class ConvexPolygon implements Area{
     public readonly vertices: PolygonVertex[];
@@ -27,6 +27,9 @@ export class ConvexPolygon implements Area{
     }
     public intersectWith(area: Area): Area {
         return area.intersectWithConvexPolygon(this);
+    }
+    public intersectWithLineSegment(other: LineSegment): Area{
+        return other.intersectWithConvexPolygon(this);
     }
     public contains(other: Area): boolean{
         return other.isContainedByConvexPolygon(this);
@@ -342,5 +345,12 @@ export class ConvexPolygon implements Area{
             }
         }
         return result;
+    }
+    public static createTriangle(point1: Point, point2: Point, point3: Point): ConvexPolygon{
+        return new ConvexPolygon([
+            HalfPlane.throughPointsAndContainingPoint(point1, point2, point3),
+            HalfPlane.throughPointsAndContainingPoint(point1, point3, point2),
+            HalfPlane.throughPointsAndContainingPoint(point2, point3, point1),
+        ])
     }
 }
