@@ -5,6 +5,7 @@ import { PolygonVertex } from "./polygon-vertex";
 import { plane } from "./plane";
 import { Transformation } from "../transformation";
 import { intersectLines } from "../geometry/intersect-lines";
+import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
 
 export class ConvexPolygon implements Area{
     public readonly vertices: PolygonVertex[];
@@ -54,13 +55,13 @@ export class ConvexPolygon implements Area{
             if(this.hasAtMostOneVertex(_halfPlane) && (_halfPlane.isContainedByHalfPlane(complement) || complement.isContainedByHalfPlane(_halfPlane))){
                 return false;
             }
-            const intersection: Point = _halfPlane.getIntersectionWith(halfPlane);
-            const vertexAtIntersection: PolygonVertex = this.findVertex(intersection);
+            const intersection: PolygonVertex = _halfPlane.getIntersectionWith(halfPlane);
+            const vertexAtIntersection: PolygonVertex = this.findVertex(intersection.point);
             if(vertexAtIntersection){
                 if(!vertexAtIntersection.isContainedByHalfPlaneWithNormal(halfPlane.normalTowardInterior)){
                     return false;
                 }
-            }else if(this.containsPoint(intersection)){
+            }else if(this.containsPoint(intersection.point)){
                 return false;
             }
         }
@@ -88,30 +89,22 @@ export class ConvexPolygon implements Area{
         }
         return new ConvexPolygon(halfPlanes);
     }
-    private getAllHalfPlaneIntersectionsWithLine(point: Point, direction: Point): Point[]{
-        const result: Point[] = [];
+    public intersectWithLine(point: Point, direction: Point): HalfPlaneLineIntersection[]{
+        const result: HalfPlaneLineIntersection[] = [];
         for(let halfPlane of this.halfPlanes){
             if(halfPlane.isParallelToLine(point, direction)){
                 continue;
             }
-            result.push(halfPlane.intersectWithLine(point, direction));
-        }
-        return result;
-    }
-    public intersectsLine(point: Point, direction: Point): boolean{
-        for(let halfPlane of this.halfPlanes){
-            if(halfPlane.isParallelToLine(point, direction) && !halfPlane.containsPoint(point)){
-                return false;
+            const intersection: HalfPlaneLineIntersection = halfPlane.intersectWithLine(point, direction);
+            const vertexAtIntersection: PolygonVertex = this.findVertex(intersection.point);
+            if(vertexAtIntersection && !vertexAtIntersection.containsLineSegmentWithDirection(direction)){
+                continue;
+            }
+            if(this.containsPoint(intersection.point)){
+                result.push(intersection);
             }
         }
-        const intersections: Point[] = this.getAllHalfPlaneIntersectionsWithLine(point, direction);
-        if(intersections.length === 0){
-            return true;
-        }
-        return !!intersections.find(p => this.containsPoint(p));
-    }
-    public intersectWithLine(point: Point, direction: Point): Point[]{
-        return this.getAllHalfPlaneIntersectionsWithLine(point, direction).filter(p => this.containsPoint(p));
+        return result;
     }
     public expandToInclude(area: Area): Area{
         return area.expandToIncludePolygon(this);
@@ -335,16 +328,16 @@ export class ConvexPolygon implements Area{
                 if(halfPlanes[i].complement().isContainedByHalfPlane(halfPlanes[j])){
                     continue;
                 }
-                const candidate: Point = halfPlanes[i].getIntersectionWith(halfPlanes[j]);
+                const candidate: PolygonVertex = halfPlanes[i].getIntersectionWith(halfPlanes[j]);
                 let include: boolean = true;
                 for(let k: number = 0; k < halfPlanes.length; k++){
-                    if(k !== i && k !== j && !halfPlanes[k].containsPoint(candidate)){
+                    if(k !== i && k !== j && !halfPlanes[k].containsPoint(candidate.point)){
                         include = false;
                         break;
                     }
                 }
                 if(include){
-                    result.push(new PolygonVertex(candidate, halfPlanes[i], halfPlanes[j]));
+                    result.push(candidate);
                 }
             }
         }

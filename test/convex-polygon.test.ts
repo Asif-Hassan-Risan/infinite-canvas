@@ -6,6 +6,8 @@ import { Area } from "../src/areas/area";
 import { plane } from "../src/areas/plane";
 import { Rectangle } from "../src/areas/rectangle";
 import { Transformation } from "../src/transformation";
+import { empty } from "../src/areas/empty";
+import { LineSegment } from "../src/areas/line-segment";
 
 function halfPlanesAreEqual(one: HalfPlane, other: HalfPlane): boolean{
     return one.normalTowardInterior.inSameDirectionAs(other.normalTowardInterior) && one.base.minus(other.base).dot(other.normalTowardInterior) === 0;
@@ -16,12 +18,22 @@ function expectPolygonsToBeEqual(one: ConvexPolygon, other: ConvexPolygon): void
         expect(!!other.halfPlanes.find(p => halfPlanesAreEqual(oneHalfPlane, p))).toBe(true);
     }
 }
+function expectLineSegmentsToBeEqual(one: LineSegment, other: LineSegment): void{
+    const pointsArrangedTheSame: boolean = one.point1.equals(other.point1) && one.point2.equals(other.point2);
+    const pointsArrangedOpposite: boolean = one.point1.equals(other.point2) && one.point2.equals(other.point1);
+    expect(pointsArrangedTheSame || pointsArrangedOpposite).toBe(true);
+}
 function expectAreasToBeEqual(one: Area, other: Area): void{
     if(one instanceof ConvexPolygon){
         expect(other instanceof ConvexPolygon).toBe(true);
         expectPolygonsToBeEqual(one, other as ConvexPolygon);
+    }else if(one instanceof LineSegment){
+        expect(other instanceof LineSegment).toBe(true);
+        expectLineSegmentsToBeEqual(one, other as LineSegment);
     }else if(one === plane){
         expect(other).toBe(plane);
+    }else if(one === empty){
+        expect(other).toBe(empty);
     }else if(!one){
         expect(other).toBeUndefined();
     }
@@ -31,6 +43,9 @@ function hp(builder: (builder: HalfPlaneBuilder) => HalfPlaneBuilder): HalfPlane
 }
 function p(builder: (builder: PolygonBuilder) => PolygonBuilder): ConvexPolygon{
     return builder(new PolygonBuilder()).build();
+}
+function ls(builder: (builder: LineSegmentBuilder) => LineSegmentBuilder){
+    return builder(new LineSegmentBuilder()).build();
 }
 class PolygonBuilder{
     private halfPlanes: HalfPlane[] = [];
@@ -57,6 +72,21 @@ class HalfPlaneBuilder{
         return this;
     }
 }
+class LineSegmentBuilder{
+    private point1: Point;
+    private point2: Point;
+    public build(): LineSegment{
+        return new LineSegment(this.point1, this.point2);
+    }
+    public from(x: number, y: number): LineSegmentBuilder{
+        this.point1 = new Point(x, y);
+        return this;
+    }
+    public to(x: number, y: number): LineSegmentBuilder{
+        this.point2 = new Point(x, y);
+        return this;
+    }
+}
 
 describe("a rectangle", () => {
     let rectangle: ConvexPolygon;
@@ -75,18 +105,6 @@ describe("a rectangle", () => {
     });
 
     it.each([
-        [new Point(0, 0), new Point(1, 0), true],
-        [new Point(0, 0.5), new Point(1, 0), true],
-        [new Point(0, -1), new Point(1, 0), false],
-        [new Point(0, 0), new Point(1, 1), true],
-        [new Point(0, 1), new Point(1, 1), true],
-        [new Point(-1, -1), new Point(1, 1), true],
-        [new Point(0, 2), new Point(1, 1), false]
-    ])("should intersect the right lines", (point: Point, direction: Point, expectedToIntersect: boolean) => {
-        expect(rectangle.intersectsLine(point, direction)).toBe(expectedToIntersect);
-    });
-
-    it.each([
         [new Point(0, 1), false],
         [new Point(-1, 0), false],
         [new Point(1, 1), false],
@@ -97,6 +115,32 @@ describe("a rectangle", () => {
         [new Point(0, -1), false]
     ])("should contain infinity in the right directions", (direction: Point, expectedToContainInfinityInDirection: boolean) => {
         expect(rectangle.containsInfinityInDirection(direction)).toBe(expectedToContainInfinityInDirection);
+    });
+
+    it.each([
+        [ls(ls => ls.from(0, -1).to(1, -1)), empty],
+        [ls(ls => ls.from(-1, 0.5).to(2, 0.5)), ls(ls => ls.from(0, 0.5).to(1, 0.5))],
+        [ls(ls => ls.from(0, 0).to(1, 0)), ls(ls => ls.from(0, 0).to(1, 0))],
+        [ls(ls => ls.from(0, 0).to(1, 1)), ls(ls => ls.from(0, 0).to(1, 1))],
+        [ls(ls => ls.from(0.25, 0.5).to(0.75, 0.5)), ls(ls => ls.from(0.25, 0.5).to(0.75, 0.5))],
+        [ls(ls => ls.from(-2, 0.5).to(-1, 0.5)), empty],
+        [ls(ls => ls.from(-0.5, 0.5).to(0.5, 0.5)), ls(ls => ls.from(0, 0.5).to(0.5, 0.5))],
+        [ls(ls => ls.from(-1, 0).to(0, 1)), empty],
+    ])("should lead to the correct intersections with line segments", (lineSegment: LineSegment, expectedIntersection: Area) => {
+        expectAreasToBeEqual(lineSegment.intersectWithConvexPolygon(rectangle), expectedIntersection);
+    });
+
+    it.each([
+        [ls(ls => ls.from(0, -1).to(1, -1)), false],
+        [ls(ls => ls.from(-1, 0.5).to(2, 0.5)), true],
+        [ls(ls => ls.from(0, 0).to(1, 0)), true],
+        [ls(ls => ls.from(0, 0).to(1, 1)), true],
+        [ls(ls => ls.from(0.25, 0.5).to(0.75, 0.5)), true],
+        [ls(ls => ls.from(-2, 0.5).to(-1, 0.5)), false],
+        [ls(ls => ls.from(-0.5, 0.5).to(0.5, 0.5)), true],
+        [ls(ls => ls.from(-1, 0).to(0, 1)), false],
+    ])("should intersect the right line segments", (lineSegment: LineSegment, expectedToIntersect: boolean) => {
+        expect(lineSegment.intersectsConvexPolygon(rectangle)).toBe(expectedToIntersect);
     });
 
     it.each([
@@ -130,16 +174,6 @@ describe("a convex polygon with one half plane", () => {
         [hp(b => b.base(0, -3).normal(0, -1)), false],
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
         expect(convexPolygon.isContainedByHalfPlane(halfPlane)).toBe(expectedToContain);
-    });
-
-    it.each([
-        [new Point(0, 0), new Point(1, 0), true],
-        [new Point(0, -2), new Point(1, 0), true],
-        [new Point(0, -3), new Point(1, 0), false],
-        [new Point(0, -3), new Point(1, 1), true],
-        [new Point(0, -3), new Point(1, -1), true],
-    ])("should intersect the right lines", (point: Point, direction: Point, expectedToIntersect: boolean) => {
-        expect(convexPolygon.intersectsLine(point, direction)).toBe(expectedToIntersect);
     });
 
     it.each([
@@ -578,18 +612,6 @@ describe("a convex polygon with two half planes and no vertices", () => {
     });
 
     it.each([
-        [new Point(0, 0), new Point(1, 0), true],
-        [new Point(0, -1), new Point(1, 0), true],
-        [new Point(0, 1), new Point(1, 0), true],
-        [new Point(0, -2), new Point(1, 0), false],
-        [new Point(0, 2), new Point(1, 0), false],
-        [new Point(0, 2), new Point(1, 1), true],
-        [new Point(0, 2), new Point(1, -1), true],
-    ])("should intersect the right lines", (point: Point, direction: Point, expectedToIntersect: boolean) => {
-        expect(convexPolygon.intersectsLine(point, direction)).toBe(expectedToIntersect);
-    });
-
-    it.each([
         [new Point(0, 1), false],
         [new Point(-1, 0), true],
         [new Point(1, 1), false],
@@ -639,18 +661,6 @@ describe("a convex polygon with two parallel half planes and two vertices", () =
             .with(hp => hp.base(0, -1).normal(0, 1))
             .with(hp => hp.base(0, 1).normal(0, -1))
             .with(hp => hp.base(-1, 0).normal(1, 0)));
-    });
-
-    it.each([
-        [new Point(0, 0), new Point(1, 0), true],
-        [new Point(0, -1), new Point(1, 0), true],
-        [new Point(0, 1), new Point(1, 0), true],
-        [new Point(0, -2), new Point(1, 0), false],
-        [new Point(-2, 0), new Point(1, 1), true],
-        [new Point(-1, 0), new Point(1, 1), true],
-        [new Point(-3, 0), new Point(1, 1), false],
-    ])("should intersect the right lines", (point: Point, direction: Point, expectedToIntersect: boolean) => {
-        expect(convexPolygon.intersectsLine(point, direction)).toBe(expectedToIntersect);
     });
 
     it.each([

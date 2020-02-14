@@ -14,6 +14,12 @@ export class PolygonVertex{
         }
         return this.normal1.cross(normal) <= 0 && normal.cross(this.normal2) <= 0;
     }
+    private containsPoint(point: Point): boolean{
+        return this.halfPlane1.containsPoint(point) && this.halfPlane2.containsPoint(point);
+    }
+    public containsLineSegmentWithDirection(direction: Point): boolean{
+        return this.containsPoint(this.point.plus(direction)) || this.containsPoint(this.point.minus(direction));
+    }
     public isContainedByVertex(other: PolygonVertex): boolean{
         return this.isContainedByHalfPlaneWithNormal(other.normal1) && this.isContainedByHalfPlaneWithNormal(other.normal2);
     }

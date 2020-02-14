@@ -1,6 +1,8 @@
 import { Point } from "../geometry/point";
 import { Transformation } from "../transformation";
 import { intersectLines } from "../geometry/intersect-lines";
+import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
+import { PolygonVertex } from "./polygon-vertex";
 
 export class HalfPlane {
     private readonly lengthOfNormal: number;
@@ -34,14 +36,18 @@ export class HalfPlane {
     public isContainedByHalfPlane(halfPlane: HalfPlane): boolean{
         return this.normalTowardInterior.inSameDirectionAs(halfPlane.normalTowardInterior) && halfPlane.getDistanceFromEdge(this.base) >= 0;
     }
-    public intersectWithLine(point: Point, direction: Point): Point{
-        return intersectLines(this.base, this.normalTowardInterior.getPerpendicular(), point, direction);
+    public intersectWithLine(point: Point, direction: Point): HalfPlaneLineIntersection{
+        return {
+            point:intersectLines(this.base, this.normalTowardInterior.getPerpendicular(), point, direction),
+            halfPlane: this
+        };
     }
     public isParallelToLine(point: Point, direction: Point): boolean{
         return this.normalTowardInterior.getPerpendicular().cross(direction) === 0;
     }
-    public getIntersectionWith(other: HalfPlane): Point{
-        return this.intersectWithLine(other.base, other.normalTowardInterior.getPerpendicular());
+    public getIntersectionWith(other: HalfPlane): PolygonVertex{
+        const halfPlaneLineIntersection: HalfPlaneLineIntersection = this.intersectWithLine(other.base, other.normalTowardInterior.getPerpendicular());
+        return new PolygonVertex(halfPlaneLineIntersection.point, this, other);
     }
     public static throughPointsAndContainingPoint(throughPoint1: Point, throughPoint2: Point, containingPoint: Point): HalfPlane{
         const throughPoints: HalfPlane[] = HalfPlane.withBorderPoints(throughPoint1, throughPoint2);

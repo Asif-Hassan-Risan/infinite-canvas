@@ -1,5 +1,6 @@
 import { HalfPlane } from "../src/areas/half-plane";
 import { Point } from "../src/geometry/point";
+import { PolygonVertex } from "../src/areas/polygon-vertex";
 
 describe("a half plane", () => {
     let halfPlane: HalfPlane;
@@ -45,8 +46,8 @@ describe.each([
 ])("two half planes", (one: HalfPlane, other: HalfPlane, expectedIntersection: Point) => {
 
     it("should have the right intersection", () => {
-        const intersection: Point = one.getIntersectionWith(other);
-        expect(intersection.x).toBeCloseTo(expectedIntersection.x);
-        expect(intersection.y).toBeCloseTo(expectedIntersection.y);
+        const intersection: PolygonVertex = one.getIntersectionWith(other);
+        expect(intersection.point.x).toBeCloseTo(expectedIntersection.x);
+        expect(intersection.point.y).toBeCloseTo(expectedIntersection.y);
     });
 });
