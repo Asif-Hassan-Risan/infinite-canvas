@@ -24,7 +24,7 @@ export class LineSegment implements Area{
             return empty;
         }
         let {point1: otherPoint1, point2: otherPoint2} = this.getPointsInSameDirection(other.point1, other.point2);
-        if(!this.comesBefore(this.point1, otherPoint2) || !this.comesBefore(otherPoint1, this.point2)){
+        if(this.comesBefore(otherPoint2, this.point1) || this.comesBefore(this.point2, otherPoint1)){
             return empty;
         }
         if(this.comesBefore(this.point1, otherPoint1)){
@@ -72,7 +72,7 @@ export class LineSegment implements Area{
         return other.containsPoint(this.point1) && other.containsPoint(this.point2);
     }
     public contains(other: Area): boolean {
-        throw new Error("Method not implemented.");
+        return other.isContainedByLineSegment(this);
     }
     private pointIsBetweenPoints(point: Point, one: Point, other: Point): boolean{
         return point.minus(one).dot(this.direction) * point.minus(other).dot(this.direction) <= 0;
@@ -94,7 +94,7 @@ export class LineSegment implements Area{
             return false;
         }
         const {point1, point2} = this.getPointsInSameDirection(other.point1, other.point2);
-        return this.comesBefore(this.point1, point2) && this.comesBefore(point1, this.point2);
+        return !this.comesBefore(point2, this.point1) && !this.comesBefore(this.point2, point1);
     }
     public intersectsConvexPolygon(other: ConvexPolygon): boolean {
         if(this.isContainedByConvexPolygon(other)){
@@ -109,7 +109,7 @@ export class LineSegment implements Area{
         return false;
     }
     public intersects(other: Area): boolean {
-        throw new Error("Method not implemented.");
+        return other.intersectsLineSegment(this);
     }
     public expandToIncludePoint(point: Point): Area {
         if(this.containsPoint(point)){

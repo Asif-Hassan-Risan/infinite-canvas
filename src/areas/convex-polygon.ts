@@ -151,6 +151,9 @@ export class ConvexPolygon implements Area{
         }
         return true;
     }
+    public intersectsLineSegment(lineSegment: LineSegment): boolean{
+        return lineSegment.intersectsConvexPolygon(this);
+    }
     public intersectsConvexPolygon(other: ConvexPolygon): boolean{
         if(this.isContainedByConvexPolygon(other) || other.isContainedByConvexPolygon(this)){
             return true;
@@ -218,6 +221,9 @@ export class ConvexPolygon implements Area{
             }
         }
         return result;
+    }
+    public isContainedByLineSegment(other: LineSegment): boolean{
+        return false;
     }
     public isContainedByConvexPolygon(other: ConvexPolygon){
         for(let halfPlane of other.halfPlanes){

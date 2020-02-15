@@ -29,7 +29,13 @@ class Empty implements Area{
     public isContainedByConvexPolygon(other: ConvexPolygon): boolean{
         return true;
     }
+    public isContainedByLineSegment(other: LineSegment): boolean{
+        return true;
+    }
     public intersectsConvexPolygon(other: ConvexPolygon): boolean{
+        return false;
+    }
+    public intersectsLineSegment(lineSegment: LineSegment): boolean{
         return false;
     }
     public expandToIncludePoint(point: Point): Area {
