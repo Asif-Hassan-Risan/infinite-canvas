@@ -8,85 +8,8 @@ import { Rectangle } from "../src/areas/rectangle";
 import { Transformation } from "../src/transformation";
 import { empty } from "../src/areas/empty";
 import { LineSegment } from "../src/areas/line-segment";
-
-function halfPlanesAreEqual(one: HalfPlane, other: HalfPlane): boolean{
-    return one.normalTowardInterior.inSameDirectionAs(other.normalTowardInterior) && one.base.minus(other.base).dot(other.normalTowardInterior) === 0;
-}
-function expectPolygonsToBeEqual(one: ConvexPolygon, other: ConvexPolygon): void{
-    expect(one.halfPlanes.length).toBe(other.halfPlanes.length);
-    for(let oneHalfPlane of one.halfPlanes){
-        expect(!!other.halfPlanes.find(p => halfPlanesAreEqual(oneHalfPlane, p))).toBe(true);
-    }
-}
-function expectLineSegmentsToBeEqual(one: LineSegment, other: LineSegment): void{
-    const pointsArrangedTheSame: boolean = one.point1.equals(other.point1) && one.point2.equals(other.point2);
-    const pointsArrangedOpposite: boolean = one.point1.equals(other.point2) && one.point2.equals(other.point1);
-    expect(pointsArrangedTheSame || pointsArrangedOpposite).toBe(true);
-}
-function expectAreasToBeEqual(one: Area, other: Area): void{
-    if(one instanceof ConvexPolygon){
-        expect(other instanceof ConvexPolygon).toBe(true);
-        expectPolygonsToBeEqual(one, other as ConvexPolygon);
-    }else if(one instanceof LineSegment){
-        expect(other instanceof LineSegment).toBe(true);
-        expectLineSegmentsToBeEqual(one, other as LineSegment);
-    }else if(one === plane){
-        expect(other).toBe(plane);
-    }else if(one === empty){
-        expect(other).toBe(empty);
-    }else if(!one){
-        expect(other).toBeUndefined();
-    }
-}
-function hp(builder: (builder: HalfPlaneBuilder) => HalfPlaneBuilder): HalfPlane{
-    return builder(new HalfPlaneBuilder()).build();
-}
-function p(builder: (builder: PolygonBuilder) => PolygonBuilder): ConvexPolygon{
-    return builder(new PolygonBuilder()).build();
-}
-function ls(builder: (builder: LineSegmentBuilder) => LineSegmentBuilder){
-    return builder(new LineSegmentBuilder()).build();
-}
-class PolygonBuilder{
-    private halfPlanes: HalfPlane[] = [];
-    public build(): ConvexPolygon{
-        return new ConvexPolygon(this.halfPlanes);
-    }
-    public with(halfPlaneBuilder: (builder: HalfPlaneBuilder) => HalfPlaneBuilder): PolygonBuilder{
-        this.halfPlanes.push(hp(halfPlaneBuilder));
-        return this;
-    }
-}
-class HalfPlaneBuilder{
-    private _base: Point;
-    private normalTowardInterior: Point;
-    public build(): HalfPlane{
-        return new HalfPlane(this._base, this.normalTowardInterior);
-    }
-    public base(x: number, y: number): HalfPlaneBuilder{
-        this._base = new Point(x, y);
-        return this;
-    }
-    public normal(x: number, y: number): HalfPlaneBuilder{
-        this.normalTowardInterior = new Point(x, y);
-        return this;
-    }
-}
-class LineSegmentBuilder{
-    private point1: Point;
-    private point2: Point;
-    public build(): LineSegment{
-        return new LineSegment(this.point1, this.point2);
-    }
-    public from(x: number, y: number): LineSegmentBuilder{
-        this.point1 = new Point(x, y);
-        return this;
-    }
-    public to(x: number, y: number): LineSegmentBuilder{
-        this.point2 = new Point(x, y);
-        return this;
-    }
-}
+import { p, ls, hp } from "./builders";
+import { expectPolygonsToBeEqual, expectAreasToBeEqual } from "./expectations";
 
 describe("a rectangle", () => {
     let rectangle: ConvexPolygon;
@@ -162,7 +85,7 @@ describe("a convex polygon with one half plane", () => {
     let convexPolygon: ConvexPolygon;
 
     beforeEach(() => {
-        convexPolygon = new PolygonBuilder().with(hp => hp.base(0, -2).normal(0, 1)).build();
+        convexPolygon = p(p => p.with(hp => hp.base(0, -2).normal(0, 1)));
     });
 
     it.each([
@@ -230,11 +153,10 @@ describe("a convex polygon with three half planes and two vertices", () => {
     let convexPolygon: ConvexPolygon;
 
     beforeEach(() => {
-        convexPolygon = new PolygonBuilder()
+        convexPolygon = p(p => p
             .with(hp => hp.base(0, -1).normal(0, -1))
             .with(hp => hp.base(-2, -2).normal(1, -1))
-            .with(hp => hp.base(2, -2).normal(-1, -1))
-            .build();
+            .with(hp => hp.base(2, -2).normal(-1, -1)))
     });
 
     it("should have the correct vertices", () => {

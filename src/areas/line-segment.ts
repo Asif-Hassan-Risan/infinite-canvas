@@ -23,19 +23,20 @@ export class LineSegment implements Area{
         if(!this.lineSegmentIsOnSameLine(other)){
             return empty;
         }
-        let otherPoint1: Point = other.point1;
-        let otherPoint2: Point = other.point2;
-        if(this.comesBefore(otherPoint2, otherPoint1)){
-            ({otherPoint1, otherPoint2} = {otherPoint2, otherPoint1});
-        }
-        if(this.comesBefore(this.point2, otherPoint1) || this.comesBefore(otherPoint2, this.point1)){
+        let {point1: otherPoint1, point2: otherPoint2} = this.getPointsInSameDirection(other.point1, other.point2);
+        if(!this.comesBefore(this.point1, otherPoint2) || !this.comesBefore(otherPoint1, this.point2)){
             return empty;
         }
         if(this.comesBefore(this.point1, otherPoint1)){
-            // if(this.comesBefore(otherP)){
-
-            // }
+            return new LineSegment(otherPoint1, this.point2);
         }
+        return new LineSegment(this.point1, otherPoint2);
+    }
+    private getPointsInSameDirection(point1: Point, point2: Point): {point1: Point, point2: Point}{
+        if(this.comesBefore(point2, point1)){
+            return {point1: point2, point2: point1};
+        }
+        return {point1, point2};
     }
     private comesBefore(point1: Point, point2: Point): boolean{
         return point2.minus(point1).dot(this.direction) >= 0;
@@ -92,6 +93,8 @@ export class LineSegment implements Area{
         if(!this.lineSegmentIsOnSameLine(other)){
             return false;
         }
+        const {point1, point2} = this.getPointsInSameDirection(other.point1, other.point2);
+        return this.comesBefore(this.point1, point2) && this.comesBefore(point1, this.point2);
     }
     public intersectsConvexPolygon(other: ConvexPolygon): boolean {
         if(this.isContainedByConvexPolygon(other)){
