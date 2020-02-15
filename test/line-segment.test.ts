@@ -1,8 +1,9 @@
 import { LineSegment } from "../src/areas/line-segment";
-import { ls } from "./builders";
+import { ls, p } from "./builders";
 import { empty } from "../src/areas/empty";
 import { expectAreasToBeEqual } from "./expectations";
 import { Area } from "../src/areas/area";
+import { Point } from "../src/geometry/point";
 
 describe("a line segment", () => {
     let lineSegment: LineSegment;
@@ -50,5 +51,19 @@ describe("a line segment", () => {
         [ls(ls => ls.from(0, 1).to(0, -1)), false]
     ])("should be contained by the right line segments", (other: LineSegment, expectedToBeContained: boolean) => {
         expect(lineSegment.isContainedByLineSegment(other)).toBe(expectedToBeContained);
+    });
+
+    it.each([
+        [new Point(-1, 0), ls(ls => ls.from(-1, 0).to(3, 0))],
+        [new Point(0, 0), ls(ls => ls.from(0, 0).to(3, 0))],
+        [new Point(1, 0), ls(ls => ls.from(0, 0).to(3, 0))],
+        [new Point(3, 0), ls(ls => ls.from(0, 0).to(3, 0))],
+        [new Point(4, 0), ls(ls => ls.from(0, 0).to(4, 0))],
+        [new Point(0, 1), p(p => p
+            .with(hp => hp.base(0, 0).normal(1, 0))
+            .with(hp => hp.base(0, 0).normal(0, 1))
+            .with(hp => hp.base(0, 1).normal(-1, -3)))]
+    ])("should result in the correct expansions with a point", (point: Point, expectedExpansion: Area) => {
+        expectAreasToBeEqual(lineSegment.expandToIncludePoint(point), expectedExpansion);
     });
 });

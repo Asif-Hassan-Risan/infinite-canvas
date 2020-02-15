@@ -115,6 +115,12 @@ export class LineSegment implements Area{
         if(this.containsPoint(point)){
             return this;
         }
+        if(this.pointIsOnSameLine(point)){
+            if(this.comesBefore(point, this.point1)){
+                return new LineSegment(point, this.point2);
+            }
+            return new LineSegment(this.point1, point);
+        }
         return ConvexPolygon.createTriangle(this.point1, point, this.point2);
     }
     public expandToIncludePolygon(polygon: ConvexPolygon): Area {
