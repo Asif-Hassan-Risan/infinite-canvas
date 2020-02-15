@@ -65,8 +65,8 @@ describe("an infinite canvas context", () => {
 				infiniteContext.clearRect(25, 25, 30, 30);
 			});
 
-			xit("should have added a clearRect", () => {
-				console.log(contextMock.getLog());
+			it("should have added a clearRect", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
 			});
 		});
 	});
