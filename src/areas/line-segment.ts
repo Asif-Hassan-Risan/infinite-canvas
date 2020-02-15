@@ -4,11 +4,11 @@ import { Point } from "../geometry/point";
 import { Transformation } from "../transformation";
 import { empty } from "./empty";
 import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
+import { SubsetOfLine } from "./subset-of-line";
 
-export class LineSegment implements Area{
-    public direction: Point;
+export class LineSegment extends SubsetOfLine implements Area{
     constructor(public point1: Point, public point2: Point){
-        this.direction = point2.minus(point1);
+        super(point1, point2.minus(point1));
     }
     public intersectWith(area: Area): Area {
         return area.intersectWithLineSegment(this);
@@ -37,9 +37,6 @@ export class LineSegment implements Area{
             return {point1: point2, point2: point1};
         }
         return {point1, point2};
-    }
-    private comesBefore(point1: Point, point2: Point): boolean{
-        return point2.minus(point1).dot(this.direction) >= 0;
     }
     public isContainedByLineSegment(other: LineSegment): boolean{
         return other.containsPoint(this.point1) && other.containsPoint(this.point2);
@@ -77,13 +74,10 @@ export class LineSegment implements Area{
     private pointIsBetweenPoints(point: Point, one: Point, other: Point): boolean{
         return point.minus(one).dot(this.direction) * point.minus(other).dot(this.direction) <= 0;
     }
-    private pointIsOnSameLine(point: Point): boolean{
-        return point.minus(this.point1).cross(this.direction) === 0;
-    }
     private lineSegmentIsOnSameLine(other: LineSegment): boolean{
         return this.direction.cross(other.direction) === 0 && this.pointIsOnSameLine(other.point1)
     }
-    public containsPoint(point: Point): boolean{
+    private containsPoint(point: Point): boolean{
         return this.pointIsOnSameLine(point) && this.pointIsBetweenPoints(point, this.point1, this.point2)
     }
     public intersectsLineSegment(other: LineSegment): boolean{

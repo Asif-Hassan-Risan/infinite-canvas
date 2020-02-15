@@ -4,6 +4,7 @@ import { LineSegment } from "../src/areas/line-segment";
 import { Area } from "../src/areas/area";
 import { plane } from "../src/areas/plane";
 import { empty } from "../src/areas/empty";
+import { Ray } from "../src/areas/ray";
 
 function halfPlanesAreEqual(one: HalfPlane, other: HalfPlane): boolean{
     return one.normalTowardInterior.inSameDirectionAs(other.normalTowardInterior) && one.base.minus(other.base).dot(other.normalTowardInterior) === 0;
@@ -19,6 +20,9 @@ function expectLineSegmentsToBeEqual(one: LineSegment, other: LineSegment): void
     const pointsArrangedOpposite: boolean = one.point1.equals(other.point2) && one.point2.equals(other.point1);
     expect(pointsArrangedTheSame || pointsArrangedOpposite).toBe(true);
 }
+function expectRaysToBeEqual(one: Ray, other: Ray): void{
+    expect(one.base.equals(other.base) && one.direction.inSameDirectionAs(other.direction)).toBe(true);
+}
 function expectAreasToBeEqual(one: Area, other: Area): void{
     if(one instanceof ConvexPolygon){
         expect(other instanceof ConvexPolygon).toBe(true);
@@ -26,6 +30,9 @@ function expectAreasToBeEqual(one: Area, other: Area): void{
     }else if(one instanceof LineSegment){
         expect(other instanceof LineSegment).toBe(true);
         expectLineSegmentsToBeEqual(one, other as LineSegment);
+    }else if(one instanceof Ray){
+        expect(other instanceof Ray).toBe(true);
+        expectRaysToBeEqual(one, other as Ray);
     }else if(one === plane){
         expect(other).toBe(plane);
     }else if(one === empty){

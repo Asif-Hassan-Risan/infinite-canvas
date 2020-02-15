@@ -2,6 +2,7 @@ import { ConvexPolygon } from "../src/areas/convex-polygon";
 import { Point } from "../src/geometry/point";
 import { HalfPlane } from "../src/areas/half-plane";
 import { LineSegment } from "../src/areas/line-segment";
+import { Ray } from "../src/areas/ray";
 
 class PolygonBuilder{
     private halfPlanes: HalfPlane[] = [];
@@ -43,6 +44,21 @@ class LineSegmentBuilder{
         return this;
     }
 }
+class RayBuilder{
+    private _base: Point;
+    private _direction: Point;
+    public build(): Ray{
+        return new Ray(this._base, this._direction);
+    }
+    public base(x: number, y: number): RayBuilder{
+        this._base = new Point(x, y);
+        return this;
+    }
+    public direction(x: number, y: number): RayBuilder{
+        this._direction = new Point(x, y);
+        return this;
+    }
+}
 function hp(builder: (builder: HalfPlaneBuilder) => HalfPlaneBuilder): HalfPlane{
     return builder(new HalfPlaneBuilder()).build();
 }
@@ -52,5 +68,8 @@ function p(builder: (builder: PolygonBuilder) => PolygonBuilder): ConvexPolygon{
 function ls(builder: (builder: LineSegmentBuilder) => LineSegmentBuilder){
     return builder(new LineSegmentBuilder()).build();
 }
-export {hp, p, ls};
+function r(builder: (builder: RayBuilder) => RayBuilder): Ray{
+    return builder(new RayBuilder()).build();
+}
+export {hp, p, ls, r};
 

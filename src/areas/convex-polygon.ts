@@ -352,6 +352,14 @@ export class ConvexPolygon implements Area{
         }
         return result;
     }
+    public static createTriangleWithInfinityInDirection(point1: Point, point2: Point, direction: Point){
+        const normalDirection: Point = point2.minus(point1).projectOn(direction.getPerpendicular());
+        return new ConvexPolygon([
+            new HalfPlane(point1, normalDirection),
+            new HalfPlane(point2, normalDirection.scale(-1)),
+            HalfPlane.throughPointsAndContainingPoint(point1, point2, point1.plus(direction))
+        ]);
+    }
     public static createTriangle(point1: Point, point2: Point, point3: Point): ConvexPolygon{
         return new ConvexPolygon([
             HalfPlane.throughPointsAndContainingPoint(point1, point2, point3),
