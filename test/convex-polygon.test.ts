@@ -55,7 +55,16 @@ describe("a rectangle", () => {
     });
 
     it.each([
-        [r(r => r.base(0, -1).direction(1, 0)), empty]
+        [r(r => r.base(0, -1).direction(1, 0)), empty],
+        [r(r => r.base(-1, 0.5).direction(1, 0)), ls(ls => ls.from(0, 0.5).to(1, 0.5))],
+        [r(r => r.base(2, 0.5).direction(-1, 0)), ls(ls => ls.from(0, 0.5).to(1, 0.5))],
+        [r(r => r.base(0, 0).direction(1, 0)), ls(ls => ls.from(0, 0).to(1, 0))],
+        [r(r => r.base(0, 0).direction(1, 1)), ls(ls => ls.from(0, 0).to(1, 1))],
+        [r(r => r.base(0.5, 0.5).direction(1, 0)), ls(ls => ls.from(0.5, 0.5).to(1, 0.5))],
+        [r(r => r.base(0.5, 0.5).direction(-1, 0)), ls(ls => ls.from(0, 0.5).to(0.5, 0.5))],
+        [r(r => r.base(0.5, 0.5).direction(1, 1)), ls(ls => ls.from(0.5, 0.5).to(1, 1))],
+        [r(r => r.base(-1, 0.5).direction(-1, 0)), empty],
+        [r(r => r.base(-1, 0).direction(1, 1)), empty],
     ])("should lead to the correct intersections with rays", (ray: Ray, expectedIntersection: Area) => {
         expectAreasToBeEqual(ray.intersectWithConvexPolygon(rectangle), expectedIntersection);
     });
@@ -132,6 +141,20 @@ describe("a convex polygon with one half plane", () => {
         [ls(ls => ls.from(0, 1).to(1, 2)), ls(ls => ls.from(0, 1).to(1, 2))],
     ])("should lead to the correct intersections with line segments", (lineSegment: LineSegment, expectedIntersection: Area) => {
         expectAreasToBeEqual(lineSegment.intersectWithConvexPolygon(convexPolygon), expectedIntersection);
+    });
+
+    it.each([
+        [r(r => r.base(0, -3).direction(1, 0)), empty],
+        [r(r => r.base(0, -2).direction(1, 0)), r(r => r.base(0, -2).direction(1, 0))],
+        [r(r => r.base(0, -2).direction(-1, 0)), r(r => r.base(0, -2).direction(-1, 0))],
+        [r(r => r.base(0, 0).direction(1, 0)), r(r => r.base(0, 0).direction(1, 0))],
+        [r(r => r.base(0, 0).direction(-1, 0)), r(r => r.base(0, 0).direction(-1, 0))],
+        [r(r => r.base(0, 0).direction(0, -1)), ls(ls => ls.from(0, 0).to(0, -2))],
+        [r(r => r.base(0, 0).direction(0, 1)), r(r => r.base(0, 0).direction(0, 1))],
+        [r(r => r.base(0, -3).direction(0, 1)), r(r => r.base(0, -2).direction(0, 1))],
+        [r(r => r.base(0, -2).direction(0, -1)), empty],
+    ])("should lead to the correct intersections with rays", (ray: Ray, expectedIntersection: Area) => {
+        expectAreasToBeEqual(ray.intersectWithConvexPolygon(convexPolygon), expectedIntersection);
     });
 
     it.each([
@@ -257,6 +280,25 @@ describe("a convex polygon with three half planes and two vertices", () => {
 
     it("should have the correct half planes", () => {
         expect(convexPolygon.halfPlanes.length).toBe(3);
+    });
+
+    it.each([
+        [r(r => r.base(-1, -1).direction(-1, -1)), r(r => r.base(-1, -1).direction(-1, -1))],
+        [r(r => r.base(0, 0).direction(-1, -1)), r(r => r.base(-1, -1).direction(-1, -1))],
+        [r(r => r.base(-1, -1).direction(0, -1)), r(r => r.base(-1, -1).direction(0, -1))],
+        [r(r => r.base(-1, -1).direction(1, 0)), ls(ls => ls.from(-1, -1).to(1, -1))],
+        [r(r => r.base(1, -1).direction(-1, 0)), ls(ls => ls.from(-1, -1).to(1, -1))],
+        [r(r => r.base(-1, 0).direction(0, -1)), r(r => r.base(-1, -1).direction(0, -1))],
+        [r(r => r.base(0, 0).direction(0, -1)), r(r => r.base(0, -1).direction(0, -1))],
+        [r(r => r.base(-1, -2).direction(0, -1)), r(r => r.base(-1, -2).direction(0, -1))],
+        [r(r => r.base(-3, -2).direction(1, 0)), ls(ls => ls.from(-2, -2).to(2, -2))],
+        [r(r => r.base(-2, -2).direction(1, 0)), ls(ls => ls.from(-2, -2).to(2, -2))],
+        [r(r => r.base(-1, -2).direction(1, 0)), ls(ls => ls.from(-1, -2).to(2, -2))],
+        [r(r => r.base(3, -2).direction(-1, 0)), ls(ls => ls.from(-2, -2).to(2, -2))],
+        [r(r => r.base(-3, -1).direction(1, 0)), ls(ls => ls.from(-1, -1).to(1, -1))],
+        [r(r => r.base(-3, 0).direction(1, 0)), empty],
+    ])("should lead to the correct intersections with rays", (ray: Ray, expectedIntersection: Area) => {
+        expectAreasToBeEqual(ray.intersectWithConvexPolygon(convexPolygon), expectedIntersection);
     });
 
     it.each([
