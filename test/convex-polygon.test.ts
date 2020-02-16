@@ -8,8 +8,9 @@ import { Rectangle } from "../src/areas/rectangle";
 import { Transformation } from "../src/transformation";
 import { empty } from "../src/areas/empty";
 import { LineSegment } from "../src/areas/line-segment";
-import { p, ls, hp } from "./builders";
+import { p, ls, hp, r } from "./builders";
 import { expectPolygonsToBeEqual, expectAreasToBeEqual } from "./expectations";
+import { Ray } from "../src/areas/ray";
 
 describe("a rectangle", () => {
     let rectangle: ConvexPolygon;
@@ -54,6 +55,12 @@ describe("a rectangle", () => {
     });
 
     it.each([
+        [r(r => r.base(0, -1).direction(1, 0)), empty]
+    ])("should lead to the correct intersections with rays", (ray: Ray, expectedIntersection: Area) => {
+        expectAreasToBeEqual(ray.intersectWithConvexPolygon(rectangle), expectedIntersection);
+    });
+
+    it.each([
         [ls(ls => ls.from(0, -1).to(1, -1)), false],
         [ls(ls => ls.from(-1, 0.5).to(2, 0.5)), true],
         [ls(ls => ls.from(0, 0).to(1, 0)), true],
@@ -62,8 +69,24 @@ describe("a rectangle", () => {
         [ls(ls => ls.from(-2, 0.5).to(-1, 0.5)), false],
         [ls(ls => ls.from(-0.5, 0.5).to(0.5, 0.5)), true],
         [ls(ls => ls.from(-1, 0).to(0, 1)), false],
+        [ls(ls => ls.from(-1, 0).to(0, 0)), false],
+        [ls(ls => ls.from(-1, 0).to(0.5, 0)), true],
     ])("should intersect the right line segments", (lineSegment: LineSegment, expectedToIntersect: boolean) => {
         expect(lineSegment.intersectsConvexPolygon(rectangle)).toBe(expectedToIntersect);
+    });
+
+    it.each([
+        [r(r => r.base(0, 0).direction(1, 0)), true],
+        [r(r => r.base(0, 0).direction(-1, 0)), false],
+        [r(r => r.base(0.5, 0).direction(-1, 0)), true],
+        [r(r => r.base(0.5, 0).direction(1, 0)), true],
+        [r(r => r.base(1, 0).direction(1, 0)), false],
+        [r(r => r.base(1, 0).direction(-1, 0)), true],
+        [r(r => r.base(-1, 0).direction(1, 2)), false],
+        [r(r => r.base(-1, 0).direction(1, 1)), false],
+        [r(r => r.base(-1, 0).direction(2, 1)), true],
+    ])("should intersect the right rays", (ray: Ray, expectedToIntersect: boolean) => {
+        expect(ray.intersectsConvexPolygon(rectangle)).toBe(expectedToIntersect);
     });
 
     it.each([
@@ -117,10 +140,29 @@ describe("a convex polygon with one half plane", () => {
         [ls(ls => ls.from(0, -3).to(1, -6)), false],
         [ls(ls => ls.from(0, -3).to(1, -3)), false],
         [ls(ls => ls.from(0, -2).to(1, -2)), true],
+        [ls(ls => ls.from(0, -2).to(1, -3)), false],
+        [ls(ls => ls.from(0, -2).to(1, 3)), true],
         [ls(ls => ls.from(0, 1).to(1, 1)), true],
         [ls(ls => ls.from(0, 1).to(1, 2)), true],
     ])("should intersect the right line segments", (lineSegment: LineSegment, expectedToIntersect: boolean) => {
         expect(lineSegment.intersectsConvexPolygon(convexPolygon)).toBe(expectedToIntersect);
+    });
+
+    it.each([
+        [r(r => r.base(0, 0).direction(1, 0)), true],
+        [r(r => r.base(0, 0).direction(1, -1)), true],
+        [r(r => r.base(0, 0).direction(1, 1)), true],
+        [r(r => r.base(0, -2).direction(1, 0)), true],
+        [r(r => r.base(0, -2).direction(1, -1)), false],
+        [r(r => r.base(0, -2).direction(1, 1)), true],
+        [r(r => r.base(0, -3).direction(1, 0)), false],
+        [r(r => r.base(0, -3).direction(-1, 0)), false],
+        [r(r => r.base(0, -3).direction(-1, 1)), true],
+        [r(r => r.base(0, -3).direction(-1, -1)), false],
+        [r(r => r.base(0, -3).direction(1, -1)), false],
+        [r(r => r.base(0, -3).direction(1, 1)), true],
+    ])("should intersect the right rays", (ray: Ray, expectedToIntersect: boolean) => {
+        expect(ray.intersectsConvexPolygon(convexPolygon)).toBe(expectedToIntersect);
     });
 
     it.each([
