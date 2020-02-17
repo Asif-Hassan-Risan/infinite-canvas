@@ -8,6 +8,7 @@ import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
 import { LineSegment } from "./line-segment";
 import { Ray } from "./ray";
 import { Line } from "./line";
+import { direction } from "../state/dimensions/direction";
 
 export class ConvexPolygon implements Area{
     public readonly vertices: PolygonVertex[];
@@ -372,7 +373,22 @@ export class ConvexPolygon implements Area{
         }
         return result;
     }
-    public static createTriangleWithInfinityInDirection(point1: Point, point2: Point, direction: Point){
+    public static createTriangleWithInfinityInTwoDirections(point: Point, direction1: Point, direction2: Point): ConvexPolygon{
+        const thisPerpendicular: Point = direction1.getPerpendicular();
+        const otherPerpendicular: Point = direction2.getPerpendicular();
+
+        if(direction1.cross(direction2) < 0){
+            return new ConvexPolygon([
+                new HalfPlane(point, thisPerpendicular.scale(-1)),
+                new HalfPlane(point, otherPerpendicular)
+            ]);
+        }
+        return new ConvexPolygon([
+            new HalfPlane(point, thisPerpendicular),
+            new HalfPlane(point, otherPerpendicular.scale(-1))
+        ]);
+    }
+    public static createTriangleWithInfinityInDirection(point1: Point, point2: Point, direction: Point): ConvexPolygon{
         const normalDirection: Point = point2.minus(point1).projectOn(direction.getPerpendicular());
         return new ConvexPolygon([
             new HalfPlane(point1, normalDirection),

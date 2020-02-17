@@ -119,18 +119,7 @@ export class Ray extends SubsetOfLine implements Area{
         if(cross === 0){
             return new Line(this.base, this.direction);
         }
-        const thisPerpendicular: Point = this.direction.getPerpendicular();
-        const otherPerpendicular: Point = direction.getPerpendicular();
-        if(cross < 0){
-            return new ConvexPolygon([
-                new HalfPlane(this.base, thisPerpendicular.scale(-1)),
-                new HalfPlane(this.base, otherPerpendicular)
-            ]);
-        }
-        return new ConvexPolygon([
-            new HalfPlane(this.base, thisPerpendicular),
-            new HalfPlane(this.base, otherPerpendicular.scale(-1))
-        ]);
+        return ConvexPolygon.createTriangleWithInfinityInTwoDirections(this.base, this.direction, direction);
     }
     public expandToIncludePolygon(polygon: ConvexPolygon): Area {
         throw new Error("Method not implemented.");
