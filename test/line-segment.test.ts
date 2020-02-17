@@ -1,5 +1,5 @@
 import { LineSegment } from "../src/areas/line-segment";
-import { ls, p } from "./builders";
+import { ls, p, r } from "./builders";
 import { empty } from "../src/areas/empty";
 import { expectAreasToBeEqual } from "./expectations";
 import { Area } from "../src/areas/area";
@@ -65,5 +65,24 @@ describe("a line segment", () => {
             .with(hp => hp.base(0, 1).normal(-1, -3)))]
     ])("should result in the correct expansions with a point", (point: Point, expectedExpansion: Area) => {
         expectAreasToBeEqual(lineSegment.expandToIncludePoint(point), expectedExpansion);
+    });
+
+    it.each([
+        [new Point(0, 1), p(p => p
+            .with(hp => hp.base(0, 0).normal(1, 0))
+            .with(hp => hp.base(3, 0).normal(-1, 0))
+            .with(hp => hp.base(0, 0).normal(0, 1)))],
+        [new Point(0, -1), p(p => p
+            .with(hp => hp.base(0, 0).normal(1, 0))
+            .with(hp => hp.base(3, 0).normal(-1, 0))
+            .with(hp => hp.base(0, 0).normal(0, -1)))],
+        [new Point(1, 1), p(p => p
+            .with(hp => hp.base(0, 0).normal(1, -1))
+            .with(hp => hp.base(3, 0).normal(-1, 1))
+            .with(hp => hp.base(0, 0).normal(0, 1)))],
+        [new Point(1, 0), r(r => r.base(0, 0).direction(1, 0))],
+        [new Point(-1, 0), r(r => r.base(3, 0).direction(-1, 0))]
+    ])("should result in the correct expansions with a point at infinity", (direction: Point, expectedExpansion: Area) => {
+        expectAreasToBeEqual(lineSegment.expandToIncludeInfinityInDirection(direction), expectedExpansion)
     });
 });

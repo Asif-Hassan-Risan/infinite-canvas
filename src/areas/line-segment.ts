@@ -6,6 +6,7 @@ import { empty } from "./empty";
 import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
 import { SubsetOfLine } from "./subset-of-line";
 import { Ray } from "./ray";
+import { Line } from "./line";
 
 export class LineSegment extends SubsetOfLine implements Area{
     constructor(public point1: Point, public point2: Point){
@@ -33,8 +34,17 @@ export class LineSegment extends SubsetOfLine implements Area{
         }
         return new LineSegment(this.point1, otherPoint2);
     }
+    public intersectWithRay(ray: Ray): Area{
+        return ray.intersectWithLineSegment(this);
+    }
+    public intersectWithLine(line: Line): Area{
+        return line.intersectWithLineSegment(this);
+    }
     public isContainedByRay(ray: Ray): boolean{
         return ray.containsPoint(this.point1) && ray.containsPoint(this.point2);
+    }
+    public isContainedByLine(line: Line): boolean{
+        return line.intersectsSubsetOfLine(this);
     }
     public isContainedByLineSegment(other: LineSegment): boolean{
         return other.containsPoint(this.point1) && other.containsPoint(this.point2);
@@ -46,7 +56,7 @@ export class LineSegment extends SubsetOfLine implements Area{
         if(this.isContainedByConvexPolygon(convexPolygon)){
             return this;
         }
-        const intersections: HalfPlaneLineIntersection[] = convexPolygon.intersectWithLine(this.point1, this.direction);
+        const intersections: HalfPlaneLineIntersection[] = convexPolygon.getIntersectionsWithLine(this.point1, this.direction);
         let point1: Point = this.point1;
         let point2: Point = this.point2;
         for(let intersection of intersections){
@@ -75,6 +85,9 @@ export class LineSegment extends SubsetOfLine implements Area{
     protected interiorContainsPoint(point: Point): boolean{
         return this.pointIsOnSameLine(point) && this.pointIsStrictlyBetweenPoints(point, this.point1, this.point2)
     }
+    public intersectsRay(ray: Ray): boolean{
+        return ray.intersectsLineSegment(this);
+    }
     public intersectsLineSegment(other: LineSegment): boolean{
         if(this.isContainedByLineSegment(other) || other.isContainedByLineSegment(this)){
             return true;
@@ -85,7 +98,9 @@ export class LineSegment extends SubsetOfLine implements Area{
         const {point1, point2} = this.getPointsInSameDirection(other.point1, other.point2);
         return !this.comesBefore(point2, this.point1) && !this.comesBefore(this.point2, point1);
     }
-    
+    public intersectsLine(line: Line): boolean{
+        return line.intersectsSubsetOfLine(this);
+    }
     public intersects(other: Area): boolean {
         return other.intersectsLineSegment(this);
     }
@@ -100,6 +115,15 @@ export class LineSegment extends SubsetOfLine implements Area{
             return new LineSegment(this.point1, point);
         }
         return ConvexPolygon.createTriangle(this.point1, point, this.point2);
+    }
+    public expandToIncludeInfinityInDirection(direction: Point): Area{
+        if(direction.inSameDirectionAs(this.direction)){
+            return new Ray(this.point1, direction);
+        }
+        if(direction.cross(this.direction) === 0){
+            return new Ray(this.point2, direction);
+        }
+        return ConvexPolygon.createTriangleWithInfinityInDirection(this.point1, this.point2, direction);
     }
     public expandToIncludePolygon(polygon: ConvexPolygon): Area {
         return this.expandToInclude(polygon);

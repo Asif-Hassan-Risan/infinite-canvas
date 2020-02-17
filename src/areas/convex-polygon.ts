@@ -6,6 +6,8 @@ import { plane } from "./plane";
 import { Transformation } from "../transformation";
 import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
 import { LineSegment } from "./line-segment";
+import { Ray } from "./ray";
+import { Line } from "./line";
 
 export class ConvexPolygon implements Area{
     public readonly vertices: PolygonVertex[];
@@ -27,6 +29,12 @@ export class ConvexPolygon implements Area{
     }
     public intersectWith(area: Area): Area {
         return area.intersectWithConvexPolygon(this);
+    }
+    public intersectWithRay(ray: Ray): Area{
+        return ray.intersectWithConvexPolygon(this);
+    }
+    public intersectWithLine(line: Line): Area{
+        return line.intersectWithConvexPolygon(this);
     }
     public intersectWithLineSegment(other: LineSegment): Area{
         return other.intersectWithConvexPolygon(this);
@@ -92,7 +100,7 @@ export class ConvexPolygon implements Area{
         }
         return new ConvexPolygon(halfPlanes);
     }
-    public intersectWithLine(point: Point, direction: Point): HalfPlaneLineIntersection[]{
+    public getIntersectionsWithLine(point: Point, direction: Point): HalfPlaneLineIntersection[]{
         const result: HalfPlaneLineIntersection[] = [];
         for(let halfPlane of this.halfPlanes){
             if(halfPlane.isParallelToLine(point, direction)){
@@ -151,8 +159,14 @@ export class ConvexPolygon implements Area{
         }
         return true;
     }
+    public intersectsRay(ray: Ray): boolean{
+        return ray.intersectsConvexPolygon(this);
+    }
     public intersectsLineSegment(lineSegment: LineSegment): boolean{
         return lineSegment.intersectsConvexPolygon(this);
+    }
+    public intersectsLine(line: Line): boolean{
+        return line.intersectsConvexPolygon(this);
     }
     public intersectsConvexPolygon(other: ConvexPolygon): boolean{
         if(this.isContainedByConvexPolygon(other) || other.isContainedByConvexPolygon(this)){
@@ -222,7 +236,13 @@ export class ConvexPolygon implements Area{
         }
         return result;
     }
+    public isContainedByRay(ray: Ray): boolean{
+        return false;
+    }
     public isContainedByLineSegment(other: LineSegment): boolean{
+        return false;
+    }
+    public isContainedByLine(line: Line): boolean{
         return false;
     }
     public isContainedByConvexPolygon(other: ConvexPolygon){

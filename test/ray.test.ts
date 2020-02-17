@@ -1,5 +1,5 @@
 import { Ray } from "../src/areas/ray";
-import { r, p, ls } from "./builders";
+import { r, p, ls, l } from "./builders";
 import { Point } from "../src/geometry/point";
 import { Area } from "../src/areas/area";
 import { expectAreasToBeEqual } from "./expectations";
@@ -47,5 +47,34 @@ describe("a ray", () => {
     ])("should intersect the right line segments", (lineSegment: LineSegment, expectedToIntersect: boolean, expectedIntersection: Area) => {
         expect(ray.intersectsLineSegment(lineSegment)).toBe(expectedToIntersect);
         expectAreasToBeEqual(ray.intersectWithLineSegment(lineSegment), expectedIntersection);
+    });
+
+    it.each([
+        [r(r => r.base(-1, 0).direction(-1, 0)), false, empty],
+        [r(r => r.base(0, 0).direction(-1, 0)), false, empty],
+        [r(r => r.base(0, 1).direction(-1, 0)), false, empty],
+        [r(r => r.base(1, 1).direction(-1, 0)), false, empty],
+        [r(r => r.base(1, 0).direction(-1, 0)), true, ls(ls => ls.from(0, 0).to(1, 0))],
+        [r(r => r.base(1, 0).direction(1, 0)), true, r(r => r.base(1, 0).direction(1, 0))],
+        [r(r => r.base(-1, 0).direction(1, 0)), true, r(r => r.base(0, 0).direction(1, 0))],
+    ])("should intersect the right rays", (other: Ray, expectedToIntersect: boolean, expectedIntersection: Area) => {
+        expect(ray.intersectsRay(other)).toBe(expectedToIntersect);
+        expectAreasToBeEqual(ray.intersectWithRay(other), expectedIntersection);
+    });
+
+    it.each([
+        [new Point(1, 0), r(r => r.base(0, 0).direction(1, 0))],
+        [new Point(0, 1), p(p => p
+            .with(hp => hp.base(0, 0).normal(0, 1))
+            .with(hp => hp.base(0, 0).normal(1, 0)))],
+        [new Point(-1, 1), p(p => p
+            .with(hp => hp.base(0, 0).normal(0, 1))
+            .with(hp => hp.base(0, 0).normal(1, 1)))],
+        [new Point(0, -1), p(p => p
+            .with(hp => hp.base(0, 0).normal(0, -1))
+            .with(hp => hp.base(0, 0).normal(1, 0)))],
+        [new Point(-1, 0), l(l => l.base(0, 0).direction(1, 0))]
+    ])("should result in the correct expansions with a point at infinity", (direction: Point, expectedExpansion: Area) => {
+        expectAreasToBeEqual(ray.expandToIncludeInfinityInDirection(direction), expectedExpansion)
     });
 });

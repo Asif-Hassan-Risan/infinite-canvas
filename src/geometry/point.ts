@@ -36,5 +36,11 @@ export class Point{
 	public inSameDirectionAs(other: Point): boolean{
 		return this.cross(other) === 0 && this.dot(other) >= 0;
 	}
+	public isInSmallerAngleBetweenPoints(point1: Point, point2: Point): boolean{
+		if(point1.cross(point2) > 0){
+            return point1.cross(this) >= 0 && this.cross(point2) >= 0;
+        }
+        return point1.cross(this) <= 0 && this.cross(point2) <= 0;
+	}
 	public static origin: Point = new Point(0, 0);
 }

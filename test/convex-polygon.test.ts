@@ -8,9 +8,10 @@ import { Rectangle } from "../src/areas/rectangle";
 import { Transformation } from "../src/transformation";
 import { empty } from "../src/areas/empty";
 import { LineSegment } from "../src/areas/line-segment";
-import { p, ls, hp, r } from "./builders";
+import { p, ls, hp, r, l } from "./builders";
 import { expectPolygonsToBeEqual, expectAreasToBeEqual } from "./expectations";
 import { Ray } from "../src/areas/ray";
+import { Line } from "../src/areas/line";
 
 describe("a rectangle", () => {
     let rectangle: ConvexPolygon;
@@ -39,6 +40,27 @@ describe("a rectangle", () => {
         [new Point(0, -1), false]
     ])("should contain infinity in the right directions", (direction: Point, expectedToContainInfinityInDirection: boolean) => {
         expect(rectangle.containsInfinityInDirection(direction)).toBe(expectedToContainInfinityInDirection);
+    });
+
+    it.each([
+        [l(l => l.base(0, -1).direction(1, 0)), false, empty],
+        [l(l => l.base(0, -1).direction(-1, 0)), false, empty],
+        [l(l => l.base(0, 0).direction(1, 0)), true, ls(ls => ls.from(0, 0).to(1, 0))],
+        [l(l => l.base(0, 0).direction(-1, 0)), true, ls(ls => ls.from(0, 0).to(1, 0))],
+        [l(l => l.base(-1, 0).direction(1, 0)), true, ls(ls => ls.from(0, 0).to(1, 0))],
+        [l(l => l.base(-1, 0).direction(-1, 0)), true, ls(ls => ls.from(0, 0).to(1, 0))],
+        [l(l => l.base(2, 0).direction(-1, 0)), true, ls(ls => ls.from(0, 0).to(1, 0))],
+        [l(l => l.base(2, 0).direction(1, 0)), true, ls(ls => ls.from(0, 0).to(1, 0))],
+        [l(l => l.base(0.5, 0).direction(1, 0)), true, ls(ls => ls.from(0, 0).to(1, 0))],
+        [l(l => l.base(0.5, 0).direction(-1, 0)), true, ls(ls => ls.from(0, 0).to(1, 0))],
+        [l(l => l.base(0.5, 0.5).direction(1, 0)), true, ls(ls => ls.from(0, 0.5).to(1, 0.5))],
+        [l(l => l.base(0.5, 0.5).direction(-1, 0)), true, ls(ls => ls.from(0, 0.5).to(1, 0.5))],
+        [l(l => l.base(-2, 0.5).direction(1, 0)), true, ls(ls => ls.from(0, 0.5).to(1, 0.5))],
+        [l(l => l.base(-2, 0.5).direction(-1, 0)), true, ls(ls => ls.from(0, 0.5).to(1, 0.5))],
+        [l(l => l.base(-1, 0).direction(1, 1)), false, empty],
+    ])("should intersect the right lines", (line: Line, expectedToIntersect: boolean, expectedIntersection: Area) => {
+        expect(line.intersectsConvexPolygon(rectangle)).toBe(expectedToIntersect);
+        expectAreasToBeEqual(line.intersectWithConvexPolygon(rectangle), expectedIntersection);
     });
 
     it.each([
@@ -155,6 +177,22 @@ describe("a convex polygon with one half plane", () => {
         [r(r => r.base(0, -2).direction(0, -1)), empty],
     ])("should lead to the correct intersections with rays", (ray: Ray, expectedIntersection: Area) => {
         expectAreasToBeEqual(ray.intersectWithConvexPolygon(convexPolygon), expectedIntersection);
+    });
+
+    it.each([
+        [l(l => l.base(0, -1).direction(1, 0)), true, l(l => l.base(0, -1).direction(1, 0))],
+        [l(l => l.base(0, -3).direction(1, 0)), false, empty],
+        [l(l => l.base(0, -2).direction(1, 0)), true, l(l => l.base(0, -2).direction(1, 0))],
+        [l(l => l.base(0, -2).direction(-1, 0)), true, l(l => l.base(0, -2).direction(1, 0))],
+        [l(l => l.base(0, -2).direction(0, 1)), true, r(r => r.base(0, -2).direction(0, 1))],
+        [l(l => l.base(0, -2).direction(0, -1)), true, r(r => r.base(0, -2).direction(0, 1))],
+        [l(l => l.base(0, -3).direction(0, 1)), true, r(r => r.base(0, -2).direction(0, 1))],
+        [l(l => l.base(0, -3).direction(0, -1)), true, r(r => r.base(0, -2).direction(0, 1))],
+        [l(l => l.base(0, -1).direction(0, 1)), true, r(r => r.base(0, -2).direction(0, 1))],
+        [l(l => l.base(0, -1).direction(0, -1)), true, r(r => r.base(0, -2).direction(0, 1))],
+    ])("should intersect the right lines", (line: Line, expectedToIntersect: boolean, expectedIntersection: Area) => {
+        expect(line.intersectsConvexPolygon(convexPolygon)).toBe(expectedToIntersect);
+        expectAreasToBeEqual(line.intersectWithConvexPolygon(convexPolygon), expectedIntersection);
     });
 
     it.each([
@@ -287,6 +325,8 @@ describe("a convex polygon with three half planes and two vertices", () => {
         [r(r => r.base(0, 0).direction(-1, -1)), r(r => r.base(-1, -1).direction(-1, -1))],
         [r(r => r.base(-1, -1).direction(0, -1)), r(r => r.base(-1, -1).direction(0, -1))],
         [r(r => r.base(-1, -1).direction(1, 0)), ls(ls => ls.from(-1, -1).to(1, -1))],
+        [r(r => r.base(-1, -1).direction(1, -1)), r(r => r.base(-1, -1).direction(1, -1))],
+        [r(r => r.base(-1, -1).direction(2, -1)), ls(ls => ls.from(-1, -1).to(3, -3))],
         [r(r => r.base(1, -1).direction(-1, 0)), ls(ls => ls.from(-1, -1).to(1, -1))],
         [r(r => r.base(-1, 0).direction(0, -1)), r(r => r.base(-1, -1).direction(0, -1))],
         [r(r => r.base(0, 0).direction(0, -1)), r(r => r.base(0, -1).direction(0, -1))],

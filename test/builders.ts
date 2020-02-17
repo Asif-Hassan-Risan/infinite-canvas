@@ -3,6 +3,7 @@ import { Point } from "../src/geometry/point";
 import { HalfPlane } from "../src/areas/half-plane";
 import { LineSegment } from "../src/areas/line-segment";
 import { Ray } from "../src/areas/ray";
+import { Line } from "../src/areas/line";
 
 class PolygonBuilder{
     private halfPlanes: HalfPlane[] = [];
@@ -59,6 +60,21 @@ class RayBuilder{
         return this;
     }
 }
+class LineBuilder{
+    private _base: Point;
+    private _direction: Point;
+    public build(): Line{
+        return new Line(this._base, this._direction);
+    }
+    public base(x: number, y: number): LineBuilder{
+        this._base = new Point(x, y);
+        return this;
+    }
+    public direction(x: number, y: number): LineBuilder{
+        this._direction = new Point(x, y);
+        return this;
+    }
+}
 function hp(builder: (builder: HalfPlaneBuilder) => HalfPlaneBuilder): HalfPlane{
     return builder(new HalfPlaneBuilder()).build();
 }
@@ -71,5 +87,8 @@ function ls(builder: (builder: LineSegmentBuilder) => LineSegmentBuilder){
 function r(builder: (builder: RayBuilder) => RayBuilder): Ray{
     return builder(new RayBuilder()).build();
 }
-export {hp, p, ls, r};
+function l(builder: (builder: LineBuilder) => LineBuilder): Line{
+    return builder(new LineBuilder()).build();
+}
+export {hp, p, ls, r, l};
 

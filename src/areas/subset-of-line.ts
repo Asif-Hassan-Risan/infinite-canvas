@@ -4,7 +4,7 @@ import { ConvexPolygon } from "./convex-polygon";
 import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
 
 export abstract class SubsetOfLine{
-    constructor(protected base: Point, protected direction: Point){}
+    constructor(public base: Point, public direction: Point){}
     protected pointIsOnSameLine(point: Point): boolean{
         return point.minus(this.base).cross(this.direction) === 0;
     }
@@ -29,7 +29,7 @@ export abstract class SubsetOfLine{
         if(this.isContainedByConvexPolygon(other)){
             return true;
         }
-        const intersections: HalfPlaneLineIntersection[] = other.intersectWithLine(this.base, this.direction);
+        const intersections: HalfPlaneLineIntersection[] = other.getIntersectionsWithLine(this.base, this.direction);
         for(let intersection of intersections){
             if(this.interiorContainsPoint(intersection.point)){
                 return true;

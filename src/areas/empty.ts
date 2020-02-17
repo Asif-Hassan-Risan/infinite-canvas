@@ -3,6 +3,8 @@ import { ConvexPolygon } from "./convex-polygon";
 import { Point } from "../geometry/point";
 import { Transformation } from "../transformation";
 import { LineSegment } from "./line-segment";
+import { Ray } from "./ray";
+import { Line } from "./line";
 
 class Empty implements Area{
     public intersectWith(area: Area): Area {
@@ -17,6 +19,12 @@ class Empty implements Area{
     public intersectWithLineSegment(other: LineSegment): Area{
         return this;
     }
+    public intersectWithRay(ray: Ray): Area{
+        return this;
+    }
+    public intersectWithLine(line: Line): Area{
+        return this;
+    }
     public expandToInclude(area: Area): Area{
         return area;
     }
@@ -29,8 +37,17 @@ class Empty implements Area{
     public isContainedByConvexPolygon(other: ConvexPolygon): boolean{
         return true;
     }
+    public isContainedByRay(ray: Ray): boolean{
+        return true;
+    }
     public isContainedByLineSegment(other: LineSegment): boolean{
         return true;
+    }
+    public isContainedByLine(line: Line): boolean{
+        return true;
+    }
+    public intersectsRay(ray: Ray): boolean{
+        return false;
     }
     public intersectsConvexPolygon(other: ConvexPolygon): boolean{
         return false;
@@ -38,7 +55,13 @@ class Empty implements Area{
     public intersectsLineSegment(lineSegment: LineSegment): boolean{
         return false;
     }
+    public intersectsLine(line: Line): boolean{
+        return false;
+    }
     public expandToIncludePoint(point: Point): Area {
+        return this;
+    }
+    public expandToIncludeInfinityInDirection(direction: Point): Area{
         return this;
     }
     public expandToIncludePolygon(polygon: ConvexPolygon): Area {

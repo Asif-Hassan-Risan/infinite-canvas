@@ -9,10 +9,7 @@ export class PolygonVertex{
         this.normal2 = halfPlane2.normalTowardInterior;
     }
     public isContainedByHalfPlaneWithNormal(normal: Point): boolean{
-        if(this.normal1.cross(this.normal2) > 0){
-            return this.normal1.cross(normal) >= 0 && normal.cross(this.normal2) >= 0;
-        }
-        return this.normal1.cross(normal) <= 0 && normal.cross(this.normal2) <= 0;
+        return normal.isInSmallerAngleBetweenPoints(this.normal1, this.normal2);
     }
     private containsPoint(point: Point): boolean{
         return this.halfPlane1.containsPoint(point) && this.halfPlane2.containsPoint(point);

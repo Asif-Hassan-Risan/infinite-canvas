@@ -20,6 +20,9 @@ export class InfiniteCanvasAreaBuilder {
             this._area = this._area.expandToIncludePoint(point);
         }
     }
+    public addInfinityInDirection(direction: Point): void{
+        
+    }
     public addArea(area: Area): void{
         if(!this._area){
             this._area = area;

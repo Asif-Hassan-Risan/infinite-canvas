@@ -9,6 +9,9 @@ export class TransformedAreaBuilder implements AreaBuilder{
     public addPoint(point: Point): void{
         this.areaBuilder.addPoint(this.transformation.apply(point));
     }
+    public addInfinityInDirection(direction: Point): void{
+        
+    }
     public addArea(area: Area): void{
         this.areaBuilder.addArea(area.transform(this.transformation));
     }

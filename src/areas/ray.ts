@@ -6,13 +6,12 @@ import { LineSegment } from "./line-segment";
 import { SubsetOfLine } from "./subset-of-line";
 import { empty } from "./empty";
 import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
+import { Line } from "./line";
+import { HalfPlane } from "./half-plane";
 
 export class Ray extends SubsetOfLine implements Area{
-    constructor(public base: Point, public direction: Point){
-        super(base, direction);
-    }
     public intersectWith(area: Area): Area {
-        throw new Error("Method not implemented.");
+        return area.intersectWithRay(this);
     }
     public intersectWithConvexPolygon(convexPolygon: ConvexPolygon): Area {
         if(!this.intersectsConvexPolygon(convexPolygon)){
@@ -21,7 +20,7 @@ export class Ray extends SubsetOfLine implements Area{
         if(this.isContainedByConvexPolygon(convexPolygon)){
             return this;
         }
-        const intersections: HalfPlaneLineIntersection[] = convexPolygon.intersectWithLine(this.base, this.direction);
+        const intersections: HalfPlaneLineIntersection[] = convexPolygon.getIntersectionsWithLine(this.base, this.direction);
         let point1: Point = this.base;
         let point2: Point;
         for(let intersection of intersections){
@@ -37,6 +36,21 @@ export class Ray extends SubsetOfLine implements Area{
             return new LineSegment(point1, point2);
         }
         return new Ray(point1, this.direction);
+    }
+    public intersectWithRay(ray: Ray): Area{
+        if(this.isContainedByRay(ray)){
+            return this;
+        }
+        if(ray.isContainedByRay(this)){
+            return ray;
+        }
+        if(!this.interiorContainsPoint(ray.base)){
+            return empty;
+        }
+        return new LineSegment(this.base, ray.base);
+    }
+    public intersectWithLine(line: Line): Area{
+        return line.intersectWithRay(this);
     }
     public intersectWithLineSegment(lineSegment: LineSegment): Area {
         if(lineSegment.isContainedByRay(this)){
@@ -54,11 +68,23 @@ export class Ray extends SubsetOfLine implements Area{
     public isContainedByConvexPolygon(other: ConvexPolygon): boolean {
         return other.containsPoint(this.base) && other.containsInfinityInDirection(this.direction);
     }
+    public isContainedByRay(ray: Ray): boolean{
+        return ray.containsPoint(this.base) && ray.containsInfinityInDirection(this.direction);
+    }
+    public isContainedByLine(line: Line): boolean{
+        return line.intersectsSubsetOfLine(this);
+    }
     public isContainedByLineSegment(lineSegment: LineSegment): boolean {
         return false;
     }
     public contains(other: Area): boolean {
-        throw new Error("Method not implemented.");
+        return other.isContainedByRay(this);
+    }
+    public intersectsRay(ray: Ray): boolean{
+        return this.isContainedByRay(ray) || ray.isContainedByRay(this) || this.interiorContainsPoint(ray.base);
+    }
+    public intersectsLine(line: Line): boolean{
+        return line.intersectsSubsetOfLine(this);
     }
     public intersectsLineSegment(lineSegment: LineSegment): boolean {
         if(lineSegment.isContainedByRay(this)){
@@ -74,7 +100,7 @@ export class Ray extends SubsetOfLine implements Area{
         return true;
     }
     public intersects(other: Area): boolean {
-        throw new Error("Method not implemented.");
+        return other.intersectsRay(this);
     }
     public expandToIncludePoint(point: Point): Area {
         if(this.containsPoint(point)){
@@ -84,6 +110,27 @@ export class Ray extends SubsetOfLine implements Area{
             return new Ray(point, this.direction);
         }
         return ConvexPolygon.createTriangleWithInfinityInDirection(this.base, point, this.direction);
+    }
+    public expandToIncludeInfinityInDirection(direction: Point): Area{
+        if(direction.inSameDirectionAs(this.direction)){
+            return this;
+        }
+        const cross: number = this.direction.cross(direction);
+        if(cross === 0){
+            return new Line(this.base, this.direction);
+        }
+        const thisPerpendicular: Point = this.direction.getPerpendicular();
+        const otherPerpendicular: Point = direction.getPerpendicular();
+        if(cross < 0){
+            return new ConvexPolygon([
+                new HalfPlane(this.base, thisPerpendicular.scale(-1)),
+                new HalfPlane(this.base, otherPerpendicular)
+            ]);
+        }
+        return new ConvexPolygon([
+            new HalfPlane(this.base, thisPerpendicular),
+            new HalfPlane(this.base, otherPerpendicular.scale(-1))
+        ]);
     }
     public expandToIncludePolygon(polygon: ConvexPolygon): Area {
         throw new Error("Method not implemented.");
@@ -97,7 +144,10 @@ export class Ray extends SubsetOfLine implements Area{
     }
     protected interiorContainsPoint(point: Point): boolean{
         return this.pointIsOnSameLine(point) && !this.comesBefore(point, this.base);
-    } 
+    }
+    public containsInfinityInDirection(direction: Point): boolean{
+        return this.direction.inSameDirectionAs(direction);
+    }
     public containsPoint(point: Point): boolean{
         return this.pointIsOnSameLine(point) && this.comesBefore(this.base, point);
     }
