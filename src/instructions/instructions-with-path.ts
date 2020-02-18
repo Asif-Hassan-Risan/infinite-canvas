@@ -11,10 +11,15 @@ import { DrawingPathInstructionWithState } from "./drawing-path-instruction-with
 import { Area } from "../areas/area";
 import { InfiniteCanvasAreaBuilder } from "../areas/infinite-canvas-area-builder";
 import { AreaBuilder } from "../areas/area-builder";
+import { Position } from "../geometry/position";
+import { transformPosition } from "../geometry/transform-position";
+import { Point } from "../geometry/point";
 
 export class InstructionsWithPath extends StateChangingInstructionSequence<PathInstructionWithState> implements StateChangingInstructionSetWithAreaAndCurrentPath{
     private areaBuilder: InfiniteCanvasAreaBuilder = new InfiniteCanvasAreaBuilder();
     private drawnArea: Area;
+    private currentPosition: Position;
+    private latestPathStartingPosition: Position;
     public visible: boolean;
     constructor(private _initiallyWithState: StateAndInstruction){
         super(_initiallyWithState);
@@ -38,7 +43,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
     }
     public drawPath(instruction: Instruction, state: InfiniteCanvasState): void{
         const newlyDrawnArea: Area = this.getCurrentlyDrawableArea();
-        this.drawnArea = newlyDrawnArea;//!this.drawnArea || newlyDrawnArea.contains(this.drawnArea) ? newlyDrawnArea : this.drawnArea;
+        this.drawnArea = newlyDrawnArea;
         const toAdd: DrawingPathInstructionWithState = DrawingPathInstructionWithState.createDrawing(state, instruction, this.drawnArea);
         toAdd.setInitialState(this.state);
         this.add(toAdd);
@@ -51,9 +56,32 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         const clippedPath: StateChangingInstructionSetWithAreaAndCurrentPath = this.recreateClippedPath();
         this.addClippedPath(clippedPath);
     }
+    public closePath(): void{
+        if(this.latestPathStartingPosition){
+            this.currentPosition = this.latestPathStartingPosition;
+        }
+        const toAdd: PathInstructionWithState = PathInstructionWithState.create(this.state, (context: CanvasRenderingContext2D) => {context.closePath();});
+        toAdd.setInitialState(this.state);
+        this.add(toAdd);
+    }
+    public moveTo(x: number, y: number, state: InfiniteCanvasState): void{
+        const pointToMoveTo: Point = new Point(x, y);
+        const transformedPointToMoveTo: Point = state.current.transformation.apply(pointToMoveTo);
+        this.areaBuilder.addPoint(transformedPointToMoveTo);
+        this.latestPathStartingPosition = transformedPointToMoveTo;
+        this.currentPosition = transformedPointToMoveTo;
+        const toAdd: PathInstructionWithState = PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            const {x, y} = transformation.apply(pointToMoveTo);
+            context.moveTo(x, y);
+        });
+        toAdd.setInitialState(this.state);
+        this.add(toAdd);
+    }
     public addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void{
-        //this.area = pathInstruction.changeArea.execute(state.current.transformation, this.area);
         pathInstruction.changeArea(this.areaBuilder.transformedWith(state.current.transformation));
+        if(pathInstruction.positionChange){
+            this.currentPosition = transformPosition(pathInstruction.positionChange, state.current.transformation);
+        }
         const toAdd: PathInstructionWithState = PathInstructionWithState.create(state, pathInstruction.instruction);
         toAdd.setInitialState(this.state);
         this.add(toAdd);

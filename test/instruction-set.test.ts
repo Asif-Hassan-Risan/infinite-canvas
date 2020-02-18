@@ -19,7 +19,7 @@ describe("an instruction set", () => {
 
         beforeEach(() => {
             instructionSet.beginPath();
-            instructionSet.addPathInstruction(PathInstructions.moveTo(0, 0));
+            instructionSet.moveTo(0, 0);
             instructionSet.addPathInstruction(PathInstructions.lineTo(3, 0));
             instructionSet.addPathInstruction(PathInstructions.lineTo(0, 3));
         });

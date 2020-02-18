@@ -135,6 +135,16 @@ export class InfiniteCanvasInstructionSet{
         }
     }
 
+    public closePath(): void{
+        if(this.currentInstructionsWithPath){
+            this.currentInstructionsWithPath.closePath();
+        }
+    }
+    public moveTo(x: number, y: number): void{
+        if(this.currentInstructionsWithPath){
+            this.currentInstructionsWithPath.moveTo(x, y, this.state);
+        }
+    }
     public intersects(area: Area): boolean{
         return this.previousInstructionsWithPath.intersects(area) || this.currentInstructionsWithPath && this.currentInstructionsWithPath.intersects(area);
     }

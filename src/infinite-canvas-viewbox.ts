@@ -66,6 +66,12 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public addPathInstruction(pathInstruction: PathInstruction): void{
 		this.instructionSet.addPathInstruction(pathInstruction);
 	}
+	public closePath(): void{
+		this.instructionSet.closePath();
+	}
+	public moveTo(x: number, y: number): void{
+		this.instructionSet.moveTo(x, y);
+	}
 	public drawPath(instruction: Instruction, pathInstructions?: PathInstruction[]): void{
 		this.instructionSet.drawPath(instruction, pathInstructions);
 	}

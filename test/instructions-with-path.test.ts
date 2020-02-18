@@ -5,7 +5,6 @@ import { defaultState } from "../src/state/default-state";
 import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InstructionsWithPath } from "../src/instructions/instructions-with-path";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../src/interfaces/state-changing-instruction-set-with-area-and-current-path";
-import { Rectangle } from "../src/areas/polygons/rectangle";
 import { PathInstruction } from "../src/interfaces/path-instruction";
 
 function drawAndLog(instructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath, state: InfiniteCanvasState): string[]{
@@ -35,7 +34,7 @@ describe("a set of instructions that is also about a path", () => {
         describe("and then receives an instruction that modifies the path", () => {
 
             beforeEach(() => {
-                instructionsWithPath.addPathInstruction(PathInstructions.moveTo(0, 0), currentState);
+                instructionsWithPath.moveTo(0, 0, currentState);
             });
 
             it("should contain an instruction to begin a path, change the state and modify the path", () => {
@@ -84,7 +83,7 @@ describe("a set of instructions that is also about a path", () => {
         let recreatedPath: StateChangingInstructionSetWithAreaAndCurrentPath;
 
         beforeEach(() => {
-            instructionsWithPath.addPathInstruction(PathInstructions.moveTo(0, 0), currentState);
+            instructionsWithPath.moveTo(0, 0, currentState);
             instructionsWithPath.addPathInstruction(PathInstructions.lineTo(10,0), currentState);
             instructionsWithPath.addPathInstruction(PathInstructions.lineTo(10,10), currentState);
             instructionsWithPath.addPathInstruction(PathInstructions.lineTo(0,10), currentState);

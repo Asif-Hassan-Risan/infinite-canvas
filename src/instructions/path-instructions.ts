@@ -18,7 +18,8 @@ export class PathInstructions{
         const changeArea: AreaChange = (builder: AreaBuilder) => builder.addArea(Rectangle.create(_x - radius, _y - radius, 2 * radius, 2 * radius));
         return {
             instruction: instruction,
-            changeArea: changeArea
+            changeArea: changeArea,
+            positionChange: new Point(_x, _y).plus(Transformation.rotation(0, 0, endAngle).apply(new Point(radius, 0)))
         };
     }
 
@@ -34,21 +35,13 @@ export class PathInstructions{
         const changeArea: AreaChange = (builder: AreaBuilder) => builder.addArea(newRectangle);
         return {
             instruction: instruction,
-            changeArea: changeArea
+            changeArea: changeArea,
+            positionChange: new Point(x2, y2)
         };
     }
 
     public static bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): PathInstruction{
         return undefined;
-    }
-
-    public static closePath(): PathInstruction{
-        return {
-            instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                context.closePath();
-            },
-            changeArea: () => {}
-        };
     }
 
     public static ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): PathInstruction{
@@ -59,7 +52,15 @@ export class PathInstructions{
                 const transformationAngle: number = transformation.getRotationAngle();
                 context.ellipse(tCenter.x, tCenter.y, radiusX * transformation.scale, radiusY * transformation.scale, rotation + transformationAngle, startAngle, endAngle, anticlockwise);
             },
-            changeArea: (builder: AreaBuilder) => builder.addArea(newRectangle)
+            changeArea: (builder: AreaBuilder) => builder.addArea(newRectangle),
+            positionChange: new Point(x, y)
+                .plus(
+                        Transformation.rotation(0, 0, endAngle).before(
+                        new Transformation(radiusX, 0, 0, radiusY, 0, 0)).before(
+                        Transformation.rotation(0, 0, rotation)
+                        )
+                    .apply(new Point(1, 0))
+                )
         };
     }
 
@@ -70,7 +71,8 @@ export class PathInstructions{
                 const {x, y} = transformation.apply(point);
                 context.lineTo(x, y);
             },
-            changeArea: (builder: AreaBuilder) => builder.addPoint(point)
+            changeArea: (builder: AreaBuilder) => builder.addPoint(point),
+            positionChange: new Point(_x, _y)
         };
     }
 
@@ -84,14 +86,15 @@ export class PathInstructions{
         ];
     }
 
-    public static moveTo(_x: number, _y: number): PathInstruction{
+    private static moveTo(_x: number, _y: number): PathInstruction{
         const point: Point = new Point(_x, _y);
         return {
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 const {x, y} = transformation.apply(point);
                 context.moveTo(x, y);
             },
-            changeArea: (builder: AreaBuilder) => builder.addPoint(point)
+            changeArea: (builder: AreaBuilder) => builder.addPoint(point),
+            positionChange: new Point(_x, _y)
         };
     }
 
