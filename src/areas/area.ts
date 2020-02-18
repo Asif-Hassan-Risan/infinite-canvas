@@ -1,9 +1,9 @@
 import { Point } from "../geometry/point";
-import { ConvexPolygon } from "./convex-polygon";
+import { ConvexPolygon } from "./polygons/convex-polygon";
 import { Transformation } from "../transformation";
-import { LineSegment } from "./line-segment";
-import { Ray } from "./ray";
-import { Line } from "./line";
+import { LineSegment } from "./line/line-segment";
+import { Ray } from "./line/ray";
+import { Line } from "./line/line";
 
 export interface Area{
     intersectWith(area: Area): Area;

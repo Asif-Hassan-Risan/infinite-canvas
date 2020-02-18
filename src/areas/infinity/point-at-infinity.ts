@@ -1,7 +1,7 @@
 import { SubsetOfLineAtInfinity } from "./subset-of-line-at-infinity";
-import { Point } from "../geometry/point";
-import { Area } from "./area";
-import { Ray } from "./ray";
+import { Point } from "../../geometry/point";
+import { Area } from "../area";
+import { Ray } from "../line/ray";
 import { LineSegmentAtInfinity } from "./line-segment-at-infinity";
 import { TwoOppositePointsOnLineAtInfinity } from "./two-opposite-points-on-line-at-infinity";
 

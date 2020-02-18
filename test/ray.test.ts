@@ -1,9 +1,9 @@
-import { Ray } from "../src/areas/ray";
+import { Ray } from "../src/areas/line/ray";
 import { r, p, ls, l } from "./builders";
 import { Point } from "../src/geometry/point";
 import { Area } from "../src/areas/area";
 import { expectAreasToBeEqual } from "./expectations";
-import { LineSegment } from "../src/areas/line-segment";
+import { LineSegment } from "../src/areas/line/line-segment";
 import { empty } from "../src/areas/empty";
 
 describe("a ray", () => {

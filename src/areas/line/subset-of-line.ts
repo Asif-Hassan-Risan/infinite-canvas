@@ -1,7 +1,7 @@
-import { Point } from "../geometry/point";
+import { Point } from "../../geometry/point";
 import { LineSegment } from "./line-segment";
-import { ConvexPolygon } from "./convex-polygon";
-import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
+import { ConvexPolygon } from "../polygons/convex-polygon";
+import { HalfPlaneLineIntersection } from "../polygons/half-plane-line-intersection";
 
 export abstract class SubsetOfLine{
     constructor(public base: Point, public direction: Point){}

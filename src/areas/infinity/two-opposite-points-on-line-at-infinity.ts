@@ -1,7 +1,7 @@
-import { Point } from "../geometry/point";
+import { Point } from "../../geometry/point";
 import { SubsetOfLineAtInfinity } from "./subset-of-line-at-infinity";
-import { Line } from "./line";
-import { Area } from "./area";
+import { Line } from "../line/line";
+import { Area } from "../area";
 import { HalfLineAtInfinity } from "./half-line-at-infinity";
 
 export class TwoOppositePointsOnLineAtInfinity implements SubsetOfLineAtInfinity{

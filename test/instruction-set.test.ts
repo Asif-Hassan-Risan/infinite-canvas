@@ -3,7 +3,7 @@ import { PathInstructions } from "../src/instructions/path-instructions";
 import { logInstruction } from "./log-instruction";
 import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InfiniteCanvasInstructionSet } from "../src/infinite-canvas-instruction-set";
-import { Rectangle } from "../src/areas/rectangle";
+import { Rectangle } from "../src/areas/polygons/rectangle";
 import { transformInstructionRelatively } from "../src/instruction-utils";
 
 describe("an instruction set", () => {

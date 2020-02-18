@@ -1,6 +1,6 @@
-import { HalfPlane } from "../src/areas/half-plane";
+import { HalfPlane } from "../src/areas/polygons/half-plane";
 import { Point } from "../src/geometry/point";
-import { PolygonVertex } from "../src/areas/polygon-vertex";
+import { PolygonVertex } from "../src/areas/polygons/polygon-vertex";
 
 describe("a half plane", () => {
     let halfPlane: HalfPlane;

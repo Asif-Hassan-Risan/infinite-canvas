@@ -1,6 +1,6 @@
-import { Point } from "../geometry/point";
-import { Transformation } from "../transformation";
-import { intersectLines } from "../geometry/intersect-lines";
+import { Point } from "../../geometry/point";
+import { Transformation } from "../../transformation";
+import { intersectLines } from "../../geometry/intersect-lines";
 import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
 import { PolygonVertex } from "./polygon-vertex";
 

@@ -1,7 +1,7 @@
-import { Point } from "../geometry/point";
+import { Point } from "../../geometry/point";
 import { SubsetOfLineAtInfinity } from "./subset-of-line-at-infinity";
-import { Area } from "./area";
-import { ConvexPolygon } from "./convex-polygon";
+import { Area } from "../area";
+import { ConvexPolygon } from "../polygons/convex-polygon";
 import { HalfLineAtInfinity } from "./half-line-at-infinity";
 import { lineAtInfinity } from "./line-at-infinity";
 

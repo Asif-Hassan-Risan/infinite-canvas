@@ -1,9 +1,9 @@
-import { Area } from "./area";
-import { ConvexPolygon } from "./convex-polygon";
-import { Point } from "../geometry/point";
-import { Transformation } from "../transformation";
-import { empty } from "./empty";
-import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
+import { Area } from "../area";
+import { ConvexPolygon } from "../polygons/convex-polygon";
+import { Point } from "../../geometry/point";
+import { Transformation } from "../../transformation";
+import { empty } from "../empty";
+import { HalfPlaneLineIntersection } from "../polygons/half-plane-line-intersection";
 import { SubsetOfLine } from "./subset-of-line";
 import { Ray } from "./ray";
 import { Line } from "./line";

@@ -1,13 +1,13 @@
 import { SubsetOfLine } from "./subset-of-line";
-import { Area } from "./area";
-import { Transformation } from "../transformation";
-import { ConvexPolygon } from "./convex-polygon";
-import { Point } from "../geometry/point";
+import { Area } from "../area";
+import { Transformation } from "../../transformation";
+import { ConvexPolygon } from "../polygons/convex-polygon";
+import { Point } from "../../geometry/point";
 import { LineSegment } from "./line-segment";
 import { Ray } from "./ray";
-import { empty } from "./empty";
-import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
-import { HalfPlane } from "./half-plane";
+import { empty } from "../empty";
+import { HalfPlaneLineIntersection } from "../polygons/half-plane-line-intersection";
+import { HalfPlane } from "../polygons/half-plane";
 
 export class Line extends SubsetOfLine implements Area{
     public intersectWith(area: Area): Area {

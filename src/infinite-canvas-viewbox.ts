@@ -11,7 +11,7 @@ import { DrawingLock } from "./drawing-lock";
 import { InfiniteCanvasPattern } from "./styles/infinite-canvas-pattern";
 import { TransformationKind } from "./transformation-kind";
 import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set";
-import { Rectangle } from "./areas/rectangle";
+import { Rectangle } from "./areas/polygons/rectangle";
 import { transformInstructionRelatively } from "./instruction-utils";
 import { Area } from "./areas/area";
 

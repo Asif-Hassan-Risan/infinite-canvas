@@ -1,8 +1,8 @@
 import { SubsetOfLineAtInfinity } from "./subset-of-line-at-infinity";
-import { Point } from "../geometry/point";
-import { Area } from "./area";
-import { ConvexPolygon } from "./convex-polygon";
-import { HalfPlane } from "./half-plane";
+import { Point } from "../../geometry/point";
+import { Area } from "../area";
+import { ConvexPolygon } from "../polygons/convex-polygon";
+import { HalfPlane } from "../polygons/half-plane";
 import { lineAtInfinity } from "./line-at-infinity";
 
 export class HalfLineAtInfinity implements SubsetOfLineAtInfinity{

@@ -1,7 +1,7 @@
 import { Transformation } from "./transformation";
 import { Point } from "./geometry/point";
-import { ConvexPolygon } from "./areas/convex-polygon";
-import { Rectangle } from "./areas/rectangle";
+import { ConvexPolygon } from "./areas/polygons/convex-polygon";
+import { Rectangle } from "./areas/polygons/rectangle";
 
 export class ViewBoxInfinity{
     private viewBoxRectangle: ConvexPolygon;

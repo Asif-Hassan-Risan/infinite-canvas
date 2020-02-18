@@ -1,9 +1,9 @@
-import { ConvexPolygon } from "../src/areas/convex-polygon";
+import { ConvexPolygon } from "../src/areas/polygons/convex-polygon";
 import { Point } from "../src/geometry/point";
-import { HalfPlane } from "../src/areas/half-plane";
-import { LineSegment } from "../src/areas/line-segment";
-import { Ray } from "../src/areas/ray";
-import { Line } from "../src/areas/line";
+import { HalfPlane } from "../src/areas/polygons/half-plane";
+import { LineSegment } from "../src/areas/line/line-segment";
+import { Ray } from "../src/areas/line/ray";
+import { Line } from "../src/areas/line/line";
 
 class PolygonBuilder{
     private halfPlanes: HalfPlane[] = [];

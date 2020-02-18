@@ -4,11 +4,11 @@ import { Transformation } from "../transformation";
 import { AreaBuilder } from "./area-builder";
 import { TransformedAreaBuilder } from "./transformed-area-builder";
 import { empty } from "./empty";
-import { LineSegment } from "./line-segment";
-import { Ray } from "./ray";
-import { SubsetOfLineAtInfinity } from "./subset-of-line-at-infinity";
-import { PointAtInfinity } from "./point-at-infinity";
-import { lineAtInfinity } from "./line-at-infinity";
+import { LineSegment } from "./line/line-segment";
+import { Ray } from "./line/ray";
+import { SubsetOfLineAtInfinity } from "./infinity/subset-of-line-at-infinity";
+import { PointAtInfinity } from "./infinity/point-at-infinity";
+import { lineAtInfinity } from "./infinity/line-at-infinity";
 import { plane } from "./plane";
 
 export class InfiniteCanvasAreaBuilder {

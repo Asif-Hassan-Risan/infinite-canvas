@@ -1,11 +1,11 @@
-import { HalfPlane } from "../src/areas/half-plane";
-import { ConvexPolygon } from "../src/areas/convex-polygon";
-import { LineSegment } from "../src/areas/line-segment";
+import { HalfPlane } from "../src/areas/polygons/half-plane";
+import { ConvexPolygon } from "../src/areas/polygons/convex-polygon";
+import { LineSegment } from "../src/areas/line/line-segment";
 import { Area } from "../src/areas/area";
 import { plane } from "../src/areas/plane";
 import { empty } from "../src/areas/empty";
-import { Ray } from "../src/areas/ray";
-import { Line } from "../src/areas/line";
+import { Ray } from "../src/areas/line/ray";
+import { Line } from "../src/areas/line/line";
 
 function halfPlanesAreEqual(one: HalfPlane, other: HalfPlane): boolean{
     return one.normalTowardInterior.inSameDirectionAs(other.normalTowardInterior) && one.base.minus(other.base).dot(other.normalTowardInterior) === 0;

@@ -1,4 +1,4 @@
-import { Line } from "../src/areas/line";
+import { Line } from "../src/areas/line/line";
 import { l, p } from "./builders";
 import { expectAreasToBeEqual } from "./expectations";
 import { Point } from "../src/geometry/point";

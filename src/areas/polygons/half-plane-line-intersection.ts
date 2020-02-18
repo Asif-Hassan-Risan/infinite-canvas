@@ -1,4 +1,4 @@
-import { Point } from "../geometry/point";
+import { Point } from "../../geometry/point";
 import { HalfPlane } from "./half-plane";
 
 export interface HalfPlaneLineIntersection{

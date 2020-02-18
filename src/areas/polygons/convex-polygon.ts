@@ -1,14 +1,14 @@
-import { Area } from "./area";
+import { Area } from "../area";
 import { HalfPlane } from "./half-plane";
-import { Point } from "../geometry/point";
+import { Point } from "../../geometry/point";
 import { PolygonVertex } from "./polygon-vertex";
-import { plane } from "./plane";
-import { Transformation } from "../transformation";
+import { plane } from "../plane";
+import { Transformation } from "../../transformation";
 import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
-import { LineSegment } from "./line-segment";
-import { Ray } from "./ray";
-import { Line } from "./line";
-import { direction } from "../state/dimensions/direction";
+import { LineSegment } from "../line/line-segment";
+import { Ray } from "../line/ray";
+import { Line } from "../line/line";
+import { direction } from "../../state/dimensions/direction";
 
 export class ConvexPolygon implements Area{
     public readonly vertices: PolygonVertex[];

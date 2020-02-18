@@ -7,7 +7,7 @@ import { PathInstructions } from "../src/instructions/path-instructions";
 import { defaultState } from "../src/state/default-state";
 import { fillStyle, strokeStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InstructionsWithPath } from "../src/instructions/instructions-with-path";
-import { Rectangle } from "../src/areas/rectangle";
+import { Rectangle } from "../src/areas/polygons/rectangle";
 import { Point } from "../src/geometry/point";
 import { AreaBuilder } from "../src/areas/area-builder";
 

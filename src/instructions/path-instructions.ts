@@ -1,6 +1,6 @@
 import { Instruction } from "./instruction";
 import { Transformation } from "../transformation";
-import { Rectangle } from "../areas/rectangle";
+import { Rectangle } from "../areas/polygons/rectangle";
 import { AreaChange } from "../areas/area-change";
 import { Point } from "../geometry/point";
 import { PathInstruction } from "../interfaces/path-instruction";

@@ -1,17 +1,17 @@
-import { ConvexPolygon } from "../src/areas/convex-polygon";
-import { HalfPlane } from "../src/areas/half-plane";
+import { ConvexPolygon } from "../src/areas/polygons/convex-polygon";
+import { HalfPlane } from "../src/areas/polygons/half-plane";
 import { Point } from "../src/geometry/point";
-import { PolygonVertex } from "../src/areas/polygon-vertex";
+import { PolygonVertex } from "../src/areas/polygons/polygon-vertex";
 import { Area } from "../src/areas/area";
 import { plane } from "../src/areas/plane";
-import { Rectangle } from "../src/areas/rectangle";
+import { Rectangle } from "../src/areas/polygons/rectangle";
 import { Transformation } from "../src/transformation";
 import { empty } from "../src/areas/empty";
-import { LineSegment } from "../src/areas/line-segment";
+import { LineSegment } from "../src/areas/line/line-segment";
 import { p, ls, hp, r, l } from "./builders";
 import { expectPolygonsToBeEqual, expectAreasToBeEqual } from "./expectations";
-import { Ray } from "../src/areas/ray";
-import { Line } from "../src/areas/line";
+import { Ray } from "../src/areas/line/ray";
+import { Line } from "../src/areas/line/line";
 
 describe("a rectangle", () => {
     let rectangle: ConvexPolygon;

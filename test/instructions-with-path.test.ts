@@ -5,7 +5,7 @@ import { defaultState } from "../src/state/default-state";
 import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InstructionsWithPath } from "../src/instructions/instructions-with-path";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../src/interfaces/state-changing-instruction-set-with-area-and-current-path";
-import { Rectangle } from "../src/areas/rectangle";
+import { Rectangle } from "../src/areas/polygons/rectangle";
 import { PathInstruction } from "../src/interfaces/path-instruction";
 
 function drawAndLog(instructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath, state: InfiniteCanvasState): string[]{

@@ -1,7 +1,7 @@
 import { SubsetOfLineAtInfinity } from "./subset-of-line-at-infinity";
-import { Point } from "../geometry/point";
-import { plane } from "./plane";
-import { Area } from "./area";
+import { Point } from "../../geometry/point";
+import { plane } from "../plane";
+import { Area } from "../area";
 
 class LineAtInfinity implements SubsetOfLineAtInfinity{
     public addPoint(point: Point): Area{

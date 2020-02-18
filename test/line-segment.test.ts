@@ -1,4 +1,4 @@
-import { LineSegment } from "../src/areas/line-segment";
+import { LineSegment } from "../src/areas/line/line-segment";
 import { ls, p, r } from "./builders";
 import { empty } from "../src/areas/empty";
 import { expectAreasToBeEqual } from "./expectations";
