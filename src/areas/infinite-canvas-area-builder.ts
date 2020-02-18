@@ -8,6 +8,8 @@ import { LineSegment } from "./line-segment";
 import { Ray } from "./ray";
 import { SubsetOfLineAtInfinity } from "./subset-of-line-at-infinity";
 import { PointAtInfinity } from "./point-at-infinity";
+import { lineAtInfinity } from "./line-at-infinity";
+import { plane } from "./plane";
 
 export class InfiniteCanvasAreaBuilder {
     constructor(private _area?: Area, private firstPoint?: Point, private subsetOfLineAtInfinity?: SubsetOfLineAtInfinity){}
@@ -36,16 +38,23 @@ export class InfiniteCanvasAreaBuilder {
                 this._area = new Ray(this.firstPoint, direction);
             }else if(this.subsetOfLineAtInfinity){
                 this.subsetOfLineAtInfinity = this.subsetOfLineAtInfinity.addPointAtInfinity(direction);
+                if(this.subsetOfLineAtInfinity === lineAtInfinity){
+                    this._area = plane;
+                }
             }else{
                 this.subsetOfLineAtInfinity = new PointAtInfinity(direction);
             }
         }
     }
     public addArea(area: Area): void{
-        if(!this._area){
-            this._area = area;
-        }else{
+        if(this._area){
             this._area = this._area.expandToInclude(area);
+        }else{
+            if(this.subsetOfLineAtInfinity){
+                this._area = this.subsetOfLineAtInfinity.addArea(area);
+            }else{
+                this._area = area;
+            }
         }
     }
     public transformedWith(transformation: Transformation): AreaBuilder{

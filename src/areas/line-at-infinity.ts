@@ -10,5 +10,8 @@ class LineAtInfinity implements SubsetOfLineAtInfinity{
     public addPointAtInfinity(direction: Point): SubsetOfLineAtInfinity{
         return this;
     }
+    public addArea(area: Area): Area{
+        return plane;
+    }
 }
 export const lineAtInfinity: LineAtInfinity = new LineAtInfinity();

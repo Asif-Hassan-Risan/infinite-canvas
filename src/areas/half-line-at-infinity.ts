@@ -16,4 +16,10 @@ export class HalfLineAtInfinity implements SubsetOfLineAtInfinity{
         }
         return lineAtInfinity;
     }
+    public addArea(area: Area): Area{
+        const perpendicular: Point = this.towardsMiddle.getPerpendicular();
+        return area.expandToIncludeInfinityInDirection(this.towardsMiddle)
+        .expandToIncludeInfinityInDirection(perpendicular)
+        .expandToIncludeInfinityInDirection(perpendicular.scale(-1));
+    }
 }

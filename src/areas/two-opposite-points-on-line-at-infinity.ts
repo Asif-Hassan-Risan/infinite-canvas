@@ -15,4 +15,7 @@ export class TwoOppositePointsOnLineAtInfinity implements SubsetOfLineAtInfinity
         }
         return new HalfLineAtInfinity(direction.projectOn(this.direction.getPerpendicular()));
     }
+    public addArea(area: Area): Area{
+        return area.expandToIncludeInfinityInDirection(this.direction).expandToIncludeInfinityInDirection(this.direction.scale(-1));
+    }
 }

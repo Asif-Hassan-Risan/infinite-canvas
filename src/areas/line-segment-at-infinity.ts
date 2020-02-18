@@ -28,4 +28,7 @@ export class LineSegmentAtInfinity implements SubsetOfLineAtInfinity{
         }
         return lineAtInfinity;
     }
+    public addArea(area: Area): Area{
+        return area.expandToIncludeInfinityInDirection(this.direction1).expandToIncludeInfinityInDirection(this.direction2);
+    }
 }

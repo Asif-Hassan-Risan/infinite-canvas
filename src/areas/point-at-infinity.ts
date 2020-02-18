@@ -19,4 +19,7 @@ export class PointAtInfinity implements SubsetOfLineAtInfinity{
     public addPoint(point: Point): Area{
         return new Ray(point, this.direction);
     }
+    public addArea(area: Area): Area{
+        return area.expandToIncludeInfinityInDirection(this.direction);
+    }
 }

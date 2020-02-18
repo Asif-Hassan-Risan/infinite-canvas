@@ -3,7 +3,7 @@ import { Area } from "../src/areas/area";
 import { empty } from "../src/areas/empty";
 import { Point } from "../src/geometry/point";
 import { expectAreasToBeEqual } from "./expectations";
-import { ls, p, r } from "./builders";
+import { ls, p, r, l } from "./builders";
 import { plane } from "../src/areas/plane";
 
 type AreaBuildStep = [(builder: InfiniteCanvasAreaBuilder) => void, Area];
@@ -24,6 +24,136 @@ describe("an area builder", () => {
     
     beforeEach(() => {
         areaBuilder = new InfiniteCanvasAreaBuilder();
+    });
+
+    describe("that starts with a point at infinity", () => {
+        let areaToAdd: Area;
+
+        beforeEach(() => {
+            areaToAdd = p(p => p
+                .with(hp => hp.base(0, 1).normal(0, -1))
+                .with(hp => hp.base(0, 1).normal(1, 0))
+                .with(hp => hp.base(1, 0).normal(0, 1))
+                .with(hp => hp.base(1, 0).normal(-1, 0)))
+            areaBuilder.addInfinityInDirection(new Point(1, 0));
+        });
+
+        it("should, when an area is added, end up with the correct area", () => {
+            areaBuilder.addArea(areaToAdd);
+            expectAreasToBeEqual(areaBuilder.area, p(p => p
+                .with(hp => hp.base(0, 1).normal(0, -1))
+                .with(hp => hp.base(0, 1).normal(1, 0))
+                .with(hp => hp.base(1, 0).normal(0, 1))))
+        });
+
+        describe("and then adds another point at infinity", () => {
+
+            beforeEach(() => {
+                areaBuilder.addInfinityInDirection(new Point(0, -1));
+            });
+
+            it("should, when an area is added, end up with the correct area", () => {
+                areaBuilder.addArea(areaToAdd);
+                expectAreasToBeEqual(areaBuilder.area, p(p => p
+                    .with(hp => hp.base(0, 1).normal(0, -1))
+                    .with(hp => hp.base(0, 1).normal(1, 0))))
+            });
+
+            it("should, when a point is added, end up with a polygon with one vertex", () => {
+                areaBuilder.addPoint(new Point(0, 1));
+                expectAreasToBeEqual(areaBuilder.area, p(p => p
+                    .with(hp => hp.base(0, 1).normal(0, -1))
+                    .with(hp => hp.base(0, 1).normal(1, 0))));
+            });
+
+            describe("and then adds another point at infinity not between the two existing", () => {
+
+                beforeEach(() => {
+                    areaBuilder.addInfinityInDirection(new Point(-1, -1));
+                });
+
+                it("should, when a point is added, end up with a polygon with one vertex", () => {
+                    areaBuilder.addPoint(new Point(0, 1));
+                    expectAreasToBeEqual(areaBuilder.area, p(p => p
+                        .with(hp => hp.base(0, 1).normal(0, -1))
+                        .with(hp => hp.base(0, 1).normal(1, -1))));
+                });
+
+                describe("and then adds another point at infinity that is not in the same half plane", () => {
+
+                    beforeEach(() => {
+                        areaBuilder.addInfinityInDirection(new Point(-1, 1));
+                    });
+
+                    it("should have the entire plane as area", () => {
+                        expectAreasToBeEqual(areaBuilder.area, plane);
+                    });
+                });
+            });
+
+            describe("and then adds another point at infinity between the two existing", () => {
+
+                beforeEach(() => {
+                    areaBuilder.addInfinityInDirection(new Point(1, -1));
+                });
+
+                it("should, when a point is added, end up with a polygon with one vertex", () => {
+                    areaBuilder.addPoint(new Point(0, 1));
+                    expectAreasToBeEqual(areaBuilder.area, p(p => p
+                        .with(hp => hp.base(0, 1).normal(0, -1))
+                        .with(hp => hp.base(0, 1).normal(1, 0))));
+                });
+            });
+        });
+
+        describe("and then adds a point at the opposite infinity", () => {
+
+            beforeEach(() => {
+                areaBuilder.addInfinityInDirection(new Point(-1, 0));
+            });
+
+            it("should, when an area is added, end up with the correct area", () => {
+                areaBuilder.addArea(areaToAdd);
+                expectAreasToBeEqual(areaBuilder.area, p(p => p
+                    .with(hp => hp.base(0, 1).normal(0, -1))
+                    .with(hp => hp.base(1, 0).normal(0, 1))))
+            });
+
+            it("should, when a point is added, end up with a line", () => {
+                areaBuilder.addPoint(new Point(0, 1));
+                expectAreasToBeEqual(areaBuilder.area, l(l => l.base(0, 1).direction(1, 0)));
+            });
+
+            describe("and then adds a point at infinity on one side of the two existing", () => {
+
+                beforeEach(() => {
+                    areaBuilder.addInfinityInDirection(new Point(-1, -1));
+                });
+
+                it("should, when an area is added, end up with the correct area", () => {
+                    areaBuilder.addArea(areaToAdd);
+                    expectAreasToBeEqual(areaBuilder.area, p(p => p
+                        .with(hp => hp.base(0, 1).normal(0, -1))))
+                });
+
+                it("should, when a point is added, end up with a half plane", () => {
+                    areaBuilder.addPoint(new Point(0, 1));
+                    expectAreasToBeEqual(areaBuilder.area, p(p => p.with(hp => hp.base(0, 1).normal(0, -1))));
+                });
+            });
+
+            describe("and then adds a point at infinity on the other side of the two existing", () => {
+
+                beforeEach(() => {
+                    areaBuilder.addInfinityInDirection(new Point(0, 1));
+                });
+
+                it("should, when a point is added, end up with a half plane", () => {
+                    areaBuilder.addPoint(new Point(0, 1));
+                    expectAreasToBeEqual(areaBuilder.area, p(p => p.with(hp => hp.base(0, 1).normal(0, 1))));
+                });
+            });
+        });
     });
 
     it.each(createStepData([
