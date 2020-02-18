@@ -6,6 +6,8 @@ import { TransformedAreaBuilder } from "./transformed-area-builder";
 import { empty } from "./empty";
 import { LineSegment } from "./line-segment";
 import { Ray } from "./ray";
+import { ConvexPolygon } from "./convex-polygon";
+import { Line } from "./line";
 
 export class InfiniteCanvasAreaBuilder {
     constructor(private _area?: Area, private firstPoint?: Point, private infinityDirection1?: Point, private infinityDirection2?: Point){}
@@ -15,25 +17,37 @@ export class InfiniteCanvasAreaBuilder {
             this._area = this._area.expandToIncludePoint(point);
         }else{
             if(this.firstPoint){
-                this.addToFirstPoint(point);
+                if(!point.equals(this.firstPoint)){
+                    this._area = new LineSegment(this.firstPoint, point);
+                }
+            }else if(this.infinityDirection1){
+                if(this.infinityDirection2){
+                    this._area = ConvexPolygon.createTriangleWithInfinityInTwoDirections(point, this.infinityDirection1, this.infinityDirection2);
+                }else{
+                    this._area = new Ray(point, this.infinityDirection1);
+                }
             }else{
                 this.firstPoint = point;
             }
         }
     }
-    private addToFirstPoint(point: Point): void{
-        if(!point.equals(this.firstPoint)){
-            this._area = new LineSegment(this.firstPoint, point);
-        }
-    }
+
     public addInfinityInDirection(direction: Point): void{
         if(this._area){
             this._area = this._area.expandToIncludeInfinityInDirection(direction);
         }else{
             if(this.firstPoint){
                 this._area = new Ray(this.firstPoint, direction);
-            }else{
+            }else if(this.infinityDirection1){
+                if(this.infinityDirection2){
 
+                }else{
+                    if(!direction.inSameDirectionAs(this.infinityDirection1)){
+                        
+                    }
+                }
+            }else{
+                this.infinityDirection1 = direction;
             }
         }
     }

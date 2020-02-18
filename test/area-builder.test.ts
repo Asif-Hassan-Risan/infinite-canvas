@@ -66,4 +66,14 @@ describe("an area builder", () => {
         }
         expectAreasToBeEqual(areaBuilder.area, expectedArea)
     });
+
+    it.each(createStepData([
+        [b => b.addInfinityInDirection(new Point(1, 0)), empty],
+        [b => b.addPoint(new Point(0, 0)), r(r => r.base(0, 0).direction(1, 0))]
+    ]))("should have the correct area at each step", (instructions: ((builder: InfiniteCanvasAreaBuilder) => void)[], expectedArea: Area) => {
+        for(let instruction of instructions){
+            instruction(areaBuilder);
+        }
+        expectAreasToBeEqual(areaBuilder.area, expectedArea)
+    });
 });
