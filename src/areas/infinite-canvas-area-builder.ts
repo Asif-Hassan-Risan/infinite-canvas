@@ -6,11 +6,11 @@ import { TransformedAreaBuilder } from "./transformed-area-builder";
 import { empty } from "./empty";
 import { LineSegment } from "./line-segment";
 import { Ray } from "./ray";
-import { ConvexPolygon } from "./convex-polygon";
-import { Line } from "./line";
+import { SubsetOfLineAtInfinity } from "./subset-of-line-at-infinity";
+import { PointAtInfinity } from "./point-at-infinity";
 
 export class InfiniteCanvasAreaBuilder {
-    constructor(private _area?: Area, private firstPoint?: Point, private infinityDirection1?: Point, private infinityDirection2?: Point){}
+    constructor(private _area?: Area, private firstPoint?: Point, private subsetOfLineAtInfinity?: SubsetOfLineAtInfinity){}
     public get area(): Area{return this._area || empty;}
     public addPoint(point: Point): void{
         if(this._area){
@@ -20,12 +20,8 @@ export class InfiniteCanvasAreaBuilder {
                 if(!point.equals(this.firstPoint)){
                     this._area = new LineSegment(this.firstPoint, point);
                 }
-            }else if(this.infinityDirection1){
-                if(this.infinityDirection2){
-                    this._area = ConvexPolygon.createTriangleWithInfinityInTwoDirections(point, this.infinityDirection1, this.infinityDirection2);
-                }else{
-                    this._area = new Ray(point, this.infinityDirection1);
-                }
+            }else if(this.subsetOfLineAtInfinity){
+                this._area = this.subsetOfLineAtInfinity.addPoint(point);
             }else{
                 this.firstPoint = point;
             }
@@ -38,16 +34,10 @@ export class InfiniteCanvasAreaBuilder {
         }else{
             if(this.firstPoint){
                 this._area = new Ray(this.firstPoint, direction);
-            }else if(this.infinityDirection1){
-                if(this.infinityDirection2){
-
-                }else{
-                    if(!direction.inSameDirectionAs(this.infinityDirection1)){
-                        
-                    }
-                }
+            }else if(this.subsetOfLineAtInfinity){
+                this.subsetOfLineAtInfinity = this.subsetOfLineAtInfinity.addPointAtInfinity(direction);
             }else{
-                this.infinityDirection1 = direction;
+                this.subsetOfLineAtInfinity = new PointAtInfinity(direction);
             }
         }
     }
@@ -62,6 +52,6 @@ export class InfiniteCanvasAreaBuilder {
         return new TransformedAreaBuilder(this, transformation);
     }
     public copy(): InfiniteCanvasAreaBuilder{
-        return new InfiniteCanvasAreaBuilder(this._area, this.firstPoint, this.infinityDirection1, this.infinityDirection2);
+        return new InfiniteCanvasAreaBuilder(this._area, this.firstPoint, this.subsetOfLineAtInfinity);
     }
 }
