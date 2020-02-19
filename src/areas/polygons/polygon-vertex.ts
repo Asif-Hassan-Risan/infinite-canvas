@@ -8,6 +8,11 @@ export class PolygonVertex{
         this.normal1 = halfPlane1.normalTowardInterior;
         this.normal2 = halfPlane2.normalTowardInterior;
     }
+    public getHalfPlaneInDirection(from: Point, to: Point): HalfPlane{
+        const directionCross: number = from.cross(to);
+        const normalCross: number = this.normal1.cross(this.normal2);
+        return directionCross * normalCross > 0 ? this.halfPlane2 : this.halfPlane1;
+    }
     public isContainedByHalfPlaneWithNormal(normal: Point): boolean{
         return normal.isInSmallerAngleBetweenPoints(this.normal1, this.normal2);
     }

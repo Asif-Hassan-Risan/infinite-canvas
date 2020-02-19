@@ -20,6 +20,47 @@ describe("a rectangle", () => {
         rectangle = Rectangle.create(0, 0, 1, 1);
     });
 
+    describe("with specific vertices", () => {
+        let topRightVertex: PolygonVertex;
+        let bottomRightVertex: PolygonVertex;
+        let topLeftVertex: PolygonVertex;
+        let bottomLeftVertex: PolygonVertex;
+
+        beforeEach(() => {
+            topRightVertex = rectangle.vertices.find(v => v.point.equals(new Point(1, 1)));
+            bottomRightVertex = rectangle.vertices.find(v => v.point.equals(new Point(1, 0)));
+            topLeftVertex = rectangle.vertices.find(v => v.point.equals(new Point(0, 1)));
+            bottomLeftVertex = rectangle.vertices.find(v => v.point.equals(new Point(0, 0)));
+        });
+
+        it("should have them", () => {
+            expect(topRightVertex).toBeDefined();
+            expect(bottomRightVertex).toBeDefined();
+            expect(topLeftVertex).toBeDefined();
+            expect(bottomLeftVertex).toBeDefined();
+        });
+
+        it("should have the correct further vertices in different directions", () => {
+            expect(rectangle.getFurthestVerticesInDirection(new Point(1, 1))).toEqual([topRightVertex]);
+            expect(rectangle.getFurthestVerticesInDirection(new Point(-1, 1))).toEqual([topLeftVertex]);
+            expect(rectangle.getFurthestVerticesInDirection(new Point(-1, -1))).toEqual([bottomLeftVertex]);
+            expect(rectangle.getFurthestVerticesInDirection(new Point(1, -1))).toEqual([bottomRightVertex]);
+
+            const furthestUpward: PolygonVertex[] = rectangle.getFurthestVerticesInDirection(new Point(0, 1));
+            expect(furthestUpward.length).toBe(2);
+            expect(furthestUpward.find(v => v.point.equals(topLeftVertex.point))).toBeTruthy();
+            expect(furthestUpward.find(v => v.point.equals(topRightVertex.point))).toBeTruthy();
+        });
+
+        it("should indicate their correct neighbors", () => {
+            expect(rectangle.getNextVertexInDirection(topRightVertex, new Point(0, 1), new Point(1, 0))).toBe(bottomRightVertex);
+            expect(rectangle.getNextVertexInDirection(topRightVertex, new Point(1, 0), new Point(0, 1))).toBe(topLeftVertex);
+
+            expect(rectangle.getNextVertexInDirection(bottomRightVertex, new Point(0, 1), new Point(1, 0))).toBe(bottomLeftVertex);
+            expect(rectangle.getNextVertexInDirection(bottomRightVertex, new Point(1, 0), new Point(0, 1))).toBe(topRightVertex);
+        });
+    });
+
     it("should be transformed the right way", () => {
         const transformed: ConvexPolygon = rectangle.transform(new Transformation(1, 1, 0, 1, 0, 0));
         expectPolygonsToBeEqual(transformed, p(p => p

@@ -8,7 +8,6 @@ import { HalfPlaneLineIntersection } from "./half-plane-line-intersection";
 import { LineSegment } from "../line/line-segment";
 import { Ray } from "../line/ray";
 import { Line } from "../line/line";
-import { direction } from "../../state/dimensions/direction";
 
 export class ConvexPolygon implements Area{
     public readonly vertices: PolygonVertex[];
@@ -81,6 +80,24 @@ export class ConvexPolygon implements Area{
             return false;
         }
         return true;
+    }
+    public getNextVertexInDirection(vertex: PolygonVertex, from: Point, to: Point): PolygonVertex{
+        const index: number = this.vertices.indexOf(vertex);
+        if(index === -1){
+            return undefined;
+        }
+        const halfPlaneInDirection: HalfPlane = vertex.getHalfPlaneInDirection(from, to);
+        for(let candidate of this.vertices){
+            if(candidate.getHalfPlaneInDirection(to, from) === halfPlaneInDirection){
+                return candidate;
+            }
+        }
+        return undefined;
+    }
+    public getFurthestVerticesInDirection(direction: Point): PolygonVertex[]{
+        const verticesAndAlong: {vertex: PolygonVertex, along: number}[] = this.vertices.map(v => ({vertex:v, along: v.point.dot(direction)}));
+        const maxAlong: number = Math.max.apply(null, verticesAndAlong.map(va => va.along));
+        return verticesAndAlong.filter(va => va.along === maxAlong).map(va => va.vertex);
     }
     public expandToIncludePolygon(other: ConvexPolygon): Area{
         return ConvexPolygon.combinePolygons(this, other);
