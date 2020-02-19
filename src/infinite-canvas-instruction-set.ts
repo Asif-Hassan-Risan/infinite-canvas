@@ -11,6 +11,7 @@ import { RectangularDrawing } from "./instructions/rectangular-drawing";
 import { Transformation } from "./transformation";
 import { transformInstructionRelatively, transformInstructionAbsolutely } from "./instruction-utils";
 import { Area } from "./areas/area";
+import { Position } from "./geometry/position"
 
 export class InfiniteCanvasInstructionSet{
     private currentInstructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath;
@@ -49,6 +50,19 @@ export class InfiniteCanvasInstructionSet{
         
         this.onChange();
     }
+
+    public drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+        const stateIsTransformable: boolean = this.state.current.isTransformable();
+        if(!stateIsTransformable){
+            instruction = transformInstructionRelatively(instruction);
+        }
+        const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
+        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith);
+        pathToDraw.rect(x, y, w, h, stateToDrawWith);
+        pathToDraw.drawPath(instruction, stateToDrawWith);
+        this.drawBeforeCurrentPath(pathToDraw);
+        this.onChange();
+	}
 
     private drawPathInstructions(instruction: Instruction, pathInstructions: PathInstruction[]): void{
         const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
@@ -140,9 +154,19 @@ export class InfiniteCanvasInstructionSet{
             this.currentInstructionsWithPath.closePath();
         }
     }
-    public moveTo(x: number, y: number): void{
+    public moveTo(position: Position): void{
         if(this.currentInstructionsWithPath){
-            this.currentInstructionsWithPath.moveTo(x, y, this.state);
+            this.currentInstructionsWithPath.moveTo(position, this.state);
+        }
+    }
+    public lineTo(position: Position): void{
+        if(this.currentInstructionsWithPath){
+            this.currentInstructionsWithPath.lineTo(position, this.state);
+        }
+    }
+    public rect(x: number, y: number, w: number, h: number): void{
+        if(this.currentInstructionsWithPath){
+            this.currentInstructionsWithPath.rect(x, y, w, h, this.state);
         }
     }
     public intersects(area: Area): boolean{

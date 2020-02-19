@@ -64,40 +64,6 @@ export class PathInstructions{
         };
     }
 
-    public static lineTo(_x: number, _y: number): PathInstruction{
-        const point: Point = new Point(_x, _y);
-        return {
-            instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                const {x, y} = transformation.apply(point);
-                context.lineTo(x, y);
-            },
-            changeArea: (builder: AreaBuilder) => builder.addPoint(point),
-            positionChange: new Point(_x, _y)
-        };
-    }
-
-    public static drawRect(x: number, y: number, w: number, h: number): PathInstruction[]{
-        return [
-            PathInstructions.moveTo(x, y),
-            PathInstructions.lineTo(x + w, y),
-            PathInstructions.lineTo(x + w, y + h),
-            PathInstructions.lineTo(x, y + h),
-            PathInstructions.lineTo(x, y)
-        ];
-    }
-
-    private static moveTo(_x: number, _y: number): PathInstruction{
-        const point: Point = new Point(_x, _y);
-        return {
-            instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                const {x, y} = transformation.apply(point);
-                context.moveTo(x, y);
-            },
-            changeArea: (builder: AreaBuilder) => builder.addPoint(point),
-            positionChange: new Point(_x, _y)
-        };
-    }
-
     public static quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): PathInstruction{
         return undefined;
     }

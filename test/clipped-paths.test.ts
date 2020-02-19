@@ -7,6 +7,7 @@ import { Transformation } from "../src/transformation";
 import { defaultState } from "../src/state/default-state";
 import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InstructionsWithPath } from "../src/instructions/instructions-with-path";
+import { Point } from "../src/geometry/point";
 
 describe("a clipped paths", () => {
     let clippedPaths: ClippedPaths;
@@ -19,9 +20,9 @@ describe("a clipped paths", () => {
         beforeEach(() => {
             currentState = defaultState;
             clippedPath = InstructionsWithPath.create(currentState);
-            clippedPath.moveTo(0, 0, currentState);
-            clippedPath.addPathInstruction(PathInstructions.lineTo(1, 0), currentState);
-            clippedPath.addPathInstruction(PathInstructions.lineTo(1, 1), currentState);
+            clippedPath.moveTo(new Point(0, 0), currentState);
+            clippedPath.lineTo(new Point(1, 0), currentState);
+            clippedPath.lineTo(new Point(1, 1), currentState);
             clippedPath.clipPath((context: CanvasRenderingContext2D) => {context.clip();}, currentState);
             currentState = clippedPath.state;
             clippedPaths = currentState.current.clippedPaths;
@@ -31,7 +32,7 @@ describe("a clipped paths", () => {
         describe("containing one more clipped path", () => {
 
             beforeEach(() => {
-                clippedPath.addPathInstruction(PathInstructions.lineTo(0, 1), currentState);
+                clippedPath.lineTo(new Point(0, 1), currentState);
                 clippedPath.clipPath((context: CanvasRenderingContext2D) => {context.clip();}, currentState);
                 otherOne = clippedPath.state.current.clippedPaths;
             });
@@ -58,7 +59,7 @@ describe("a clipped paths", () => {
             describe("and another one, still based on the same path", () => {
 
                 beforeEach(() => {
-                    clippedPath.addPathInstruction(PathInstructions.lineTo(0, 0), currentState);
+                    clippedPath.lineTo(new Point(0, 0), currentState);
                     clippedPath.clipPath((context: CanvasRenderingContext2D) => {context.clip();}, currentState);
                     otherOne = clippedPath.state.current.clippedPaths;
                 });
@@ -84,7 +85,7 @@ describe("a clipped paths", () => {
                     currentState = clippedPath.state;
                     const otherClippedPath: InstructionsWithPath = InstructionsWithPath.create(currentState);
                     currentState = currentState.withCurrentState(fillStyle.changeInstanceValue(currentState.current, "#f00"));
-                    otherClippedPath.moveTo(1, 1, currentState);
+                    otherClippedPath.moveTo(new Point(1, 1), currentState);
                     otherClippedPath.clipPath((context: CanvasRenderingContext2D) => {context.clip();}, currentState);
                     otherOne = otherClippedPath.state.current.clippedPaths;
                 });

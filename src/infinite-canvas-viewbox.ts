@@ -14,6 +14,7 @@ import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set"
 import { Rectangle } from "./areas/polygons/rectangle";
 import { transformInstructionRelatively } from "./instruction-utils";
 import { Area } from "./areas/area";
+import { Position } from "./geometry/position"
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -69,11 +70,20 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public closePath(): void{
 		this.instructionSet.closePath();
 	}
-	public moveTo(x: number, y: number): void{
-		this.instructionSet.moveTo(x, y);
+	public moveTo(position: Position): void{
+		this.instructionSet.moveTo(position);
+	}
+	public lineTo(position: Position): void{
+		this.instructionSet.lineTo(position);
+	}
+	public rect(x: number, y: number, w: number, h: number): void{
+		this.instructionSet.rect(x, y, w, h);
 	}
 	public drawPath(instruction: Instruction, pathInstructions?: PathInstruction[]): void{
 		this.instructionSet.drawPath(instruction, pathInstructions);
+	}
+	public drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+		this.instructionSet.drawRect(x, y, w, h, instruction);
 	}
 	private getInstructionToClearRectangle(x: number, y: number, width: number, height: number): Instruction{
 		return transformInstructionRelatively((context: CanvasRenderingContext2D) => {

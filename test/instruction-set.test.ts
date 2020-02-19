@@ -5,6 +5,7 @@ import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InfiniteCanvasInstructionSet } from "../src/infinite-canvas-instruction-set";
 import { Rectangle } from "../src/areas/polygons/rectangle";
 import { transformInstructionRelatively } from "../src/instruction-utils";
+import { Point } from "../src/geometry/point";
 
 describe("an instruction set", () => {
     let instructionSet: InfiniteCanvasInstructionSet;
@@ -19,9 +20,9 @@ describe("an instruction set", () => {
 
         beforeEach(() => {
             instructionSet.beginPath();
-            instructionSet.moveTo(0, 0);
-            instructionSet.addPathInstruction(PathInstructions.lineTo(3, 0));
-            instructionSet.addPathInstruction(PathInstructions.lineTo(0, 3));
+            instructionSet.moveTo(new Point(0, 0));
+            instructionSet.lineTo(new Point(3, 0));
+            instructionSet.lineTo(new Point(0, 3));
         });
 
         it("should not have called onchange", () => {
@@ -64,9 +65,9 @@ describe("an instruction set", () => {
 
         beforeEach(() => {
             instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#f00"));
-            instructionSet.drawPath((context: CanvasRenderingContext2D, transformation: Transformation) => {
+            instructionSet.drawRect(0, 0, 1, 1, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.fill();
-            }, PathInstructions.drawRect(0, 0, 1, 1));
+            });
         });
 
         it("should have called onchange", () => {
@@ -117,9 +118,9 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#00f"));
-                instructionSet.drawPath((context: CanvasRenderingContext2D, transformation: Transformation) => {
+                instructionSet.drawRect(2, 0, 1, 1, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                     context.fill();
-                }, PathInstructions.drawRect(2, 0, 1, 1));
+                });
             });
 
             it("should have recorded everything in the right order", () => {

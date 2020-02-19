@@ -5,10 +5,12 @@ import { DrawingLock } from "../drawing-lock";
 import { TransformationKind } from "../transformation-kind";
 import { TransformableBox } from "./transformable-box";
 import { Area } from "../areas/area";
+import { Position } from "../geometry/position"
 
 export interface ViewBox extends TransformableBox, CurrentState{
     measureText(text: string): TextMetrics;
     drawPath(instruction: Instruction, pathInstructions?: PathInstruction[]): void;
+    drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void;
     addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void;
     createPatternFromImageData(imageData: ImageData): Promise<CanvasPattern>;
     createPattern(image: CanvasImageSource, repetition: string): CanvasPattern;
@@ -20,5 +22,7 @@ export interface ViewBox extends TransformableBox, CurrentState{
     clipPath(instruction: Instruction): void;
     addPathInstruction(pathInstruction: PathInstruction): void;
     closePath(): void;
-    moveTo(x: number, y: number): void;
+    moveTo(position: Position): void;
+    lineTo(position: Position): void;
+    rect(x: number, y: number, w: number, h: number): void;
 }

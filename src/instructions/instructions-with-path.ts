@@ -14,6 +14,7 @@ import { AreaBuilder } from "../areas/area-builder";
 import { Position } from "../geometry/position";
 import { transformPosition } from "../geometry/transform-position";
 import { Point } from "../geometry/point";
+import { isPointAtInfinity } from "../geometry/is-point-at-infinity";
 
 export class InstructionsWithPath extends StateChangingInstructionSequence<PathInstructionWithState> implements StateChangingInstructionSetWithAreaAndCurrentPath{
     private areaBuilder: InfiniteCanvasAreaBuilder = new InfiniteCanvasAreaBuilder();
@@ -64,18 +65,41 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         toAdd.setInitialState(this.state);
         this.add(toAdd);
     }
-    public moveTo(x: number, y: number, state: InfiniteCanvasState): void{
-        const pointToMoveTo: Point = new Point(x, y);
-        const transformedPointToMoveTo: Point = state.current.transformation.apply(pointToMoveTo);
+    public moveTo(position: Position, state: InfiniteCanvasState): void{
+        if(isPointAtInfinity(position)){
+            return;
+        }
+        const transformedPointToMoveTo: Point = state.current.transformation.apply(position);
         this.areaBuilder.addPoint(transformedPointToMoveTo);
         this.latestPathStartingPosition = transformedPointToMoveTo;
         this.currentPosition = transformedPointToMoveTo;
         const toAdd: PathInstructionWithState = PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-            const {x, y} = transformation.apply(pointToMoveTo);
+            const {x, y} = transformation.apply(position);
             context.moveTo(x, y);
         });
         toAdd.setInitialState(this.state);
         this.add(toAdd);
+    }
+    public lineTo(position: Position, state: InfiniteCanvasState): void{
+        if(isPointAtInfinity(position)){
+            return;
+        }
+        const transformedPointToMoveTo: Point = state.current.transformation.apply(position);
+        this.areaBuilder.addPoint(transformedPointToMoveTo);
+        this.currentPosition = transformedPointToMoveTo;
+        const toAdd: PathInstructionWithState = PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            const {x, y} = transformation.apply(position);
+            context.lineTo(x, y);
+        });
+        toAdd.setInitialState(this.state);
+        this.add(toAdd);
+    }
+    public rect(x: number, y: number, w: number, h: number, state: InfiniteCanvasState): void{
+        this.moveTo(new Point(x, y), state);
+        this.lineTo(new Point(x + w, y), state);
+        this.lineTo(new Point(x + w, y + h), state);
+        this.lineTo(new Point(x, y + h), state);
+        this.lineTo(new Point(x, y), state);
     }
     public addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void{
         pathInstruction.changeArea(this.areaBuilder.transformedWith(state.current.transformation));

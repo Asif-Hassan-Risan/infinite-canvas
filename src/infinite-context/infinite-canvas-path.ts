@@ -1,6 +1,6 @@
 import { ViewBox } from "../interfaces/viewbox";
 import { PathInstructions } from "../instructions/path-instructions";
-import { PathInstruction } from "../interfaces/path-instruction";
+import { Point } from "../geometry/point";
 
 export class InfiniteCanvasPath implements CanvasPath{
 	constructor(private viewBox: ViewBox){}
@@ -18,17 +18,14 @@ export class InfiniteCanvasPath implements CanvasPath{
 		this.viewBox.addPathInstruction(PathInstructions.ellipse(x, y, radiusX, radiusY, rotation, startAngle, endAngle, anticlockwise));
 	}
 	public lineTo(_x: number, _y: number): void{
-		this.viewBox.addPathInstruction(PathInstructions.lineTo(_x, _y));
+		this.viewBox.lineTo(new Point(_x, _y));
 	}
 	public moveTo(_x: number, _y: number): void{
-		this.viewBox.moveTo(_x, _y);
+		this.viewBox.moveTo(new Point(_x, _y));
 	}
 	public quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void{}
 
 	public rect(x: number, y: number, w: number, h: number): void{
-		const pathInstructions: PathInstruction[] = PathInstructions.drawRect(x, y, w, h);
-		for(let pathInstruction of pathInstructions){
-			this.viewBox.addPathInstruction(pathInstruction);
-		}
+		this.viewBox.rect(x, y, w, h);
 	}
 }
