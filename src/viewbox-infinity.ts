@@ -15,7 +15,11 @@ export class ViewBoxInfinity{
         return undefined;
     }
     public getInfinityFromPointInDirection(fromPoint: Point, direction: Point, viewBoxTransformation: Transformation): Point{
-        const transformedViewbox: ConvexPolygon = this.getTransformedViewbox(viewBoxTransformation);
-        return viewBoxTransformation.apply(transformedViewbox.getPointInFrontInDirection(fromPoint, direction));
+        const contextTransformation: Transformation = viewBoxTransformation.inverse().before(this.infiniteContextTransformation).before(viewBoxTransformation);
+        const viewboxFromContext: ConvexPolygon = this.viewBoxRectangle.transform(contextTransformation.inverse());
+
+        const fromPointFromContext = this.infiniteContextTransformation.inverse().before(viewBoxTransformation).apply(fromPoint);
+        const directionFromContext = this.infiniteContextTransformation.inverse().before(viewBoxTransformation).untranslated().apply(direction);
+        return viewboxFromContext.getPointInFrontInDirection(fromPointFromContext, directionFromContext)
     }
 }
