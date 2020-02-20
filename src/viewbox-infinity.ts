@@ -2,7 +2,6 @@ import { Transformation } from "./transformation";
 import { Point } from "./geometry/point";
 import { ConvexPolygon } from "./areas/polygons/convex-polygon";
 import { Rectangle } from "./areas/polygons/rectangle";
-import { PolygonVertex } from "./areas/polygons/polygon-vertex";
 
 export class ViewBoxInfinity{
     private viewBoxRectangle: ConvexPolygon;
@@ -17,8 +16,6 @@ export class ViewBoxInfinity{
     }
     public getInfinityFromPointInDirection(fromPoint: Point, direction: Point, viewBoxTransformation: Transformation): Point{
         const transformedViewbox: ConvexPolygon = this.getTransformedViewbox(viewBoxTransformation);
-        const furthestVertex: PolygonVertex = transformedViewbox.getFurthestVerticesInDirection(direction)[0];
-        const intersectionInDirection: Point = fromPoint.plus(furthestVertex.point.minus(fromPoint).projectOn(direction));
-        return viewBoxTransformation.apply(intersectionInDirection);
+        return viewBoxTransformation.apply(transformedViewbox.getPointInFrontInDirection(fromPoint, direction));
     }
 }

@@ -81,23 +81,20 @@ export class ConvexPolygon implements Area{
         }
         return true;
     }
-    public getNextVertexInDirection(vertex: PolygonVertex, from: Point, to: Point): PolygonVertex{
-        const index: number = this.vertices.indexOf(vertex);
-        if(index === -1){
-            return undefined;
-        }
-        const halfPlaneInDirection: HalfPlane = vertex.getHalfPlaneInDirection(from, to);
-        for(let candidate of this.vertices){
-            if(candidate.getHalfPlaneInDirection(to, from) === halfPlaneInDirection){
-                return candidate;
+    public getPointInFrontInDirection(point: Point, direction: Point): Point{
+        let along: number = 0;
+        let frontMostVertex: Point;
+        for(let vertex of this.vertices){
+            const newAlong: number = vertex.point.minus(point).dot(direction);
+            if(newAlong > along){
+                frontMostVertex = vertex.point;
+                along = newAlong;
             }
         }
-        return undefined;
-    }
-    public getFurthestVerticesInDirection(direction: Point): PolygonVertex[]{
-        const verticesAndAlong: {vertex: PolygonVertex, along: number}[] = this.vertices.map(v => ({vertex:v, along: v.point.dot(direction)}));
-        const maxAlong: number = Math.max.apply(null, verticesAndAlong.map(va => va.along));
-        return verticesAndAlong.filter(va => va.along === maxAlong).map(va => va.vertex);
+        if(frontMostVertex){
+            return point.plus(frontMostVertex.minus(point).projectOn(direction));
+        }
+        return point;
     }
     public expandToIncludePolygon(other: ConvexPolygon): Area{
         return ConvexPolygon.combinePolygons(this, other);
