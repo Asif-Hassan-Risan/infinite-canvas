@@ -15,6 +15,8 @@ import { Position } from "../geometry/position";
 import { transformPosition } from "../geometry/transform-position";
 import { Point } from "../geometry/point";
 import { isPointAtInfinity } from "../geometry/is-point-at-infinity";
+import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
+import { PointAtInfinity } from "../geometry/point-at-infinity";
 
 export class InstructionsWithPath extends StateChangingInstructionSequence<PathInstructionWithState> implements StateChangingInstructionSetWithAreaAndCurrentPath{
     private areaBuilder: InfiniteCanvasAreaBuilder = new InfiniteCanvasAreaBuilder();
@@ -22,7 +24,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
     private currentPosition: Position;
     private latestPathStartingPosition: Position;
     public visible: boolean;
-    constructor(private _initiallyWithState: StateAndInstruction){
+    constructor(private _initiallyWithState: StateAndInstruction, private readonly infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity){
         super(_initiallyWithState);
     }
     private get area(): Area{return this.areaBuilder.area;}
@@ -36,7 +38,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         return this.state.current.clippingRegion.intersectWith(this.area);
     }
     private copy(): InstructionsWithPath{
-        const result: InstructionsWithPath = new InstructionsWithPath(this._initiallyWithState.copy());
+        const result: InstructionsWithPath = new InstructionsWithPath(this._initiallyWithState.copy(), this.infinityFactory);
         for(const added of this.added){
             result.add(added.copy());
         }
@@ -80,17 +82,30 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         toAdd.setInitialState(this.state);
         this.add(toAdd);
     }
-    public lineTo(position: Position, state: InfiniteCanvasState): void{
-        if(isPointAtInfinity(position)){
-            return;
+    private getInstructionToDrawLineFromTo(state: InfiniteCanvasState, from: Position, to: Position): PathInstructionWithState{
+        if(isPointAtInfinity(to)){
+            if(isPointAtInfinity(from)){
+
+            }else{
+                const infinity = this.infinityFactory(state);
+                return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                    const {x, y} = infinity.getInfinityFromPointInDirection(from, to.direction, transformation);
+                    context.lineTo(x, y);
+                });
+            }
+        }else{
+            return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                const {x, y} = transformation.apply(to);
+                context.lineTo(x, y);
+            });
         }
-        const transformedPointToMoveTo: Point = state.current.transformation.apply(position);
-        this.areaBuilder.addPoint(transformedPointToMoveTo);
-        this.currentPosition = transformedPointToMoveTo;
-        const toAdd: PathInstructionWithState = PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-            const {x, y} = transformation.apply(position);
-            context.lineTo(x, y);
-        });
+    }
+    public lineTo(position: Position, state: InfiniteCanvasState): void{
+        const transformedPosition: Position = transformPosition(position, state.current.transformation);
+        this.areaBuilder.addPosition(transformedPosition);
+        const previousPosition: Position = this.currentPosition;
+        this.currentPosition = transformedPosition;
+        let toAdd: PathInstructionWithState = this.getInstructionToDrawLineFromTo(state, transformPosition(previousPosition, state.current.transformation.inverse()), position);
         toAdd.setInitialState(this.state);
         this.add(toAdd);
     }
@@ -158,15 +173,19 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<PathI
         const result: InstructionsWithPath = this.copy();
         result.removeAll(i => (i instanceof DrawingPathInstructionWithState));
         result.areaBuilder = this.areaBuilder.copy();
+        result.currentPosition = this.currentPosition;
+        result.latestPathStartingPosition = this.latestPathStartingPosition;
         return result;
     }
     private recreateClippedPath(): StateChangingInstructionSetWithAreaAndCurrentPath{
         const result: InstructionsWithPath = this.copy();
         result.removeAll(i => i instanceof DrawingPathInstructionWithState);
         result.areaBuilder = this.areaBuilder.copy();
+        result.currentPosition = this.currentPosition;
+        result.latestPathStartingPosition = this.latestPathStartingPosition;
         return result;
     }
-    public static create(initialState: InfiniteCanvasState): InstructionsWithPath{
-        return new InstructionsWithPath(StateAndInstruction.create(initialState, (context: CanvasRenderingContext2D) => {context.beginPath();}));
+    public static create(initialState: InfiniteCanvasState, infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity): InstructionsWithPath{
+        return new InstructionsWithPath(StateAndInstruction.create(initialState, (context: CanvasRenderingContext2D) => {context.beginPath();}), infinityFactory);
     }
 }

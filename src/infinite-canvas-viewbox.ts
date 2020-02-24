@@ -15,6 +15,7 @@ import { Rectangle } from "./areas/polygons/rectangle";
 import { transformInstructionRelatively } from "./instruction-utils";
 import { Area } from "./areas/area";
 import { Position } from "./geometry/position"
+import { InfiniteCanvasViewBoxInfinity } from "./infinite-canvas-viewbox-infinity";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -25,7 +26,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		private context: CanvasRenderingContext2D,
 		private readonly drawingIterationProvider: DrawingIterationProvider,
 		private readonly drawLockProvider: () => DrawingLock){
-		this.instructionSet = new InfiniteCanvasInstructionSet(() => drawingIterationProvider.provideDrawingIteration(() => this.draw()));
+		this.instructionSet = new InfiniteCanvasInstructionSet(() => drawingIterationProvider.provideDrawingIteration(() => this.draw()), (state: InfiniteCanvasState) => new InfiniteCanvasViewBoxInfinity(this.width, this.height, state.current.transformation));
 		this._transformation = Transformation.identity;
 	}
 	public get state(): InfiniteCanvasState{return this.instructionSet.state;}

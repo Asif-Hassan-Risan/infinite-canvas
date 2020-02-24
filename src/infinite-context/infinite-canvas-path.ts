@@ -20,6 +20,9 @@ export class InfiniteCanvasPath implements CanvasPath{
 	public lineTo(_x: number, _y: number): void{
 		this.viewBox.lineTo(new Point(_x, _y));
 	}
+	public lineToInfinityInDirection(x: number, y: number): void{
+		this.viewBox.lineTo({direction: new Point(x, y)});
+	}
 	public moveTo(_x: number, _y: number): void{
 		this.viewBox.moveTo(new Point(_x, _y));
 	}

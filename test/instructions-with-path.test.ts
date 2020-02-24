@@ -19,7 +19,7 @@ describe("a set of instructions that is also about a path", () => {
 
     beforeEach(() => {
         currentState = defaultState;
-        instructionsWithPath = InstructionsWithPath.create(currentState);
+        instructionsWithPath = InstructionsWithPath.create(currentState, () => undefined);
     });
 
     describe("that receives a change of state", () => {
@@ -121,7 +121,7 @@ describe("a set of instructions that describe a rectangle path that is drawn", (
 
     beforeEach(() => {
         currentState = defaultState;
-        instructionsWithPath = InstructionsWithPath.create(currentState);
+        instructionsWithPath = InstructionsWithPath.create(currentState, () => undefined);
         instructionsWithPath.rect(0, 0, 1, 1, currentState);
         instructionsWithPath.drawPath((context: CanvasRenderingContext2D) => {
             context.fill();

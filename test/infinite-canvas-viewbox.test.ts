@@ -1938,4 +1938,63 @@ describe("an infinite canvas context", () => {
 			});
 		});
 	});
+
+	describe("that translates", () => {
+
+		beforeEach(() => {
+			infiniteContext.translate(30, 60);
+		});
+
+		describe("and then rotates", () => {
+
+			beforeEach(() => {
+				infiniteContext.transform(0, 1, -1, 0, 0, 0);
+			});
+
+			describe("and then draws a line to inifinity", () => {
+
+				beforeEach(() => {
+					infiniteContext.beginPath();
+					infiniteContext.moveTo(30, 30);
+					infiniteContext.lineToInfinityInDirection(1, 0);
+					contextMock.clear();
+					infiniteContext.stroke();
+				});
+		
+				it("should draw a line to the right border of the viewbox", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+
+		describe("and then draws a line to inifinity", () => {
+
+			beforeEach(() => {
+				infiniteContext.beginPath();
+				infiniteContext.moveTo(30, 30);
+				infiniteContext.lineToInfinityInDirection(1, 0);
+				contextMock.clear();
+				infiniteContext.stroke();
+			});
+	
+			it("should draw a line to the right border of the viewbox", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
+
+	describe("draws a line to inifinity", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.moveTo(30, 30);
+			infiniteContext.lineToInfinityInDirection(1, 0);
+			contextMock.clear();
+			infiniteContext.stroke();
+		});
+
+		it("should draw a line to the right border of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
 })

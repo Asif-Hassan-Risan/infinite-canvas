@@ -12,18 +12,19 @@ import { Transformation } from "./transformation";
 import { transformInstructionRelatively, transformInstructionAbsolutely } from "./instruction-utils";
 import { Area } from "./areas/area";
 import { Position } from "./geometry/position"
+import { ViewboxInfinity } from "./interfaces/viewbox-infinity";
 
 export class InfiniteCanvasInstructionSet{
     private currentInstructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath;
     private previousInstructionsWithPath: PreviousInstructions;
     public state: InfiniteCanvasState;
     private instructionToRestoreState: Instruction;
-    constructor(private readonly onChange: () => void){
+    constructor(private readonly onChange: () => void, private readonly infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity){
         this.previousInstructionsWithPath = PreviousInstructions.create();
         this.state = this.previousInstructionsWithPath.state;
     }
     public beginPath(): void{
-        this.replaceCurrentInstructionsWithPath(InstructionsWithPath.create(this.state));
+        this.replaceCurrentInstructionsWithPath(InstructionsWithPath.create(this.state, this.infinityFactory));
     }
     public changeState(change: (state: InfiniteCanvasStateInstance) => InfiniteCanvasStateInstance): void{
         this.state = this.state.withCurrentState(change(this.state.current));
@@ -57,7 +58,7 @@ export class InfiniteCanvasInstructionSet{
             instruction = transformInstructionRelatively(instruction);
         }
         const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
-        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith);
+        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityFactory);
         pathToDraw.rect(x, y, w, h, stateToDrawWith);
         pathToDraw.drawPath(instruction, stateToDrawWith);
         this.drawBeforeCurrentPath(pathToDraw);
@@ -66,7 +67,7 @@ export class InfiniteCanvasInstructionSet{
 
     private drawPathInstructions(instruction: Instruction, pathInstructions: PathInstruction[]): void{
         const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
-        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith);
+        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityFactory);
         for(let pathInstruction of pathInstructions){
             pathToDraw.addPathInstruction(pathInstruction, stateToDrawWith);
         }

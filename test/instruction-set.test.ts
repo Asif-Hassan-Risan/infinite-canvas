@@ -13,7 +13,7 @@ describe("an instruction set", () => {
 
     beforeEach(() => {
         onChangeSpy = jest.fn();
-        instructionSet = new InfiniteCanvasInstructionSet(onChangeSpy);
+        instructionSet = new InfiniteCanvasInstructionSet(onChangeSpy, () => undefined);
     });
 
     describe("that begins drawing a path", () => {

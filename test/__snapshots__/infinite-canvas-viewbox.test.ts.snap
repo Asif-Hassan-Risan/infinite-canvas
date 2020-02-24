@@ -1,5 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`an infinite canvas context draws a line to inifinity should draw a line to the right border of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context fills a rect, begins a path, clips it and then fills it and then reduces the path's area, clips again and fills a rect and then reduces the path's area again and fills it should have recreated the path and filled it 1`] = `
 Array [
   "context.restore()",
@@ -2601,6 +2614,34 @@ Array [
   "context.transform(1,0,0,1,0,0)",
   "context.strokeText(\\"Some text\\",100,100)",
   "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context that translates and then draws a line to inifinity should draw a line to the right border of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.setTransform(1,0,0,1,30,60)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(170,30)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that translates and then rotates and then draws a line to inifinity should draw a line to the right border of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.setTransform(0,1,-1,0,30,60)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(140,30)",
+  "context.lineWidth = 1",
+  "context.stroke()",
 ]
 `;
 

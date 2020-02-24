@@ -10,6 +10,8 @@ import { SubsetOfLineAtInfinity } from "./infinity/subset-of-line-at-infinity";
 import { PointAtInfinity } from "./infinity/point-at-infinity";
 import { lineAtInfinity } from "./infinity/line-at-infinity";
 import { plane } from "./plane";
+import { isPointAtInfinity } from "../geometry/is-point-at-infinity";
+import { Position } from "../geometry/position"
 
 export class InfiniteCanvasAreaBuilder {
     constructor(private _area?: Area, private firstPoint?: Point, private subsetOfLineAtInfinity?: SubsetOfLineAtInfinity){}
@@ -29,7 +31,13 @@ export class InfiniteCanvasAreaBuilder {
             }
         }
     }
-
+    public addPosition(position: Position): void{
+        if(isPointAtInfinity(position)){
+            this.addInfinityInDirection(position.direction);
+        }else{
+            this.addPoint(position);
+        }
+    }
     public addInfinityInDirection(direction: Point): void{
         if(this._area){
             this._area = this._area.expandToIncludeInfinityInDirection(direction);

@@ -22,7 +22,7 @@ describe("a state with a clipped path", () => {
 
     beforeEach(() => {
         currentState = defaultState;
-        currentPath = InstructionsWithPath.create(defaultState);
+        currentPath = InstructionsWithPath.create(defaultState, () => undefined);
         currentState = applyChangeToCurrentState(currentState, s => fillStyle.changeInstanceValue(s, "#f00"));
         currentPath.rect(0, 0, 3, 3, currentState);
         currentPath.clipPath((context: CanvasRenderingContext2D) => context.clip(), currentState);
@@ -117,7 +117,7 @@ describe("a state with a clipped path", () => {
 
         beforeEach(()=> {
             currentState = currentState.saved();
-            addedClippedPath = InstructionsWithPath.create(currentState);
+            addedClippedPath = InstructionsWithPath.create(currentState, () => undefined);
             addedClippedPath.moveTo(new Point(1, 1), currentState);
             addedClippedPath.clipPath((context, transformation) => {context.clip();}, currentState);
             currentState = addedClippedPath.state;
@@ -130,7 +130,7 @@ describe("a state with a clipped path", () => {
             beforeEach(() => {
                 currentState = currentState.restored();
                 currentState = currentState.saved();
-                const differentAddedClippedPath: InstructionsWithPath = InstructionsWithPath.create(currentState);
+                const differentAddedClippedPath: InstructionsWithPath = InstructionsWithPath.create(currentState, () => undefined);
                 differentAddedClippedPath.moveTo(new Point(2, 2), currentState);
                 differentAddedClippedPath.clipPath((context, transformation) => {context.clip();}, currentState);
                 stateWithCurrentlyADifferentAdditionalClippedPath = differentAddedClippedPath.state;
@@ -147,7 +147,7 @@ describe("a state with a clipped path", () => {
 
             beforeEach(() => {
                 currentState = currentState.restored();
-                const differentAddedClippedPath: InstructionsWithPath = InstructionsWithPath.create(currentState);
+                const differentAddedClippedPath: InstructionsWithPath = InstructionsWithPath.create(currentState, () => undefined);
                 differentAddedClippedPath.moveTo(new Point(2, 2), currentState);
                 differentAddedClippedPath.clipPath((context, transformation) => {context.clip();}, currentState);
                 stateWithCurrentlyADifferentAdditionalClippedPath = differentAddedClippedPath.state;

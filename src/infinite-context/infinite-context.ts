@@ -225,6 +225,9 @@ export class InfiniteContext implements InfiniteCanvasRenderingContext2D{
 	public lineTo(x: number, y: number): void{
 		this.canvasPath.lineTo(x, y);
 	}
+	public lineToInfinityInDirection(x: number, y: number): void{
+		this.canvasPath.lineToInfinityInDirection(x,  y);
+	}
 	public moveTo(x: number, y: number): void{
 		this.canvasPath.moveTo(x, y);
 	}

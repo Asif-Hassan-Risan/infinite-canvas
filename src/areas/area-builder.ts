@@ -1,8 +1,7 @@
-import { Point } from "../geometry/point";
 import { Area } from "./area";
+import { Position } from "../geometry/position"
 
 export interface AreaBuilder{
-    addPoint(point: Point): void;
-    addInfinityInDirection(direction: Point): void;
+    addPosition(position: Position): void;
     addArea(area: Area): void;
 }
