@@ -10,7 +10,6 @@ import {ClippingPathInstructionWithState} from "./clipping-path-instruction-with
 import {transformPosition} from "../geometry/transform-position";
 import {PathInstruction} from "../interfaces/path-instruction";
 import {Area} from "../areas/area";
-import { Point } from "../geometry/point";
 import {positionsAreEqual} from "../geometry/positions-are-equal";
 
 export class InstructionsWithSubpath extends StateChangingInstructionSequence<PathInstructionWithState>{
@@ -82,10 +81,20 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
                 }
             }
         }else{
-            return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                const {x, y} = transformation.apply(to);
-                context.lineTo(x, y);
-            });
+            if(isPointAtInfinity(from)){
+                const infinity = this.infinityFactory(state);
+                return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                    let {x, y} = infinity.getInfinityFromPointInDirection(to, from.direction, transformation);
+                    context.lineTo(x, y);
+                    ({x, y} = transformation.apply(to));
+                    context.lineTo(x, y);
+                });
+            }else{
+                return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                    const {x, y} = transformation.apply(to);
+                    context.lineTo(x, y);
+                });
+            }
         }
     }
     public static createSilent(initialState: InfiniteCanvasState, initialPosition: Position, infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity): InstructionsWithSubpath{

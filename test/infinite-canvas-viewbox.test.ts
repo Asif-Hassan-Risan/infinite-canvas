@@ -2080,12 +2080,31 @@ describe("an infinite canvas context", () => {
 			infiniteContext.beginPath();
 			infiniteContext.moveTo(30, 30);
 			infiniteContext.lineToInfinityInDirection(1, 0);
-			contextMock.clear();
-			infiniteContext.stroke();
 		});
 
-		it("should draw a line to the right border of the viewbox", () => {
-			expect(contextMock.getLog()).toMatchSnapshot();
+		describe("and then strokes the path", () => {
+
+			beforeEach(() => {
+				contextMock.clear();
+				infiniteContext.stroke();
+			});
+
+			it("should draw a line to the right border of the viewbox", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+
+		describe("and then draws a line back from infinity to a point and then strokes", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineTo(30, 60);
+				contextMock.clear();
+				infiniteContext.stroke();
+			});
+
+			it("should draw the right line back to the point", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
 		});
 	});
 })
