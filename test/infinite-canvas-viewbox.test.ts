@@ -1939,6 +1939,20 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
+	describe("that draws an arc", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.arc(30, 30, 30, 0, 2 * Math.PI);
+			contextMock.clear();
+			infiniteContext.fill();
+		});
+
+		fit("should draw an arc", () => {
+			console.log(contextMock.getLog());
+		});
+	});
+
 	describe("that translates", () => {
 
 		beforeEach(() => {
