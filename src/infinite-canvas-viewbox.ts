@@ -80,8 +80,8 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public rect(x: number, y: number, w: number, h: number): void{
 		this.instructionSet.rect(x, y, w, h);
 	}
-	public drawPath(instruction: Instruction, pathInstructions?: PathInstruction[]): void{
-		this.instructionSet.drawPath(instruction, pathInstructions);
+	public drawPath(instruction: Instruction): void{
+		this.instructionSet.drawPath(instruction);
 	}
 	public drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
 		this.instructionSet.drawRect(x, y, w, h, instruction);

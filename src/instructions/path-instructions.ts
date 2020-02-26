@@ -19,7 +19,8 @@ export class PathInstructions{
         return {
             instruction: instruction,
             changeArea: changeArea,
-            positionChange: new Point(_x, _y).plus(Transformation.rotation(0, 0, endAngle).apply(new Point(radius, 0)))
+            positionChange: new Point(_x, _y).plus(Transformation.rotation(0, 0, endAngle).apply(new Point(radius, 0))),
+            initialPoint: new Point(_x, _y).plus(Transformation.rotation(0, 0, startAngle).apply(new Point(radius, 0)))
         };
     }
 
@@ -36,7 +37,8 @@ export class PathInstructions{
         return {
             instruction: instruction,
             changeArea: changeArea,
-            positionChange: new Point(x2, y2)
+            positionChange: new Point(x2, y2),
+            initialPoint: new Point(x1, y1)
         };
     }
 
@@ -60,7 +62,15 @@ export class PathInstructions{
                         Transformation.rotation(0, 0, rotation)
                         )
                     .apply(new Point(1, 0))
-                )
+                ),
+            initialPoint: new Point(x, y)
+            .plus(
+                    Transformation.rotation(0, 0, startAngle).before(
+                    new Transformation(radiusX, 0, 0, radiusY, 0, 0)).before(
+                    Transformation.rotation(0, 0, rotation)
+                    )
+                .apply(new Point(1, 0))
+            )
         };
     }
 

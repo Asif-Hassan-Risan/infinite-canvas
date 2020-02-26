@@ -1939,6 +1939,21 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
+	describe("that draws a line without calling 'moveTo'", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.lineTo(10, 10);
+			infiniteContext.lineTo(20, 10);
+			contextMock.clear();
+			infiniteContext.stroke();
+		});
+
+		it("should draw a line", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
 	describe("that draws an arc", () => {
 
 		beforeEach(() => {
@@ -1948,8 +1963,22 @@ describe("an infinite canvas context", () => {
 			infiniteContext.fill();
 		});
 
-		fit("should draw an arc", () => {
-			console.log(contextMock.getLog());
+		it("should draw an arc", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that draws an ellipse", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.ellipse(50, 50, 100, 40, 0, 0, Math.PI);
+			contextMock.clear();
+			infiniteContext.fill();
+		});
+
+		it("should draw an ellipse", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
 		});
 	});
 

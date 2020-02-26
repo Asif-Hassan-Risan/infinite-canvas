@@ -9,6 +9,8 @@ export class CanvasContextMock{
         let patternId: number = 0;
         const methods: string[] = [
             "setLineDash",
+            "arc",
+            "ellipse",
             "clearRect",
             "fillRect",
             "setTransform",

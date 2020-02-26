@@ -38,17 +38,12 @@ export class InfiniteCanvasInstructionSet{
         this.setInstructionToRestoreState();
     }
 
-    public drawPath(instruction: Instruction, pathInstructions?: PathInstruction[]): void{
+    public drawPath(instruction: Instruction): void{
         const stateIsTransformable: boolean = this.state.current.isTransformable();
         if(!stateIsTransformable){
             instruction = transformInstructionRelatively(instruction);
         }
-        if(pathInstructions){
-            this.drawPathInstructions(instruction, pathInstructions);
-        }else{
-            this.drawCurrentPath(instruction);
-        }
-        
+        this.drawCurrentPath(instruction);
         this.onChange();
     }
 
@@ -64,16 +59,6 @@ export class InfiniteCanvasInstructionSet{
         this.drawBeforeCurrentPath(pathToDraw);
         this.onChange();
 	}
-
-    private drawPathInstructions(instruction: Instruction, pathInstructions: PathInstruction[]): void{
-        const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
-        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityFactory);
-        for(let pathInstruction of pathInstructions){
-            pathToDraw.addPathInstruction(pathInstruction, stateToDrawWith);
-        }
-        pathToDraw.drawPath(instruction, stateToDrawWith);
-        this.drawBeforeCurrentPath(pathToDraw);
-    }
 
     public addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
         if(transformationKind === TransformationKind.Relative){

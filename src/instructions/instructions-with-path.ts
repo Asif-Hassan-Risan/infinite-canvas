@@ -70,6 +70,13 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         const currentSubpath: InstructionsWithSubpath = this.added[this.added.length - 1];
         currentSubpath.closePath();
     }
+    private silentlyMoveTo(position: Position, state: InfiniteCanvasState): void{
+        const transformedPointToMoveTo: Position = transformPosition(position, state.current.transformation);
+        this.areaBuilder.addPosition(transformedPointToMoveTo);
+        const newSubpath: InstructionsWithSubpath = InstructionsWithSubpath.createSilent(state, position, this.infinityFactory);
+        newSubpath.setInitialState(this.state);
+        this.add(newSubpath);
+    }
     public moveTo(position: Position, state: InfiniteCanvasState): void{
         if(isPointAtInfinity(position)){
             return;
@@ -82,6 +89,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
     }
     public lineTo(position: Position, state: InfiniteCanvasState): void{
         if(this.added.length === 0){
+            this.moveTo(position, state);
             return;
         }
         const currentSubpath: InstructionsWithSubpath = this.added[this.added.length - 1];
@@ -98,7 +106,11 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
     }
     public addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void{
         if(this.added.length === 0){
-            return;
+            if(pathInstruction.initialPoint){
+                this.silentlyMoveTo(pathInstruction.initialPoint, state);
+            }else{
+                return;
+            }
         }
         const currentSubpath: InstructionsWithSubpath = this.added[this.added.length - 1];
         const toAdd: PathInstructionWithState = PathInstructionWithState.create(state, pathInstruction.instruction);

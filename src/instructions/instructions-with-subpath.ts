@@ -10,6 +10,7 @@ import {ClippingPathInstructionWithState} from "./clipping-path-instruction-with
 import {transformPosition} from "../geometry/transform-position";
 import {PathInstruction} from "../interfaces/path-instruction";
 import {Area} from "../areas/area";
+import { Point } from "../geometry/point";
 
 export class InstructionsWithSubpath extends StateChangingInstructionSequence<PathInstructionWithState>{
     private currentPosition: Position;
@@ -73,6 +74,10 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
                 context.lineTo(x, y);
             });
         }
+    }
+    public static createSilent(initialState: InfiniteCanvasState, initialPosition: Position, infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity): InstructionsWithSubpath{
+        let initialInstruction: PathInstructionWithState = PathInstructionWithState.create(initialState, () => {});
+        return new InstructionsWithSubpath(initialInstruction, transformPosition(initialPosition, initialState.current.transformation), infinityFactory);
     }
     public static create(initialState: InfiniteCanvasState, initialPosition: Position, infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity): InstructionsWithSubpath{
         let initialInstruction: PathInstructionWithState;

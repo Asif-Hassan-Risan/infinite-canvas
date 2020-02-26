@@ -1466,6 +1466,19 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that draws a line without calling 'moveTo' should draw a line 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(10,10)",
+  "context.lineTo(20,10)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that draws a path, fills it and then adds to the path and then strokes the path should have executed the last path modification only once 1`] = `
 Array [
   "context.restore()",
@@ -1551,6 +1564,30 @@ Array [
 `;
 
 exports[`an infinite canvas context that draws a triangular path and then clears a rect outside the triangle should not have added a clearRect 1`] = `Array []`;
+
+exports[`an infinite canvas context that draws an arc should draw an arc 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.arc(30,30,30,0,6.283185307179586,)",
+  "context.lineWidth = 1",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that draws an ellipse should draw an ellipse 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.ellipse(50,50,100,40,0,0,3.141592653589793,)",
+  "context.lineWidth = 1",
+  "context.fill()",
+]
+`;
 
 exports[`an infinite canvas context that fills a rect, begins a new path, translates and then clears a rect should add a clearRect with the right arguments 1`] = `
 Array [

@@ -9,7 +9,7 @@ import { Position } from "../geometry/position"
 
 export interface ViewBox extends TransformableBox, CurrentState{
     measureText(text: string): TextMetrics;
-    drawPath(instruction: Instruction, pathInstructions?: PathInstruction[]): void;
+    drawPath(instruction: Instruction): void;
     drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void;
     addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void;
     createPatternFromImageData(imageData: ImageData): Promise<CanvasPattern>;
