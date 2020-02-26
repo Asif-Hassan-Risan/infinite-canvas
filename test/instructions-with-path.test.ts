@@ -28,10 +28,6 @@ describe("a set of instructions that is also about a path", () => {
             currentState = currentState.withCurrentState(fillStyle.changeInstanceValue(currentState.current, "#f00"));
         });
 
-        it("should contain an instruction to begin a path and one to change the state", () => {
-            expect(drawAndLog(instructionsWithPath, currentState)).toMatchSnapshot();
-        });
-
         describe("and then receives an instruction that modifies the path", () => {
 
             beforeEach(() => {
@@ -65,17 +61,6 @@ describe("a set of instructions that is also about a path", () => {
                         expect(drawAndLog(instructionsWithPath, currentState)).toMatchSnapshot();
                     });
                 });
-            });
-        });
-
-        describe("and then receives a change of state on the same property", () => {
-
-            beforeEach(() => {
-                currentState = currentState.withCurrentState(fillStyle.changeInstanceValue(currentState.current, "#00f"));
-            });
-
-            it("should still contain only two instructions", () => {
-                expect(drawAndLog(instructionsWithPath, currentState)).toMatchSnapshot();
             });
         });
     });
