@@ -1466,6 +1466,49 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that draws a line and then draws a line to infinity in a different direction and fills the path should have filled the right shape 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(10,10)",
+  "context.lineTo(10,20)",
+  "context.lineTo(200,20)",
+  "context.lineTo(200,10)",
+  "context.lineWidth = 1",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that draws a line and then draws a line to infinity in the opposite direction and fills the path should not have drawn more lines than necessary 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(10,10)",
+  "context.lineTo(10,20)",
+  "context.lineTo(10,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that draws a line and then draws a line to infinity in the same direction and fills the path should not have drawn more lines than necessary 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(10,10)",
+  "context.lineTo(10,20)",
+  "context.lineTo(10,200)",
+  "context.lineWidth = 1",
+  "context.fill()",
+]
+`;
+
 exports[`an infinite canvas context that draws a line without calling 'moveTo' should draw a line 1`] = `
 Array [
   "context.restore()",

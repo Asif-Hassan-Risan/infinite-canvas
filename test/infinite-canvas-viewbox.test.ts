@@ -1982,6 +1982,54 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
+	describe("that draws a line", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.moveTo(10, 10);
+			infiniteContext.lineTo(10, 20);
+		});
+
+		describe("and then draws a line to infinity in the opposite direction and fills the path", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineToInfinityInDirection(0, -1);
+				contextMock.clear();
+				infiniteContext.fill();
+			});
+
+			it("should not have drawn more lines than necessary", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+
+		describe("and then draws a line to infinity in the same direction and fills the path", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineToInfinityInDirection(0, 1);
+				contextMock.clear();
+				infiniteContext.fill();
+			});
+
+			it("should not have drawn more lines than necessary", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+
+		describe("and then draws a line to infinity in a different direction and fills the path", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineToInfinityInDirection(1, 0);
+				contextMock.clear();
+				infiniteContext.fill();
+			});
+
+			it("should have filled the right shape", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
+
 	describe("that translates", () => {
 
 		beforeEach(() => {
