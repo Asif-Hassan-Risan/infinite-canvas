@@ -51,6 +51,9 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
         this.removeAll(i => i instanceof DrawingPathInstructionWithState && area.contains(i.drawnArea));
     }
     public addPathInstruction(pathInstruction: PathInstruction, pathInstructionWithState: PathInstructionWithState, state: InfiniteCanvasState): void{
+        if(pathInstruction.initialPoint && !positionsAreEqual(this.currentPosition, pathInstruction.initialPoint)){
+            this.lineTo(pathInstruction.initialPoint, state);
+        }
         if(pathInstruction.positionChange){
             this.currentPosition = transformPosition(pathInstruction.positionChange, state.current.transformation);
         }

@@ -37,8 +37,7 @@ export class PathInstructions{
         return {
             instruction: instruction,
             changeArea: changeArea,
-            positionChange: new Point(x2, y2),
-            initialPoint: new Point(x1, y1)
+            positionChange: new Point(x2, y2)
         };
     }
 
