@@ -24,8 +24,14 @@ export class InfiniteCanvasText implements CanvasText{
 	}
 	private getDrawnRectangle(x: number, y: number, text: string): Rectangle{
 		const measured: TextMetrics = this.viewBox.measureText(text);
-		const width: number = Math.abs(measured.actualBoundingBoxRight - measured.actualBoundingBoxLeft);
-		const height: number = measured.actualBoundingBoxAscent + measured.actualBoundingBoxDescent;
-		return Rectangle.create(x, y - measured.actualBoundingBoxAscent, width, height);
+		let width: number;
+		if(measured.actualBoundingBoxRight !== undefined){
+			width = Math.abs(measured.actualBoundingBoxRight - measured.actualBoundingBoxLeft);
+		}else{
+			width = measured.width;
+		}
+		const height: number = measured.actualBoundingBoxAscent !== undefined ? measured.actualBoundingBoxAscent + measured.actualBoundingBoxDescent : 1;
+		const ascent: number = measured.actualBoundingBoxAscent !== undefined ? measured.actualBoundingBoxAscent : 0;
+		return Rectangle.create(x, y - ascent, width, height);
 	}
 }
