@@ -109,10 +109,10 @@ export class Line extends SubsetOfLine implements Area{
         return new ConvexPolygon([new HalfPlane(this.base, perpendicular)]);
     }
     public expandToIncludePolygon(polygon: ConvexPolygon): Area {
-        throw new Error("Method not implemented.");
+        return this.expandToInclude(polygon);
     }
     public expandToInclude(other: Area): Area {
-        throw new Error("Method not implemented.");
+        return other.expandToIncludePoint(this.base).expandToIncludeInfinityInDirection(this.direction).expandToIncludeInfinityInDirection(this.direction.scale(-1));
     }
     public transform(transformation: Transformation): Area {
         const baseTransformed: Point = transformation.apply(this.base);

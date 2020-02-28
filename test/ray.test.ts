@@ -5,6 +5,8 @@ import { Area } from "../src/areas/area";
 import { expectAreasToBeEqual } from "./expectations";
 import { LineSegment } from "../src/areas/line/line-segment";
 import { empty } from "../src/areas/empty";
+import {ConvexPolygon} from "../src/areas/polygons/convex-polygon";
+import {Rectangle} from "../src/areas/polygons/rectangle";
 
 describe("a ray", () => {
     let ray: Ray;
@@ -76,5 +78,16 @@ describe("a ray", () => {
         [new Point(-1, 0), l(l => l.base(0, 0).direction(1, 0))]
     ])("should result in the correct expansions with a point at infinity", (direction: Point, expectedExpansion: Area) => {
         expectAreasToBeEqual(ray.expandToIncludeInfinityInDirection(direction), expectedExpansion)
+    });
+
+    it.each([
+        [Rectangle.create(-1, 1, 1, 1), p(p => p
+            .with(hp => hp.base(0, 0).normal(1, 1))
+            .with(hp => hp.base(0, 0).normal(0, 1))
+            .with(hp => hp.base(-1, 1).normal(1, 0))
+            .with(hp => hp.base(-1, 2).normal(0, -1)))]
+    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
+        const result: Area = ray.expandToIncludePolygon(expandWith);
+        expectAreasToBeEqual(result, expectedExpansion);
     });
 });
