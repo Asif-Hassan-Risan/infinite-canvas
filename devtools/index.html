@@ -20,6 +20,7 @@
 			<div>
 				<canvas width="400" height="400" ref="canvas"></canvas>
 			</div>
+			<div>difference: {{differencemeasure}}</div>
 		</div>
 	</template>
 	<template id="exampleTemplate">
@@ -40,7 +41,7 @@
 					<input type="checkbox" v-model="greedyGestureHandling"/>
 					<label>greedy gesture handling</label> 
 				</div>
-				<span v-on:click="onViewDiff" class="view-diff-link" v-if="diffImageData">view diff</span>
+				<span v-on:click="onViewDiff" class="view-diff-link" v-if="difference">view diff</span>
 			</div>
 		</div>
 		
@@ -67,7 +68,7 @@
 			
 		</div>
 		<example v-for="example in examples" v-bind:example="example" v-bind:dark="dark" v-on:imagesunequal="onImagesUnequal" v-on:ignored="onIgnored" v-on:viewdiff="onViewDiff"></example>
-		<diff-viewer v-bind:visible="viewDiff" v-on:close="onDiffViewerClose" v-bind:imagedata="diffImageData"></diff-viewer>
+		<diff-viewer v-bind:visible="viewDiff" v-on:close="onDiffViewerClose" v-bind:imagedata="diffImageData" v-bind:differencemeasure="differenceMeasure"></diff-viewer>
 	</div>
 	<script type="text/javascript">
 		(function(){
@@ -95,6 +96,7 @@
 				var currentIndex = 0;
 				var data1 = imageData1.data;
 				var data2 = imageData2.data;
+				var differenceMeasure = 0;
 				for(var r = 0; r < canvasHeight; r++){
 					for(var c = 0; c < canvasWidth; c++){
 						var rDif = data2[currentIndex] - data1[currentIndex];
@@ -104,6 +106,7 @@
 						var redValue = 0;
 						if(rDif !== 0 || gDif !== 0 || bDif !== 0 || aDif !== 0){
 							redValue = rDif * rDif + gDif * gDif + bDif * bDif + aDif * aDif;
+							differenceMeasure += redValue;
 						}
 						newData[currentIndex] = redValue;
 						newData[currentIndex + 1] = 0;
@@ -112,7 +115,10 @@
 						currentIndex += 4;
 					}
 				}
-				return new ImageData(newData, canvasWidth);
+				return {
+					data: new ImageData(newData, canvasWidth),
+					differenceMeasure: differenceMeasure
+				};
 			};
 			var functionLinePattern = "([^\\r\\n]*?)([^\\s][^\\r\\n]*)";
 			function getLinesFromFunction(f){
@@ -667,7 +673,7 @@
 
 							},
 							title: "fill a rect, begin a path, clip, make it smaller, clip, make it smaller and fill",
-							ignored: "could look different because a path ends up being clipped multiple times"
+							maxDifference: 30882
 						},
 						{
 							code:function(ctx){
@@ -1046,7 +1052,7 @@
 								drawSomething();
 							},
 							title: "infinite rays, transformed",
-							ignored: "slight difference"
+							maxDifference: 2005
 						},
 						{
 							code:function(ctx){
@@ -1079,13 +1085,15 @@
 						unequalImages: [],
 						ignoredImages: [],
 						viewDiff: false,
-						diffImageData: undefined
+						diffImageData: undefined,
+						differenceMeasure: undefined
 					};
 				},
 				methods:{
-					onViewDiff:function(newImageData){
+					onViewDiff:function(difference){
 						this.viewDiff = true;
-						this.diffImageData = newImageData;
+						this.diffImageData = difference.data;
+						this.differenceMeasure = difference.differenceMeasure;
 					},
 					onDiffViewerClose: function(){
 						this.viewDiff = false;
@@ -1132,20 +1140,21 @@
 								editor: undefined,
 								imagesAreEqual: false,
 								ignoredMessage: undefined,
-								diffImageData: undefined
+								difference: undefined
 							};
 						},
 						methods: {
 							onViewDiff: function(){
-								this.$emit("viewdiff", this.diffImageData);
+								this.$emit("viewdiff", this.difference);
 							},
-							handleImagesUnequal(canvas, infCanvas){
+							getImageDifference(canvas, infCanvas){
 								try{
 									var regularCanvasData = canvas.getContext("2d").getImageData(0, 0, canvasWidth, canvasHeight);
 									var infiniteCanvasData = infCanvas.getContext("2d").getImageData(0, 0, canvasWidth, canvasHeight);
-									this.diffImageData = compareImages(regularCanvasData, infiniteCanvasData);
+									return compareImages(regularCanvasData, infiniteCanvasData);
 								}catch(e){}
-								
+							},
+							handleImagesUnequal(){
 								if(this.example.ignored){
 									this.ignoredMessage = this.example.ignored;
 									this.$emit("ignored", {title: this.example.title, index: this.example.index})
@@ -1183,12 +1192,25 @@
 							this.editor.setValue(code);
 							this.editor.clearSelection();
 							(this.example.finiteCode || this.example.code)(regularContext);
-							this.example.code(infiniteContext);
+							try{
+								this.example.code(infiniteContext);
+							}catch(e){
+								console.error("error for example '"+this.example.title+"'");
+								throw e;
+							}
+
 							this.infiniteCanvas.addEventListener("draw", () => {
 								try{
 									var dataUrlRegular = canvas.toDataURL();
 									var dataUrlInfinite = infCanvas.toDataURL();
-									this.imagesAreEqual = dataUrlRegular === dataUrlInfinite;
+									if(dataUrlRegular === dataUrlInfinite){
+										this.imagesAreEqual = true;
+									}else{
+										this.difference = this.getImageDifference(canvas, infCanvas);
+										if(this.difference && this.example.maxDifference && this.difference.differenceMeasure <= this.example.maxDifference){
+											this.imagesAreEqual = true;
+										}
+									}
 								}catch(e){
 									this.imagesAreEqual = false;
 								}
@@ -1209,7 +1231,8 @@
 						template: document.getElementById("diffViewerTemplate").innerHTML,
 						props:{
 							visible: Boolean,
-							imagedata: Object
+							imagedata: Object,
+							differencemeasure: Number
 						},
 						watch:{
 							imagedata:function(value){
