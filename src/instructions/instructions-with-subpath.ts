@@ -13,10 +13,8 @@ import {Area} from "../areas/area";
 import {positionsAreEqual} from "../geometry/positions-are-equal";
 
 export class InstructionsWithSubpath extends StateChangingInstructionSequence<PathInstructionWithState>{
-    private currentPosition: Position;
-    constructor(private _initiallyWithState: PathInstructionWithState, private readonly initialPosition: Position, private readonly infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity) {
+    constructor(private _initiallyWithState: PathInstructionWithState, private readonly initialPosition: Position, private currentPosition: Position, private readonly infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity) {
         super(_initiallyWithState);
-        this.currentPosition = initialPosition;
     }
     public addDrawingInstruction(drawingInstruction: DrawingPathInstructionWithState): void{
         drawingInstruction.setInitialState(this.state);
@@ -32,7 +30,7 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
         this.add(toAdd);
     }
     public copy(): InstructionsWithSubpath{
-        const result: InstructionsWithSubpath = new InstructionsWithSubpath(this._initiallyWithState.copy(), this.initialPosition, this.infinityFactory);
+        const result: InstructionsWithSubpath = new InstructionsWithSubpath(this._initiallyWithState.copy(), this.initialPosition, this.currentPosition, this.infinityFactory);
         for(const added of this.added){
             result.add(added.copy());
         }
@@ -102,7 +100,8 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
     }
     public static createSilent(initialState: InfiniteCanvasState, initialPosition: Position, infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity): InstructionsWithSubpath{
         let initialInstruction: PathInstructionWithState = PathInstructionWithState.create(initialState, () => {});
-        return new InstructionsWithSubpath(initialInstruction, transformPosition(initialPosition, initialState.current.transformation), infinityFactory);
+        initialPosition = transformPosition(initialPosition, initialState.current.transformation);
+        return new InstructionsWithSubpath(initialInstruction, initialPosition, initialPosition, infinityFactory);
     }
     public static create(initialState: InfiniteCanvasState, initialPosition: Position, infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity): InstructionsWithSubpath{
         let initialInstruction: PathInstructionWithState;
@@ -114,6 +113,7 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
                 context.moveTo(x, y);
             });
         }
-        return new InstructionsWithSubpath(initialInstruction, transformPosition(initialPosition, initialState.current.transformation), infinityFactory);
+        const transformedInitialPosition: Position = transformPosition(initialPosition, initialState.current.transformation);
+        return new InstructionsWithSubpath(initialInstruction, transformedInitialPosition, transformedInitialPosition, infinityFactory);
     }
 }
