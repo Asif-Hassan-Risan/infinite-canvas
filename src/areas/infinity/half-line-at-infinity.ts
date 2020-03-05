@@ -8,7 +8,7 @@ import { lineAtInfinity } from "./line-at-infinity";
 export class HalfLineAtInfinity implements SubsetOfLineAtInfinity{
     constructor(private towardsMiddle: Point){}
     public addPoint(point: Point): Area{
-        return new ConvexPolygon([new HalfPlane(point, this.towardsMiddle)]);
+        return ConvexPolygon.createFromHalfPlane(new HalfPlane(point, this.towardsMiddle));
     }
     public addPointAtInfinity(direction: Point): SubsetOfLineAtInfinity{
         if(direction.dot(this.towardsMiddle) >= 0){

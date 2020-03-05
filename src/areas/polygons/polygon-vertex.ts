@@ -13,10 +13,30 @@ export class PolygonVertex{
         const normalCross: number = this.normal1.cross(this.normal2);
         return directionCross * normalCross > 0 ? this.halfPlane2 : this.halfPlane1;
     }
+    public isExpandableToContainPoint(point: Point): boolean{
+        return this.halfPlane1.interiorContainsPoint(point) || this.halfPlane2.interiorContainsPoint(point);
+    }
+    public isInSameHalfPlaneAs(point: Point): boolean{
+        return this.halfPlane1.containsPoint(point) || this.halfPlane2.containsPoint(point);
+    }
+    public getHalfPlaneContaining(point: Point): HalfPlane{
+        return this.halfPlane1.containsPoint(point) ? this.halfPlane1 : this.halfPlane2;
+    }
+    public expandToContainPoint(point: Point): {newHalfPlane: HalfPlane, newVertex: PolygonVertex}{
+        const halfPlaneToKeep: HalfPlane = this.halfPlane1.interiorContainsPoint(point) ? this.halfPlane1 : this.halfPlane2;
+        const halfPlaneNotToKeep: HalfPlane = halfPlaneToKeep === this.halfPlane1 ? this.halfPlane2 : this.halfPlane1;
+        const directionOfNewHalfPlane: Point = point.minus(this.point).getPerpendicularOnSameSideAs(halfPlaneNotToKeep.normalTowardInterior);
+        const newHalfPlane: HalfPlane = new HalfPlane(this.point, directionOfNewHalfPlane);
+        return {
+            newHalfPlane: newHalfPlane,
+            newVertex: new PolygonVertex(this.point, halfPlaneToKeep, newHalfPlane)
+        };
+
+    }
     public isContainedByHalfPlaneWithNormal(normal: Point): boolean{
         return normal.isInSmallerAngleBetweenPoints(this.normal1, this.normal2);
     }
-    private containsPoint(point: Point): boolean{
+    public containsPoint(point: Point): boolean{
         return this.halfPlane1.containsPoint(point) && this.halfPlane2.containsPoint(point);
     }
     public containsLineSegmentWithDirection(direction: Point): boolean{

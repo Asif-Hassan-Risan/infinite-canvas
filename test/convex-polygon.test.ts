@@ -13,11 +13,79 @@ import { expectPolygonsToBeEqual, expectAreasToBeEqual } from "./expectations";
 import { Ray } from "../src/areas/line/ray";
 import { Line } from "../src/areas/line/line";
 
+describe("this other convex polygon", () => {
+    let convexPolygon: ConvexPolygon;
+
+    beforeEach(() => {
+        convexPolygon = p(p => p
+            .with(hp => hp.base(-141.056193662169, -228.2245820892264).normal(1.6150955140898589, -0))
+            .with(hp => hp.base(-141.056193662169, -228.2245820892264).normal(0, 1.6150955140898589))
+            .with(hp => hp.base(828.0011147917512, 740.8327263646938).normal(0, -1.6150955140899441))
+            .with(hp => hp.base(828.0011147917513, -228.2245820892264).normal(-328.2245820892264, 0)));
+    });
+
+    it("should result in an expansion without duplicate vertices", () => {
+        const expansion: ConvexPolygon = convexPolygon.expandToIncludePoint(new Point(100, 740.8327263646939));
+        const distinctVertices: Point[] = [];
+        for(let vertex of expansion.vertices){
+            if(!distinctVertices.find(p => p.equals(vertex.point))){
+                distinctVertices.push(vertex.point);
+            }
+        }
+        expect(expansion.vertices.length === distinctVertices.length).toBe(true);
+    });
+});
+
+describe("this convex polygon", () => {
+    let convexPolygon: ConvexPolygon;
+    let halfPlane: HalfPlane;
+
+    beforeEach(() => {
+        convexPolygon = p(p => p
+            .with(hp => hp.base(-402.1340461764957, -361.10791810591667).normal(1.7993598633201486, 0.5432587720044353))
+            .with(hp => hp.base(-402.1340461764957, -361.10791810591667).normal(-0.5432587720044353, 1.7993598633201486))
+            .with(hp => hp.base(-25.303718781786813, 341.67767249145567).normal(0.5432587720043784, -1.7993598633200918))
+            .with(hp => hp.base(-25.303718781786813, 341.67767249145567).normal(-291.67767249145567, -162.97763160132547)));
+        halfPlane = hp(hp => hp.base(256.30589115559, -162.3131805520412).normal(-503.9908530434968, -206.30589115559002));
+    });
+
+    it("should expand to a convex polygon that fits within these bounds", () => {
+        const expansion: ConvexPolygon = convexPolygon.expandToIncludePoint(new Point(50, 341.67767249145567));
+        expect(expansion.vertices.find(v => v.point.x < -570 || v.point.x > 260)).toBeFalsy();
+        expect(expansion.vertices.find(v => v.point.y < -370 || v.point.y > 350)).toBeFalsy();
+    });
+});
 describe("a rectangle", () => {
     let rectangle: ConvexPolygon;
 
     beforeEach(() => {
         rectangle = Rectangle.create(0, 0, 1, 1);
+    });
+
+    describe("when it is expanded to include a point", () => {
+        let expansion: ConvexPolygon;
+
+        beforeEach(() => {
+            expansion = rectangle.expandToIncludePoint(new Point(2, 0));
+        });
+
+        it("should result in an expansion all of whose vertices refer to two of its half planes", () => {
+            const halfPlanes: HalfPlane[] = expansion.halfPlanes;
+            const vertices: PolygonVertex[] = expansion.vertices;
+            for(let vertex of vertices){
+                expect(halfPlanes.indexOf(vertex.halfPlane1) > -1).toBe(true);
+                expect(halfPlanes.indexOf(vertex.halfPlane2) > -1).toBe(true);
+            }
+        });
+    });
+
+    it.each([
+        [new Point(0, 0), new Point(0, 1), new Point(-1, 0), new Point(0, 1), []],
+        [new Point(0, 0), new Point(1, 1), new Point(-1, 0), new Point(0, 1), [new Point(0, 1)]],
+        [new Point(0, 0.5), new Point(0.5, 1), new Point(-1, 0), new Point(0, 1), [new Point(0, 1)]],
+        [new Point(0, 0.5), new Point(1, 0.5), new Point(-1, 0), new Point(0, 1), [new Point(0, 1), new Point(1, 1)]]
+    ])("should get the correct vertices between points", (point1: Point, point2: Point, directionFrom: Point, directionTo: Point, expectedResult: Point[]) => {
+        expect(rectangle.getVerticesBetweenPointsInDirection(point1, point2, directionFrom, directionTo)).toEqual(expectedResult);
     });
 
     it.each([

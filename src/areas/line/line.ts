@@ -95,7 +95,7 @@ export class Line extends SubsetOfLine implements Area{
         if(this.pointIsOnSameLine(point)){
             return this;
         }
-        return new ConvexPolygon([HalfPlane.throughPointsAndContainingPoint(this.base, this.base.plus(this.direction), point)]);
+        return ConvexPolygon.createFromHalfPlane(HalfPlane.throughPointsAndContainingPoint(this.base, this.base.plus(this.direction), point));
     }
     public expandToIncludeInfinityInDirection(direction: Point): Area{
         const cross: number = direction.cross(this.direction);
@@ -104,9 +104,9 @@ export class Line extends SubsetOfLine implements Area{
             return this;
         }
         if(cross > 0){
-            return new ConvexPolygon([new HalfPlane(this.base, perpendicular.scale(-1))]);
+            return ConvexPolygon.createFromHalfPlane(new HalfPlane(this.base, perpendicular.scale(-1)));
         }
-        return new ConvexPolygon([new HalfPlane(this.base, perpendicular)]);
+        return ConvexPolygon.createFromHalfPlane(new HalfPlane(this.base, perpendicular));
     }
     public expandToIncludePolygon(polygon: ConvexPolygon): Area {
         return this.expandToInclude(polygon);

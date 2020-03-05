@@ -10,11 +10,10 @@ import { Ray } from "../line/ray";
 import { Line } from "../line/line";
 
 export class ConvexPolygon implements Area{
-    public readonly vertices: PolygonVertex[];
     public readonly halfPlanes: HalfPlane[];
-    constructor(halfPlanes: HalfPlane[]){
+    constructor(halfPlanes: HalfPlane[], public vertices?: PolygonVertex[]){
         this.halfPlanes = halfPlanes;
-        this.vertices = ConvexPolygon.getVertices(this.halfPlanes);
+        this.vertices = this.vertices || ConvexPolygon.getVertices(this.halfPlanes);
     }
     private findVertex(point: Point): PolygonVertex{
         for(let vertex of this.vertices){
@@ -81,6 +80,53 @@ export class ConvexPolygon implements Area{
         }
         return true;
     }
+    private getClosestHalfPlane(point: Point): HalfPlane{
+        let distance: number = Infinity;
+        let result: HalfPlane;
+        for(let halfPlane of this.halfPlanes){
+            const thisDistance: number = halfPlane.getDistanceFromEdge(point);
+            if(thisDistance <= distance){
+                distance = thisDistance;
+                result = halfPlane;
+            }
+        }
+        return result;
+    }
+    public getVerticesBetweenPointsInDirection(point1: Point, point2: Point, directionFrom: Point, directionTo: Point): Point[]{
+        const result: Point[] = [];
+        if(point1.equals(point2)){
+            return result;
+        }
+        const point1Vertex: PolygonVertex = this.vertices.find(v => v.point.equals(point1));
+        const point2Vertex: PolygonVertex = this.vertices.find(v => v.point.equals(point2));
+        let currentHalfPlane: HalfPlane = point1Vertex ? point1Vertex.getHalfPlaneInDirection(directionFrom, directionTo) : this.getClosestHalfPlane(point1);
+        const halfPlaneToPoint2: HalfPlane = point2Vertex ? point2Vertex.getHalfPlaneInDirection(directionTo, directionFrom) : this.getClosestHalfPlane(point2);
+        let counter: number = 0;
+        while(currentHalfPlane !== halfPlaneToPoint2){
+            let nextVertex: PolygonVertex;
+            for(let vertex of this.vertices){
+                if(vertex.getHalfPlaneInDirection(directionTo, directionFrom) === currentHalfPlane){
+                    nextVertex = vertex;
+                    currentHalfPlane = vertex.getHalfPlaneInDirection(directionFrom, directionTo);
+                    break;
+                }
+            }
+            if(!nextVertex){
+                return result;
+            }
+            result.push(nextVertex.point);
+            counter++;
+            if(counter > 20){
+                console.log("polygon: ", this);
+                console.log("point1: ", point1);
+                console.log("point2: ", point2);
+                console.log("directionFrom: ", directionFrom);
+                console.log("directionTo: ", directionTo);
+                throw new Error("while loop doesn't end")
+            }
+        }
+        return result;
+    }
     public getPointInFrontInDirection(point: Point, direction: Point): Point{
         let along: number = 0;
         let frontMostVertex: Point;
@@ -100,9 +146,37 @@ export class ConvexPolygon implements Area{
         return ConvexPolygon.combinePolygons(this, other);
     }
     public expandToIncludePoint(point: Point): ConvexPolygon{
-        let halfPlanes: HalfPlane[] = this.halfPlanes.filter(hp => hp.containsPoint(point)).concat(this.getTangentPlanesThroughPoint(point));
-        halfPlanes = ConvexPolygon.getHalfPlanesNotContainingAnyOther(halfPlanes);
-        return new ConvexPolygon(halfPlanes);
+        if(this.containsPoint(point)){
+            return this;
+        }
+        let newHalfPlanes: HalfPlane[] = [];
+        const newVertices: PolygonVertex[] = [];
+        for(let halfPlane of this.halfPlanes){
+            if(this.hasAtMostOneVertex(halfPlane) && !halfPlane.containsPoint(point)){
+                newHalfPlanes.push(halfPlane.expandToIncludePoint(point));
+            }
+        }
+        if(this.vertices.length === 0){
+            return new ConvexPolygon(newHalfPlanes.concat(this.halfPlanes.filter(hp => hp.containsPoint(point))));
+        }
+        for(let vertex of this.vertices){
+            if(vertex.containsPoint(point)){
+                newVertices.push(vertex);
+            }
+            else if(vertex.isExpandableToContainPoint(point)){
+                const expansion: {newHalfPlane: HalfPlane, newVertex: PolygonVertex} = vertex.expandToContainPoint(point);
+                newHalfPlanes.push(expansion.newHalfPlane);
+                newVertices.push(expansion.newVertex);
+            }else if(vertex.isInSameHalfPlaneAs(point)){
+                newHalfPlanes.push(vertex.getHalfPlaneContaining(point));
+            }
+        }
+        if(newHalfPlanes.length !== 2){
+            throw new Error("expected two new half planes");
+        }
+        newVertices.push(new PolygonVertex(point, newHalfPlanes[0], newHalfPlanes[1]));
+        newHalfPlanes = ConvexPolygon.getHalfPlanes(newVertices);
+        return new ConvexPolygon(newHalfPlanes, newVertices);
     }
     public expandToIncludeInfinityInDirection(direction: Point): Area{
         if(this.containsInfinityInDirection(direction)){
@@ -239,7 +313,7 @@ export class ConvexPolygon implements Area{
         for(let vertex of this.vertices){
             const throughVertex: HalfPlane[] = HalfPlane.withBorderPoints(vertex.point, point);
             for(let planeThroughVertex of throughVertex){
-                if(this.isContainedByHalfPlane(planeThroughVertex)){
+                if(vertex.isContainedByHalfPlaneWithNormal(planeThroughVertex.normalTowardInterior)){
                     result.push(planeThroughVertex);
                 }
             }
@@ -401,6 +475,9 @@ export class ConvexPolygon implements Area{
             new HalfPlane(point, thisPerpendicular),
             new HalfPlane(point, otherPerpendicular.scale(-1))
         ]);
+    }
+    public static createFromHalfPlane(halfPlane: HalfPlane): ConvexPolygon{
+        return new ConvexPolygon([halfPlane]);
     }
     public static createTriangleWithInfinityInDirection(point1: Point, point2: Point, direction: Point): ConvexPolygon{
         const normalDirection: Point = point2.minus(point1).projectOn(direction.getPerpendicular());

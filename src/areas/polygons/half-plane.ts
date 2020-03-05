@@ -30,6 +30,9 @@ export class HalfPlane {
     public containsPoint(point: Point): boolean {
         return this.getDistanceFromEdge(point) >= 0;
     }
+    public interiorContainsPoint(point: Point): boolean{
+        return this.getDistanceFromEdge(point) > 0;
+    }
     public containsInfinityInDirection(direction: Point): boolean{
         return direction.dot(this.normalTowardInterior) >= 0;
     }

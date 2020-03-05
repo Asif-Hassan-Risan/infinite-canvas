@@ -83,7 +83,7 @@ export class LineSegment extends SubsetOfLine implements Area{
         return this.pointIsOnSameLine(point) && this.pointIsBetweenPoints(point, this.point1, this.point2)
     }
     protected interiorContainsPoint(point: Point): boolean{
-        return this.pointIsOnSameLine(point) && this.pointIsStrictlyBetweenPoints(point, this.point1, this.point2)
+        return this.pointIsOnSameLine(point) && this.pointIsStrictlyBetweenPoints(point, this.point1, this.point2);
     }
     public intersectsRay(ray: Ray): boolean{
         return ray.intersectsLineSegment(this);

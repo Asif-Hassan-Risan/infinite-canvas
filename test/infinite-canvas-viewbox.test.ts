@@ -2082,6 +2082,51 @@ describe("an infinite canvas context", () => {
 			infiniteContext.lineToInfinityInDirection(1, 0);
 		});
 
+		describe("and then draws a line to the opposite point at infinity and strokes", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineToInfinityInDirection(-1, 0);
+				contextMock.clear();
+				infiniteContext.stroke();
+			});
+
+			it("should draw a path that is on a line", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+
+		describe("and then draws a line to another point at infinity", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineToInfinityInDirection(0, 1);
+			});
+
+			describe("and then draws a line back and fills", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineTo(60, 60);
+					contextMock.clear();
+					infiniteContext.fill();
+				});
+
+				it("should draw a path that ends coming from the correct direction", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+
+			describe("and then fills", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.fill();
+				});
+	
+				it("should create a path that covers the correct section of the view box", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+
 		describe("and then strokes the path", () => {
 
 			beforeEach(() => {

@@ -15,6 +15,52 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context draws a line to inifinity and then draws a line to another point at infinity and then draws a line back and fills should draw a path that ends coming from the correct direction 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(60,200)",
+  "context.lineTo(60,60)",
+  "context.lineWidth = 1",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to inifinity and then draws a line to another point at infinity and then fills should create a path that covers the correct section of the view box 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineWidth = 1",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to inifinity and then draws a line to the opposite point at infinity and strokes should draw a path that is on a line 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(0,30)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context draws a line to inifinity and then strokes the path should draw a line to the right border of the viewbox 1`] = `
 Array [
   "context.restore()",

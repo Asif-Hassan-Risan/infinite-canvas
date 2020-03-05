@@ -11,6 +11,7 @@ import {transformPosition} from "../geometry/transform-position";
 import {PathInstruction} from "../interfaces/path-instruction";
 import {Area} from "../areas/area";
 import {positionsAreEqual} from "../geometry/positions-are-equal";
+import {Point} from "../geometry/point";
 
 export class InstructionsWithSubpath extends StateChangingInstructionSequence<PathInstructionWithState>{
     constructor(private _initiallyWithState: PathInstructionWithState, private readonly initialPosition: Position, private currentPosition: Position, private readonly infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity) {
@@ -61,7 +62,27 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
     private getInstructionToDrawLineFromTo(state: InfiniteCanvasState, initialPosition: Position, from: Position, to: Position): PathInstructionWithState{
         if(isPointAtInfinity(to)){
             if(isPointAtInfinity(from)){
+                if(isPointAtInfinity(initialPosition)){
 
+                }else{
+                    if(to.direction.inSameDirectionAs(from.direction)){
+                        return PathInstructionWithState.create(state, () => {});
+                    }
+                    const infinity = this.infinityFactory(state);
+                    if(to.direction.cross(from.direction) === 0){
+                        return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                            const {x, y} = infinity.getInfinityFromPointInDirection(initialPosition, to.direction, transformation);
+                            context.lineTo(x, y);
+                        });
+                    }
+                    return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                        const infinities: Point[] = infinity.getInfinitiesFromDirectionFromPointToDirection(initialPosition, from.direction, to.direction, transformation);
+                        for(let _infinity of infinities){
+                            let {x, y} = _infinity;
+                            context.lineTo(x, y)
+                        }
+                    });
+                }
             }else{
                 const infinity = this.infinityFactory(state);
                 if(positionsAreEqual(from, initialPosition) || (!isPointAtInfinity(initialPosition) && from.minus(initialPosition).cross(to.direction) === 0)){

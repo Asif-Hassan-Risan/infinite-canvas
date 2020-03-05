@@ -21,6 +21,10 @@ export class Point{
 	public equals(other: Point): boolean{
 		return this.x === other.x && this.y === other.y;
 	}
+	public getPerpendicularOnSameSideAs(other: Point): Point{
+		let perp: Point = this.getPerpendicular();
+		return perp.dot(other) > 0 ? perp : perp.scale(-1);
+	}
 	public getPerpendicular(): Point{
 		return new Point(-this.y, this.x);
 	}

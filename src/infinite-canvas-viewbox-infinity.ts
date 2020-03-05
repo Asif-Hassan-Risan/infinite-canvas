@@ -12,8 +12,13 @@ export class InfiniteCanvasViewBoxInfinity implements ViewboxInfinity{
     private getTransformedViewbox(viewBoxTransformation: Transformation): ConvexPolygon{
         return this.viewBoxRectangle.transform(viewBoxTransformation.inverse().before(this.infiniteContextTransformation.inverse()));
     }
-    public getInfinitiesFromDirectionFromPointToDirectionFromPoint(direction1: Point, point1: Point, direction2: Point, point2: Point): Point[]{
-        return undefined;
+    public getInfinitiesFromDirectionFromPointToDirection(point: Point, direction1: Point, direction2: Point, viewBoxTransformation: Transformation): Point[]{
+        const transformedViewbox: ConvexPolygon = this.getTransformedViewbox(viewBoxTransformation);
+        const startingPoint: Point = transformedViewbox.getPointInFrontInDirection(point, direction1);
+        const destinationPoint: Point = transformedViewbox.getPointInFrontInDirection(point, direction2);
+        let polygonToCircumscribe: ConvexPolygon = transformedViewbox.expandToIncludePoint(startingPoint).expandToIncludePoint(destinationPoint);
+        const verticesInBetween: Point[] = polygonToCircumscribe.getVerticesBetweenPointsInDirection(startingPoint, destinationPoint, direction1, direction2);
+        return verticesInBetween.concat([destinationPoint]).map(p => viewBoxTransformation.apply(p));
     }
     public getInfinityFromPointInDirection(fromPoint: Point, direction: Point, viewBoxTransformation: Transformation): Point{
         const pointInFront: Point = this.getTransformedViewbox(viewBoxTransformation).getPointInFrontInDirection(fromPoint, direction);
