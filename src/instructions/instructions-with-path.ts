@@ -17,6 +17,7 @@ import { Point } from "../geometry/point";
 import { isPointAtInfinity } from "../geometry/is-point-at-infinity";
 import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
 import {InstructionsWithSubpath} from "./instructions-with-subpath";
+import {down, left, right, up} from "../geometry/points-at-infinity";
 
 export class InstructionsWithPath extends StateChangingInstructionSequence<InstructionsWithSubpath> implements StateChangingInstructionSetWithAreaAndCurrentPath{
     private areaBuilder: InfiniteCanvasAreaBuilder = new InfiniteCanvasAreaBuilder();
@@ -98,11 +99,32 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         currentSubpath.lineTo(position, state);
     }
     public rect(x: number, y: number, w: number, h: number, state: InfiniteCanvasState): void{
-        this.moveTo(new Point(x, y), state);
-        this.lineTo(new Point(x + w, y), state);
-        this.lineTo(new Point(x + w, y + h), state);
-        this.lineTo(new Point(x, y + h), state);
-        this.lineTo(new Point(x, y), state);
+        if(Number.isFinite(x)){
+            if(Number.isFinite(y)){
+                this.moveTo(new Point(x, y), state);
+                if(Number.isFinite(w)){
+                    this.lineTo(new Point(x + w, y), state);
+                    if(Number.isFinite(h)){
+                        this.lineTo(new Point(x + w, y + h), state);
+                        this.lineTo(new Point(x, y + h), state);
+                    }else{
+                        this.lineTo(h > 0 ? down : up, state);
+                    }
+                }else{
+                    this.lineTo(w > 0 ? right : left, state);
+                    if(Number.isFinite(h)){
+                        this.lineTo(new Point(x, y + h), state);
+                    }else{
+                        this.lineTo(h > 0 ? down : up, state);
+                    }
+                }
+                this.lineTo(new Point(x, y), state);
+            }else{
+
+            }
+        }else{
+
+        }
     }
     public addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void{
         if(this.added.length === 0){
