@@ -1750,6 +1750,72 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that fills a rect with finite width and negative infinite height should fill a rect that extends to outside of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(20,20)",
+  "context.lineTo(50,20)",
+  "context.lineTo(50,0)",
+  "context.lineTo(20,0)",
+  "context.lineTo(20,0)",
+  "context.lineTo(20,20)",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that fills a rect with finite width and positive infinite height should fill a rect that extends to outside of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(20,20)",
+  "context.lineTo(50,20)",
+  "context.lineTo(50,200)",
+  "context.lineTo(20,200)",
+  "context.lineTo(20,200)",
+  "context.lineTo(20,20)",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that fills a rect with negative infinite width and a finite height should fill a rect that extends to outside of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(20,20)",
+  "context.lineTo(0,20)",
+  "context.lineTo(0,50)",
+  "context.lineTo(20,50)",
+  "context.lineTo(20,20)",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that fills a rect with positive infinite width and a finite height should fill a rect that extends to outside of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(20,20)",
+  "context.lineTo(200,20)",
+  "context.lineTo(200,50)",
+  "context.lineTo(20,50)",
+  "context.lineTo(20,20)",
+  "context.fill()",
+]
+`;
+
 exports[`an infinite canvas context that fills a rect, begins a new path, translates and then clears a rect should add a clearRect with the right arguments 1`] = `
 Array [
   "context.restore()",

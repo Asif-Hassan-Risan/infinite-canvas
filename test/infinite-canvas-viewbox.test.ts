@@ -2217,4 +2217,52 @@ describe("an infinite canvas context", () => {
 			});
 		});
 	});
+
+	describe("that fills a rect with finite width and positive infinite height", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(20, 20, 30, Infinity);
+		});
+
+		it("should fill a rect that extends to outside of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that fills a rect with finite width and negative infinite height", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(20, 20, 30, -Infinity);
+		});
+
+		it("should fill a rect that extends to outside of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that fills a rect with positive infinite width and a finite height", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(20, 20, Infinity, 30);
+		});
+
+		it("should fill a rect that extends to outside of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that fills a rect with negative infinite width and a finite height", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(20, 20, -Infinity, 30);
+		});
+
+		it("should fill a rect that extends to outside of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
 })
