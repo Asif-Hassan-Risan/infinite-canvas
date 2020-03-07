@@ -2082,6 +2082,45 @@ describe("an infinite canvas context", () => {
 			infiniteContext.lineToInfinityInDirection(1, 0);
 		});
 
+		describe("and then strokes the ray and clears a rect overlapping the ray", () => {
+
+			beforeEach(() => {
+				infiniteContext.stroke();
+				contextMock.clear();
+				infiniteContext.clearRect(0, 0, 60, 60);
+			});
+
+			it("should have added a clearRect", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+
+		describe("and then strokes the ray and clears a rect overlapping the ray", () => {
+
+			beforeEach(() => {
+				infiniteContext.stroke();
+				contextMock.clear();
+				infiniteContext.clearRect(300, 0, 60, 60);
+			});
+
+			it("should have added a clearRect", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+
+		describe("and then strokes the ray and clears a rect not overlapping the ray", () => {
+
+			beforeEach(() => {
+				infiniteContext.stroke();
+				contextMock.clear();
+				infiniteContext.clearRect(0, 40, 60, 60);
+			});
+
+			it("should not have added a clearRect", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+
 		describe("and then draws a line to the opposite point at infinity and strokes", () => {
 
 			beforeEach(() => {
@@ -2099,6 +2138,32 @@ describe("an infinite canvas context", () => {
 
 			beforeEach(() => {
 				infiniteContext.lineToInfinityInDirection(0, 1);
+			});
+
+			describe("and then fills the path and clears a rect overlapping the drawn area", () => {
+
+				beforeEach(() => {
+					infiniteContext.fill();
+					contextMock.clear();
+					infiniteContext.clearRect(40, 40, 60, 60);
+				});
+
+				it("should add a clearRect", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+
+			describe("and then fills the path and clears a rect not overlapping the drawn area", () => {
+
+				beforeEach(() => {
+					infiniteContext.fill();
+					contextMock.clear();
+					infiniteContext.clearRect(-40, -40, 60, 60);
+				});
+
+				it("should not add a clearRect", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
 			});
 
 			describe("and then draws a line back and fills", () => {

@@ -47,6 +47,27 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context draws a line to inifinity and then draws a line to another point at infinity and then fills the path and clears a rect not overlapping the drawn area should not add a clearRect 1`] = `Array []`;
+
+exports[`an infinite canvas context draws a line to inifinity and then draws a line to another point at infinity and then fills the path and clears a rect overlapping the drawn area should add a clearRect 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(40,40,60,60)",
+  "context.restore()",
+]
+`;
+
 exports[`an infinite canvas context draws a line to inifinity and then draws a line to the opposite point at infinity and strokes should draw a path that is on a line 1`] = `
 Array [
   "context.restore()",
@@ -71,6 +92,42 @@ Array [
   "context.lineTo(200,30)",
   "context.lineWidth = 1",
   "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to inifinity and then strokes the ray and clears a rect not overlapping the ray should not have added a clearRect 1`] = `Array []`;
+
+exports[`an infinite canvas context draws a line to inifinity and then strokes the ray and clears a rect overlapping the ray should have added a clearRect 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(0,0,60,60)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to inifinity and then strokes the ray and clears a rect overlapping the ray should have added a clearRect 2`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(300,0,60,60)",
+  "context.restore()",
 ]
 `;
 
