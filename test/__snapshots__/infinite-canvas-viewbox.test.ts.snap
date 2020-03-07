@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`an infinite canvas context draws a line to inifinity and then draws a line back from infinity to a point and then strokes should draw the right line back to the point 1`] = `
+exports[`an infinite canvas context draws a line to infinity and then draws a line back from infinity to a point and then strokes should draw the right line back to the point 1`] = `
 Array [
   "context.restore()",
   "context.save()",
@@ -15,7 +15,7 @@ Array [
 ]
 `;
 
-exports[`an infinite canvas context draws a line to inifinity and then draws a line to another point at infinity and then draws a line back and fills should draw a path that ends coming from the correct direction 1`] = `
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line back and fills should draw a path that ends coming from the correct direction 1`] = `
 Array [
   "context.restore()",
   "context.save()",
@@ -32,7 +32,7 @@ Array [
 ]
 `;
 
-exports[`an infinite canvas context draws a line to inifinity and then draws a line to another point at infinity and then fills should create a path that covers the correct section of the view box 1`] = `
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then fills should create a path that covers the correct section of the view box 1`] = `
 Array [
   "context.restore()",
   "context.save()",
@@ -47,9 +47,9 @@ Array [
 ]
 `;
 
-exports[`an infinite canvas context draws a line to inifinity and then draws a line to another point at infinity and then fills the path and clears a rect not overlapping the drawn area should not add a clearRect 1`] = `Array []`;
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then fills the path and clears a rect not overlapping the drawn area should not add a clearRect 1`] = `Array []`;
 
-exports[`an infinite canvas context draws a line to inifinity and then draws a line to another point at infinity and then fills the path and clears a rect overlapping the drawn area should add a clearRect 1`] = `
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then fills the path and clears a rect overlapping the drawn area should add a clearRect 1`] = `
 Array [
   "context.restore()",
   "context.save()",
@@ -68,7 +68,7 @@ Array [
 ]
 `;
 
-exports[`an infinite canvas context draws a line to inifinity and then draws a line to the opposite point at infinity and strokes should draw a path that is on a line 1`] = `
+exports[`an infinite canvas context draws a line to infinity and then draws a line to the opposite point at infinity and strokes should draw a path that is on a line 1`] = `
 Array [
   "context.restore()",
   "context.save()",
@@ -82,7 +82,7 @@ Array [
 ]
 `;
 
-exports[`an infinite canvas context draws a line to inifinity and then strokes the path should draw a line to the right border of the viewbox 1`] = `
+exports[`an infinite canvas context draws a line to infinity and then strokes the path should draw a line to the right border of the viewbox 1`] = `
 Array [
   "context.restore()",
   "context.save()",
@@ -95,9 +95,9 @@ Array [
 ]
 `;
 
-exports[`an infinite canvas context draws a line to inifinity and then strokes the ray and clears a rect not overlapping the ray should not have added a clearRect 1`] = `Array []`;
+exports[`an infinite canvas context draws a line to infinity and then strokes the ray and clears a rect not overlapping the ray should not have added a clearRect 1`] = `Array []`;
 
-exports[`an infinite canvas context draws a line to inifinity and then strokes the ray and clears a rect overlapping the ray should have added a clearRect 1`] = `
+exports[`an infinite canvas context draws a line to infinity and then strokes the ray and clears a rect overlapping the ray should have added a clearRect 1`] = `
 Array [
   "context.restore()",
   "context.save()",
@@ -114,7 +114,7 @@ Array [
 ]
 `;
 
-exports[`an infinite canvas context draws a line to inifinity and then strokes the ray and clears a rect overlapping the ray should have added a clearRect 2`] = `
+exports[`an infinite canvas context draws a line to infinity and then strokes the ray and clears a rect overlapping the ray should have added a clearRect 2`] = `
 Array [
   "context.restore()",
   "context.save()",

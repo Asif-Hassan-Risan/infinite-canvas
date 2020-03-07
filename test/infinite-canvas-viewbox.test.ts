@@ -2074,7 +2074,7 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
-	describe("draws a line to inifinity", () => {
+	describe("draws a line to infinity", () => {
 
 		beforeEach(() => {
 			infiniteContext.beginPath();
