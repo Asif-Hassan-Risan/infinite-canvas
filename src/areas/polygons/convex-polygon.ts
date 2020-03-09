@@ -93,39 +93,25 @@ export class ConvexPolygon implements Area{
         return result;
     }
     public getVerticesBetweenPointsInDirection(point1: Point, point2: Point, directionFrom: Point, directionTo: Point): Point[]{
-        const result: Point[] = [];
         if(point1.equals(point2)){
-            return result;
+            return [];
         }
-        const point1Vertex: PolygonVertex = this.vertices.find(v => v.point.equals(point1));
-        const point2Vertex: PolygonVertex = this.vertices.find(v => v.point.equals(point2));
-        let currentHalfPlane: HalfPlane = point1Vertex ? point1Vertex.getHalfPlaneInDirection(directionFrom, directionTo) : this.getClosestHalfPlane(point1);
-        const halfPlaneToPoint2: HalfPlane = point2Vertex ? point2Vertex.getHalfPlaneInDirection(directionTo, directionFrom) : this.getClosestHalfPlane(point2);
-        let counter: number = 0;
-        while(currentHalfPlane !== halfPlaneToPoint2){
-            let nextVertex: PolygonVertex;
-            for(let vertex of this.vertices){
-                if(vertex.getHalfPlaneInDirection(directionTo, directionFrom) === currentHalfPlane){
-                    nextVertex = vertex;
-                    currentHalfPlane = vertex.getHalfPlaneInDirection(directionFrom, directionTo);
-                    break;
-                }
+        const crossDirections: number = directionFrom.cross(directionTo);
+        const vertices: Point[] = this.vertices.map(v => v.point).filter(p => {
+            if(p.equals(point1) || p.equals(point2)){
+                return false;
             }
-            if(!nextVertex){
-                return result;
+            const cross = p.minus(point1).cross(point2.minus(point1));
+            return crossDirections > 0 && cross >= 0 || crossDirections < 0 && cross <= 0;
+        });
+        vertices.sort((p1, p2) => {
+            const cross: number = p1.minus(point1).cross(p2.minus(point1));
+            if(crossDirections > 0 && cross >= 0 || crossDirections < 0 && cross <= 0){
+                return -1;
             }
-            result.push(nextVertex.point);
-            counter++;
-            if(counter > 20){
-                console.log("polygon: ", this);
-                console.log("point1: ", point1);
-                console.log("point2: ", point2);
-                console.log("directionFrom: ", directionFrom);
-                console.log("directionTo: ", directionTo);
-                throw new Error("while loop doesn't end")
-            }
-        }
-        return result;
+            return 1;
+        });
+        return vertices;
     }
     public getPointInFrontInDirection(point: Point, direction: Point): Point{
         let along: number = 0;

@@ -8,11 +8,6 @@ export class PolygonVertex{
         this.normal1 = halfPlane1.normalTowardInterior;
         this.normal2 = halfPlane2.normalTowardInterior;
     }
-    public getHalfPlaneInDirection(from: Point, to: Point): HalfPlane{
-        const directionCross: number = from.cross(to);
-        const normalCross: number = this.normal1.cross(this.normal2);
-        return directionCross * normalCross > 0 ? this.halfPlane2 : this.halfPlane1;
-    }
     public isExpandableToContainPoint(point: Point): boolean{
         return this.halfPlane1.interiorContainsPoint(point) || this.halfPlane2.interiorContainsPoint(point);
     }
@@ -24,8 +19,10 @@ export class PolygonVertex{
     }
     public expandToContainPoint(point: Point): {newHalfPlane: HalfPlane, newVertex: PolygonVertex}{
         const halfPlaneToKeep: HalfPlane = this.halfPlane1.interiorContainsPoint(point) ? this.halfPlane1 : this.halfPlane2;
-        const halfPlaneNotToKeep: HalfPlane = halfPlaneToKeep === this.halfPlane1 ? this.halfPlane2 : this.halfPlane1;
-        const directionOfNewHalfPlane: Point = point.minus(this.point).getPerpendicularOnSameSideAs(halfPlaneNotToKeep.normalTowardInterior);
+        let directionOfNewHalfPlane: Point = point.minus(this.point).getPerpendicular();
+        if(!this.isContainedByHalfPlaneWithNormal(directionOfNewHalfPlane)){
+            directionOfNewHalfPlane = directionOfNewHalfPlane.scale(-1);
+        }
         const newHalfPlane: HalfPlane = new HalfPlane(this.point, directionOfNewHalfPlane);
         return {
             newHalfPlane: newHalfPlane,
