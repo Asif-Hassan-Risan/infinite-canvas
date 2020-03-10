@@ -2082,6 +2082,56 @@ describe("an infinite canvas context", () => {
 			infiniteContext.lineToInfinityInDirection(1, 0);
 		});
 
+		describe("and then strokes the ray and clears an infinite rectangle partially overlapping the ray", () => {
+
+			beforeEach(() => {
+				infiniteContext.stroke();
+				contextMock.clear();
+				infiniteContext.clearRect(40, 20, Infinity, 20);
+			});
+
+			it("should clear a rectangle extending to the edge of the viewbox", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+
+			describe("and then the viewbox transformation translates", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					viewbox.transformation = new Transformation(1, 0, 0, 1, -10, 0);
+				});
+
+				it("should clear a rectangle extending to the edge of the viewbox", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+
+			describe("and then the viewbox transformation scales", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					viewbox.transformation = new Transformation(2, 0, 0, 2, 0, 0);
+				});
+
+				it("should clear a rectangle extending to the edge of the viewbox", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+
+		describe("and then strokes the ray and clears a rect overlapping the entire ray", () => {
+
+			beforeEach(() => {
+				infiniteContext.stroke();
+				contextMock.clear();
+				infiniteContext.clearRect(20, 20, Infinity, 20);
+			});
+
+			it("should forget about the drawn path and not add a clearRect", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+
 		describe("and then strokes the ray and clears a rect overlapping the ray", () => {
 
 			beforeEach(() => {
@@ -2188,6 +2238,187 @@ describe("an infinite canvas context", () => {
 	
 				it("should create a path that covers the correct section of the view box", () => {
 					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+
+			describe("and then draws a line to a third point at infinity (not in the same half plane) and then fills", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineToInfinityInDirection(-1, -1);
+					contextMock.clear();
+					infiniteContext.fill();
+				});
+
+				it("should draw the correct path", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+
+				describe("and then clears the entire plane", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(-Infinity, -Infinity, Infinity, Infinity);
+					});
+
+					it("should clear everything", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with infinite width, infinite height and no left", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(-Infinity, 50, Infinity, Infinity);
+					});
+
+					it("should clear a rect extending to the left and right and bottom of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with infinite width, infinite height and no top", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, -Infinity, Infinity, Infinity);
+					});
+
+					it("should clear a rect extending to the top and bottom and right of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with finite width, infinite height and no top", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, -Infinity, 50, Infinity);
+					});
+
+					it("should clear a rect extending to the top and bottom of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with positive infinite width and positive infinite height", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, 50, Infinity, Infinity);
+					});
+
+					it("should clear a rect extending to the right and to the bottom of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with finite width but located at positive infinity vertically", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, Infinity, 50, 50);
+					});
+
+					it("should do nothing", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with infinite height but located infinitely far down", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, Infinity, 50, Infinity);
+					});
+
+					it("should do nothing", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with finite width but located at negative infinity vertically", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, -Infinity, 50, 50);
+					});
+
+					it("should do nothing", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with finite height but located at positive infinity horizontally", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(Infinity, 50, 50, 50);
+					});
+
+					it("should do nothing", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with finite height but located at negative infinity horizontally", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(-Infinity, 50, 50, 50);
+					});
+
+					it("should do nothing", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with positive infinite width", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, 50, Infinity, 50);
+					});
+
+					it("should clear a rectangle extending to the right side of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with negative infinite width", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, 50, -Infinity, 50);
+					});
+
+					it("should clear a rectangle extending to the left side of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with positive infinite height", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, 50, 50, Infinity);
+					});
+
+					it("should clear a rectangle extending to the bottom of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with negative infinite height", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, 50, 50, -Infinity);
+					});
+
+					it("should clear a rectangle extending to the top of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
 				});
 			});
 		});

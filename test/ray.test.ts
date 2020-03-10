@@ -6,7 +6,6 @@ import { expectAreasToBeEqual } from "./expectations";
 import { LineSegment } from "../src/areas/line/line-segment";
 import { empty } from "../src/areas/empty";
 import {ConvexPolygon} from "../src/areas/polygons/convex-polygon";
-import {Rectangle} from "../src/areas/polygons/rectangle";
 
 describe("a ray", () => {
     let ray: Ray;
@@ -81,7 +80,7 @@ describe("a ray", () => {
     });
 
     it.each([
-        [Rectangle.create(-1, 1, 1, 1), p(p => p
+        [ConvexPolygon.createRectangle(-1, 1, 1, 1), p(p => p
             .with(hp => hp.base(0, 0).normal(1, 1))
             .with(hp => hp.base(0, 0).normal(0, 1))
             .with(hp => hp.base(-1, 1).normal(1, 0))

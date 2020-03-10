@@ -1,11 +1,10 @@
 import { Transformation } from "../src/transformation";
-import { PathInstructions } from "../src/instructions/path-instructions";
 import { logInstruction } from "./log-instruction";
 import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InfiniteCanvasInstructionSet } from "../src/infinite-canvas-instruction-set";
-import { Rectangle } from "../src/areas/polygons/rectangle";
 import { transformInstructionRelatively } from "../src/instruction-utils";
 import { Point } from "../src/geometry/point";
+import {ConvexPolygon} from "../src/areas/polygons/convex-polygon";
 
 describe("an instruction set", () => {
     let instructionSet: InfiniteCanvasInstructionSet;
@@ -43,7 +42,7 @@ describe("an instruction set", () => {
 
                 beforeEach(() => {
                     onChangeSpy.mockClear();
-                    instructionSet.clearArea(Rectangle.create(0, 0, 1, 1), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+                    instructionSet.clearArea(ConvexPolygon.createRectangle(0, 0, 1, 1), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
                         context.clearRect(0, 0, 1, 1);
                     }));
                 });
@@ -78,7 +77,7 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 onChangeSpy.mockClear();
-                instructionSet.clearArea(Rectangle.create(0.5, 0, 2, 2), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+                instructionSet.clearArea(ConvexPolygon.createRectangle(0.5, 0, 2, 2), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
                     context.clearRect(0.5, 0, 2, 2);
                 }));
             });
@@ -98,7 +97,7 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 onChangeSpy.mockClear();
-                instructionSet.clearArea(Rectangle.create(-1, -1, 3, 3), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+                instructionSet.clearArea(ConvexPolygon.createRectangle(-1, -1, 3, 3), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
                     context.clearRect(-1, -1, 3, 3);
                 }));
             });

@@ -480,4 +480,27 @@ export class ConvexPolygon implements Area{
             HalfPlane.throughPointsAndContainingPoint(point2, point3, point1),
         ])
     }
+    public static createRectangleBetweenPoints(point1: Point, point2: Point): ConvexPolygon{
+        const x: number = Math.min(point1.x, point2.x);
+        const y: number = Math.min(point1.y, point2.y);
+        const width: number = Math.abs(point1.x - point2.x);
+        const height: number = Math.abs(point1.y - point2.y);
+        return ConvexPolygon.createRectangle(x, y, width, height);
+    }
+    public static createRectangle(x: number, y: number, width: number, height: number): ConvexPolygon{
+        const halfPlanes: HalfPlane[] = [];
+        if(Number.isFinite(x)){
+            halfPlanes.push(new HalfPlane(new Point(x, 0), new Point(1, 0)));
+            if(Number.isFinite(width)){
+                halfPlanes.push(new HalfPlane(new Point(x + width, 0), new Point(-1, 0)))
+            }
+        }
+        if(Number.isFinite(y)){
+            halfPlanes.push(new HalfPlane(new Point(0, y), new Point(0, 1)));
+            if(Number.isFinite(height)){
+                halfPlanes.push(new HalfPlane(new Point(0, y + height), new Point(0, -1)))
+            }
+        }
+        return new ConvexPolygon(halfPlanes);
+    }
 }

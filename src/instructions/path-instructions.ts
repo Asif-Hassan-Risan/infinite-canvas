@@ -1,11 +1,11 @@
 import { Instruction } from "./instruction";
 import { Transformation } from "../transformation";
-import { Rectangle } from "../areas/polygons/rectangle";
 import { AreaChange } from "../areas/area-change";
 import { Point } from "../geometry/point";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { AreaBuilder } from "../areas/area-builder";
 import { Area } from "../areas/area";
+import {ConvexPolygon} from "../areas/polygons/convex-polygon";
 
 export class PathInstructions{
 
@@ -15,7 +15,7 @@ export class PathInstructions{
             const {x, y} = transformation.apply(new Point(_x, _y));
             context.arc(x, y, radius * transformation.scale, startAngle + transformationAngle, endAngle + transformationAngle, anticlockwise);
         };
-        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addArea(Rectangle.create(_x - radius, _y - radius, 2 * radius, 2 * radius));
+        const changeArea: AreaChange = (builder: AreaBuilder) => builder.addArea(ConvexPolygon.createRectangle(_x - radius, _y - radius, 2 * radius, 2 * radius));
         return {
             instruction: instruction,
             changeArea: changeArea,
@@ -27,7 +27,7 @@ export class PathInstructions{
     public static arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): PathInstruction{
         const p1: Point = new Point(x1, y1);
         const p2: Point = new Point(x2, y2);
-        const newRectangle: Rectangle = Rectangle.createBetweenPoints(p1, p2);
+        const newRectangle: Area = ConvexPolygon.createRectangleBetweenPoints(p1, p2);
         const instruction: Instruction = (context: CanvasRenderingContext2D, transformation: Transformation) => {
             const tp1: Point = transformation.apply(p1);
             const tp2: Point = transformation.apply(p2);
@@ -46,7 +46,7 @@ export class PathInstructions{
     }
 
     public static ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): PathInstruction{
-        const newRectangle: Area = Rectangle.create(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
+        const newRectangle: Area = ConvexPolygon.createRectangle(x - radiusX, y - radiusY, 2 * radiusX, 2 * radiusY).transform(Transformation.rotation(x, y, rotation));
         return {
             instruction: (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 const tCenter: Point = transformation.apply(new Point(x, y));

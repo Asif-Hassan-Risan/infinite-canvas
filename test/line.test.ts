@@ -4,7 +4,6 @@ import { expectAreasToBeEqual } from "./expectations";
 import { Point } from "../src/geometry/point";
 import { Area } from "../src/areas/area";
 import {ConvexPolygon} from "../src/areas/polygons/convex-polygon";
-import {Rectangle} from "../src/areas/polygons/rectangle";
 
 describe("a line", () => {
     let line: Line;
@@ -24,7 +23,7 @@ describe("a line", () => {
     });
 
     it.each([
-        [Rectangle.create(0, 1, 1, 1), p(p => p
+        [ConvexPolygon.createRectangle(0, 1, 1, 1), p(p => p
             .with(hp => hp.base(0, 2).normal(0, -1))
             .with(hp => hp.base(0, 0).normal(0, 1)))]
     ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {

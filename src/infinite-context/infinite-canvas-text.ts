@@ -1,7 +1,8 @@
 import { ViewBox } from "../interfaces/viewbox";
-import { Rectangle } from "../areas/polygons/rectangle";
 import { Instruction } from "../instructions/instruction";
 import { TransformationKind } from "../transformation-kind";
+import {Area} from "../areas/area";
+import {ConvexPolygon} from "../areas/polygons/convex-polygon";
 
 export class InfiniteCanvasText implements CanvasText{
 	constructor(private readonly viewBox: ViewBox){}
@@ -22,7 +23,7 @@ export class InfiniteCanvasText implements CanvasText{
 		};
 		this.viewBox.addDrawing(drawingInstruction, this.getDrawnRectangle(x, y, text), TransformationKind.Relative, true);
 	}
-	private getDrawnRectangle(x: number, y: number, text: string): Rectangle{
+	private getDrawnRectangle(x: number, y: number, text: string): Area{
 		const measured: TextMetrics = this.viewBox.measureText(text);
 		let width: number;
 		if(measured.actualBoundingBoxRight !== undefined){
@@ -32,6 +33,6 @@ export class InfiniteCanvasText implements CanvasText{
 		}
 		const height: number = measured.actualBoundingBoxAscent !== undefined ? measured.actualBoundingBoxAscent + measured.actualBoundingBoxDescent : 1;
 		const ascent: number = measured.actualBoundingBoxAscent !== undefined ? measured.actualBoundingBoxAscent : 0;
-		return Rectangle.create(x, y - ascent, width, height);
+		return ConvexPolygon.createRectangle(x, y - ascent, width, height);
 	}
 }

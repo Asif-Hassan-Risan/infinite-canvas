@@ -32,6 +32,209 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with finite height but located at negative infinity horizontally should do nothing 1`] = `Array []`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with finite height but located at positive infinity horizontally should do nothing 1`] = `Array []`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with finite width but located at negative infinity vertically should do nothing 1`] = `Array []`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with finite width but located at positive infinity vertically should do nothing 1`] = `Array []`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with finite width, infinite height and no top should clear a rect extending to the top and bottom of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(50,0,50,200)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with infinite height but located infinitely far down should do nothing 1`] = `Array []`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with infinite width, infinite height and no left should clear a rect extending to the left and right and bottom of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(0,50,200,150)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with infinite width, infinite height and no top should clear a rect extending to the top and bottom and right of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(50,0,150,200)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with negative infinite height should clear a rectangle extending to the top of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(50,50,50,-50)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with negative infinite width should clear a rectangle extending to the left side of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(50,50,-50,50)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with positive infinite height should clear a rectangle extending to the bottom of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(50,50,50,150)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with positive infinite width and positive infinite height should clear a rect extending to the right and to the bottom of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(50,50,150,150)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears a rect with positive infinite width should clear a rectangle extending to the right side of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(50,50,150,50)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills and then clears the entire plane should clear everything 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then draws a line to a third point at infinity (not in the same half plane) and then fills should draw the correct path 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
+  "context.lineWidth = 1",
+  "context.fill()",
+]
+`;
+
 exports[`an infinite canvas context draws a line to infinity and then draws a line to another point at infinity and then fills should create a path that covers the correct section of the view box 1`] = `
 Array [
   "context.restore()",
@@ -97,6 +300,14 @@ Array [
 
 exports[`an infinite canvas context draws a line to infinity and then strokes the ray and clears a rect not overlapping the ray should not have added a clearRect 1`] = `Array []`;
 
+exports[`an infinite canvas context draws a line to infinity and then strokes the ray and clears a rect overlapping the entire ray should forget about the drawn path and not add a clearRect 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+]
+`;
+
 exports[`an infinite canvas context draws a line to infinity and then strokes the ray and clears a rect overlapping the ray should have added a clearRect 1`] = `
 Array [
   "context.restore()",
@@ -127,6 +338,57 @@ Array [
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
   "context.clearRect(300,0,60,60)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then strokes the ray and clears an infinite rectangle partially overlapping the ray and then the viewbox transformation scales should clear a rectangle extending to the edge of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(60,60)",
+  "context.lineTo(200,60)",
+  "context.lineWidth = 2",
+  "context.stroke()",
+  "context.save()",
+  "context.transform(2,0,0,2,0,0)",
+  "context.clearRect(40,20,60,20)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then strokes the ray and clears an infinite rectangle partially overlapping the ray and then the viewbox transformation translates should clear a rectangle extending to the edge of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(20,30)",
+  "context.lineTo(200,30)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+  "context.save()",
+  "context.transform(1,0,0,1,-10,0)",
+  "context.clearRect(40,20,170,20)",
+  "context.restore()",
+]
+`;
+
+exports[`an infinite canvas context draws a line to infinity and then strokes the ray and clears an infinite rectangle partially overlapping the ray should clear a rectangle extending to the edge of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(200,30)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(40,20,160,20)",
   "context.restore()",
 ]
 `;

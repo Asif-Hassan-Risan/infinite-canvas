@@ -4,7 +4,6 @@ import { Point } from "../src/geometry/point";
 import { PolygonVertex } from "../src/areas/polygons/polygon-vertex";
 import { Area } from "../src/areas/area";
 import { plane } from "../src/areas/plane";
-import { Rectangle } from "../src/areas/polygons/rectangle";
 import { Transformation } from "../src/transformation";
 import { empty } from "../src/areas/empty";
 import { LineSegment } from "../src/areas/line/line-segment";
@@ -81,7 +80,7 @@ describe("a rectangle", () => {
     let rectangle: ConvexPolygon;
 
     beforeEach(() => {
-        rectangle = Rectangle.create(0, 0, 1, 1);
+        rectangle = ConvexPolygon.createRectangle(0, 0, 1, 1);
     });
 
     describe("when it is expanded to include a point", () => {

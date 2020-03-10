@@ -11,11 +11,15 @@ import { DrawingLock } from "./drawing-lock";
 import { InfiniteCanvasPattern } from "./styles/infinite-canvas-pattern";
 import { TransformationKind } from "./transformation-kind";
 import { InfiniteCanvasInstructionSet } from "./infinite-canvas-instruction-set";
-import { Rectangle } from "./areas/polygons/rectangle";
 import { transformInstructionRelatively } from "./instruction-utils";
 import { Area } from "./areas/area";
 import { Position } from "./geometry/position"
 import { InfiniteCanvasViewBoxInfinity } from "./infinite-canvas-viewbox-infinity";
+import {ConvexPolygon} from "./areas/polygons/convex-polygon";
+import {ViewboxInfinity} from "./interfaces/viewbox-infinity";
+import {Point} from "./geometry/point";
+import { Rectangle } from "./interfaces/rectangle";
+import { plane } from "./areas/plane";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -86,16 +90,60 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
 		this.instructionSet.drawRect(x, y, w, h, instruction);
 	}
+	private getFiniteRectangle(x: number, y: number, width: number, height: number, infinity: ViewboxInfinity): (transformation: Transformation) => Rectangle{
+		const xStart: (transformation: Transformation) => number = Number.isFinite(x) ? () => x : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), new Point(-1, 0), transformation)).x;
+		const xEndDirection: Point = width > 0 ? new Point(1, 0) : new Point(-1, 0);
+		const xEnd: (transformation: Transformation) => number = Number.isFinite(width) ? () => x + width : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), xEndDirection, transformation)).x;
+		const yStart: (transformation: Transformation) => number = Number.isFinite(y) ? () => y : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), new Point(0, -1), transformation)).y;
+		const yEndDirection: Point = height > 0 ? new Point(0, 1) : new Point(0, -1);
+		const yEnd: (transformation: Transformation) => number = Number.isFinite(height) ? () => y + height : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), yEndDirection, transformation)).y;
+		return (transformation: Transformation) => {
+			const _xStart: number = xStart(transformation);
+			const _xEnd: number = xEnd(transformation);
+			const _yStart: number = yStart(transformation);
+			const _yEnd: number = yEnd(transformation);
+			return {
+				x: _xStart,
+				width: _xEnd - _xStart,
+				y: _yStart,
+				height: _yEnd - _yStart
+			};
+		};
+	}
 	private getInstructionToClearRectangle(x: number, y: number, width: number, height: number): Instruction{
-		return transformInstructionRelatively((context: CanvasRenderingContext2D) => {
+		const infinity: ViewboxInfinity = new InfiniteCanvasViewBoxInfinity(this.width, this.height, this.state.current.transformation);
+		const finiteRectangle: (transformation: Transformation) => Rectangle = this.getFiniteRectangle(x, y, width, height, infinity);
+		return transformInstructionRelatively((context: CanvasRenderingContext2D, transformation: Transformation) => {
+			const {x, y, width, height} = finiteRectangle(transformation);
 			context.clearRect(x, y, width, height);
-		})
+		});
 	}
 	public clipPath(instruction: Instruction): void{
 		this.instructionSet.clipPath(instruction);
 	}
+	private lineSegmentHasLength(start: number, length: number): boolean{
+		if(Number.isFinite(start)){
+			return true;
+		}
+		if(Number.isFinite(length)){
+			return false;
+		}
+		return start < 0 && length > 0;
+	}
+	private lineSegmentIsLine(start: number, length: number): boolean{
+		return !Number.isFinite(start) && start < 0 && !Number.isFinite(length) && length > 0;
+	}
+	private rectangleHasArea(x: number, y: number, width: number, height: number): boolean{
+		return this.lineSegmentHasLength(x, width) && this.lineSegmentHasLength(y, height);
+	}
+	private rectangleIsPlane(x: number, y: number, width: number, height: number): boolean{
+		return this.lineSegmentIsLine(x, width) && this.lineSegmentIsLine(y, height);
+	}
 	public clearArea(x: number, y: number, width: number, height: number): void{
-		const area: Rectangle = Rectangle.create(x, y, width, height);
+		if(!this.rectangleHasArea(x, y, width, height)){
+			return;
+		}
+		const area: Area = this.rectangleIsPlane(x, y, width, height) ? plane : ConvexPolygon.createRectangle(x, y, width, height);
 		this.instructionSet.clearArea(area, this.getInstructionToClearRectangle(x, y, width, height));
 	}
 	public createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient{
