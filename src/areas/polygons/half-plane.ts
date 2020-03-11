@@ -21,6 +21,10 @@ export class HalfPlane {
     public complement(): HalfPlane{
         return new HalfPlane(this.base, this.normalTowardInterior.scale(-1));
     }
+    public expandByDistance(distance: number): HalfPlane{
+        const newBase: Point = this.base.plus(this.normalTowardInterior.scale(-distance / this.normalTowardInterior.mod()));
+        return new HalfPlane(newBase, this.normalTowardInterior);
+    }
     public expandToIncludePoint(point: Point): HalfPlane{
         if(this.containsPoint(point)){
             return this;

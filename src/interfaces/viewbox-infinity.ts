@@ -1,7 +1,6 @@
-import { Point } from "../geometry/point";
-import { Transformation } from "../transformation";
+import {Point} from "../geometry/point";
 
 export interface ViewboxInfinity{
-    getInfinityFromPointInDirection(fromPoint: Point, direction: Point, viewBoxTransformation: Transformation): Point;
-    getInfinitiesFromDirectionFromPointToDirection(point: Point, direction1: Point, direction2: Point, viewBoxTransformation: Transformation): Point[];
+    getInfinityFromPointInDirection(fromPoint: Point, direction: Point): Point;
+    getInfinitiesFromDirectionFromPointToDirection(point: Point, direction1: Point, direction2: Point): Point[];
 }

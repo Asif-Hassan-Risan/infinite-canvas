@@ -192,6 +192,9 @@ export class ConvexPolygon implements Area{
         }
         return result;
     }
+    public expandByDistance(distance: number): ConvexPolygon{
+        return new ConvexPolygon(this.halfPlanes.map(hp => hp.expandByDistance(distance)));
+    }
     public expandToInclude(area: Area): Area{
         return area.expandToIncludePolygon(this);
     }

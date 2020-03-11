@@ -15,15 +15,16 @@ import { Position } from "../geometry/position";
 import { transformPosition } from "../geometry/transform-position";
 import { Point } from "../geometry/point";
 import { isPointAtInfinity } from "../geometry/is-point-at-infinity";
-import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
 import {InstructionsWithSubpath} from "./instructions-with-subpath";
 import {down, left, right, up} from "../geometry/points-at-infinity";
+import {ViewboxInfinity} from "../interfaces/viewbox-infinity";
+import { ViewboxInfinityProvider } from "../interfaces/viewbox-infinity-provider";
 
 export class InstructionsWithPath extends StateChangingInstructionSequence<InstructionsWithSubpath> implements StateChangingInstructionSetWithAreaAndCurrentPath{
     private areaBuilder: InfiniteCanvasAreaBuilder = new InfiniteCanvasAreaBuilder();
     private drawnArea: Area;
     public visible: boolean;
-    constructor(private _initiallyWithState: StateAndInstruction, private readonly infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity){
+    constructor(private _initiallyWithState: StateAndInstruction, private readonly infinityProvider: ViewboxInfinityProvider){
         super(_initiallyWithState);
     }
     private get area(): Area{return this.areaBuilder.area;}
@@ -37,7 +38,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         return this.state.current.clippingRegion.intersectWith(this.area);
     }
     private copy(): InstructionsWithPath{
-        const result: InstructionsWithPath = new InstructionsWithPath(this._initiallyWithState.copy(), this.infinityFactory);
+        const result: InstructionsWithPath = new InstructionsWithPath(this._initiallyWithState.copy(), this.infinityProvider);
         for(const added of this.added){
             result.add(added.copy());
         }
@@ -74,7 +75,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
     private silentlyMoveTo(position: Position, state: InfiniteCanvasState): void{
         const transformedPointToMoveTo: Position = transformPosition(position, state.current.transformation);
         this.areaBuilder.addPosition(transformedPointToMoveTo);
-        const newSubpath: InstructionsWithSubpath = InstructionsWithSubpath.createSilent(state, position, this.infinityFactory);
+        const newSubpath: InstructionsWithSubpath = InstructionsWithSubpath.createSilent(state, position, this.infinityProvider);
         newSubpath.setInitialState(this.state);
         this.add(newSubpath);
     }
@@ -84,7 +85,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         }
         const transformedPointToMoveTo: Point = state.current.transformation.apply(position);
         this.areaBuilder.addPoint(transformedPointToMoveTo);
-        const newSubpath: InstructionsWithSubpath = InstructionsWithSubpath.create(state, position, this.infinityFactory);
+        const newSubpath: InstructionsWithSubpath = InstructionsWithSubpath.create(state, position, this.infinityProvider);
         newSubpath.setInitialState(this.state);
         this.add(newSubpath);
     }
@@ -191,7 +192,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         result.areaBuilder = this.areaBuilder.copy();
         return result;
     }
-    public static create(initialState: InfiniteCanvasState, infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity): InstructionsWithPath{
-        return new InstructionsWithPath(StateAndInstruction.create(initialState, (context: CanvasRenderingContext2D) => {context.beginPath();}), infinityFactory);
+    public static create(initialState: InfiniteCanvasState, infinityProvider: ViewboxInfinityProvider): InstructionsWithPath{
+        return new InstructionsWithPath(StateAndInstruction.create(initialState, (context: CanvasRenderingContext2D) => {context.beginPath();}), infinityProvider);
     }
 }

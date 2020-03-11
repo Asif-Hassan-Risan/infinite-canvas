@@ -12,6 +12,13 @@ export class Transformation{
 		){
 			this.scale = Math.sqrt(a * d - b * c);
 	}
+	public getMaximumLineWidthScale(): number{
+		const x1: number = this.a + this.c,
+		y1: number = this.b + this.d,
+		x2: number = this.a - this.c,
+		y2: number = this.b - this.d;
+		return Math.sqrt(Math.max(x1 * x1 + y1 * y1, x2 * x2 + y2 * y2));
+	}
 	public getRotationAngle(): number{
 		const cos: number = this.a / this.scale;
 		const sin: number = this.b / this.scale;

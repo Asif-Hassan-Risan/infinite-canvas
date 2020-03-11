@@ -12,19 +12,19 @@ import { Transformation } from "./transformation";
 import { transformInstructionRelatively, transformInstructionAbsolutely } from "./instruction-utils";
 import { Area } from "./areas/area";
 import { Position } from "./geometry/position"
-import { ViewboxInfinity } from "./interfaces/viewbox-infinity";
+import { ViewboxInfinityProvider } from "./interfaces/viewbox-infinity-provider";
 
 export class InfiniteCanvasInstructionSet{
     private currentInstructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath;
     private previousInstructionsWithPath: PreviousInstructions;
     public state: InfiniteCanvasState;
     private instructionToRestoreState: Instruction;
-    constructor(private readonly onChange: () => void, private readonly infinityFactory: (state: InfiniteCanvasState) => ViewboxInfinity){
+    constructor(private readonly onChange: () => void, private readonly infinityProvider: ViewboxInfinityProvider){
         this.previousInstructionsWithPath = PreviousInstructions.create();
         this.state = this.previousInstructionsWithPath.state;
     }
     public beginPath(): void{
-        this.replaceCurrentInstructionsWithPath(InstructionsWithPath.create(this.state, this.infinityFactory));
+        this.replaceCurrentInstructionsWithPath(InstructionsWithPath.create(this.state, this.infinityProvider));
     }
     public changeState(change: (state: InfiniteCanvasStateInstance) => InfiniteCanvasStateInstance): void{
         this.state = this.state.withCurrentState(change(this.state.current));
@@ -53,7 +53,7 @@ export class InfiniteCanvasInstructionSet{
             instruction = transformInstructionRelatively(instruction);
         }
         const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
-        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityFactory);
+        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityProvider);
         pathToDraw.rect(x, y, w, h, stateToDrawWith);
         pathToDraw.drawPath(instruction, stateToDrawWith);
         this.drawBeforeCurrentPath(pathToDraw);
