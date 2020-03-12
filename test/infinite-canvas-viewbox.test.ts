@@ -2496,4 +2496,23 @@ describe("an infinite canvas context", () => {
 			expect(contextMock.getLog()).toMatchSnapshot();
 		});
 	});
+
+	describe("that transforms, begins a path, draws line from a point to infinity, rotates, draws a line to infinity and strokes", () => {
+
+		beforeEach(() => {
+			infiniteContext.translate(50, 50);
+			infiniteContext.transform(1, 1, 0, 1, 0, 0);
+			infiniteContext.beginPath();
+			infiniteContext.moveTo(0, 0);
+			infiniteContext.lineToInfinityInDirection(1, 1);
+			infiniteContext.rotate(Math.PI/8);
+			infiniteContext.lineToInfinityInDirection(1, 1);
+			contextMock.clear();
+			infiniteContext.stroke();
+		});
+
+		it("should", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
 })

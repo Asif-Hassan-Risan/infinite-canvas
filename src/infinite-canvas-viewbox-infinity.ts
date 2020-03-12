@@ -15,8 +15,17 @@ export class InfiniteCanvasViewboxInfinity implements ViewboxInfinity{
         const transformedViewbox: ConvexPolygon = this.getTransformedViewbox();
         const startingPoint: Point = transformedViewbox.getPointInFrontInDirection(point, direction1);
         const destinationPoint: Point = transformedViewbox.getPointInFrontInDirection(point, direction2);
-        let polygonToCircumscribe: ConvexPolygon = transformedViewbox.expandToIncludePoint(startingPoint).expandToIncludePoint(destinationPoint);
-        const verticesInBetween: Point[] = polygonToCircumscribe.getVerticesBetweenPointsInDirection(startingPoint, destinationPoint, direction1, direction2);
+        let polygonToCircumscribe: ConvexPolygon = transformedViewbox
+            .expandToIncludePoint(point)
+            .expandToIncludePoint(startingPoint)
+            .expandToIncludePoint(destinationPoint);
+        const verticesInBetween: Point[] = polygonToCircumscribe.vertices.map(v => v.point).filter(p => !p.equals(startingPoint) && !p.equals(destinationPoint) && !p.equals(point) && p.minus(point).isInSmallerAngleBetweenPoints(direction1, direction2));
+        verticesInBetween.sort((p1, p2) => {
+            if(p1.minus(point).isInSmallerAngleBetweenPoints(p2.minus(point), direction1)){
+                return -1;
+            }
+            return 1;
+        });
         return verticesInBetween.concat([destinationPoint]).map(p => viewBoxTransformation.apply(p));
     }
 }

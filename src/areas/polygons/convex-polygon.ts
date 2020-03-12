@@ -80,39 +80,7 @@ export class ConvexPolygon implements Area{
         }
         return true;
     }
-    private getClosestHalfPlane(point: Point): HalfPlane{
-        let distance: number = Infinity;
-        let result: HalfPlane;
-        for(let halfPlane of this.halfPlanes){
-            const thisDistance: number = halfPlane.getDistanceFromEdge(point);
-            if(thisDistance <= distance){
-                distance = thisDistance;
-                result = halfPlane;
-            }
-        }
-        return result;
-    }
-    public getVerticesBetweenPointsInDirection(point1: Point, point2: Point, directionFrom: Point, directionTo: Point): Point[]{
-        if(point1.equals(point2)){
-            return [];
-        }
-        const crossDirections: number = directionFrom.cross(directionTo);
-        const vertices: Point[] = this.vertices.map(v => v.point).filter(p => {
-            if(p.equals(point1) || p.equals(point2)){
-                return false;
-            }
-            const cross = p.minus(point1).cross(point2.minus(point1));
-            return crossDirections > 0 && cross >= 0 || crossDirections < 0 && cross <= 0;
-        });
-        vertices.sort((p1, p2) => {
-            const cross: number = p1.minus(point1).cross(p2.minus(point1));
-            if(crossDirections > 0 && cross >= 0 || crossDirections < 0 && cross <= 0){
-                return -1;
-            }
-            return 1;
-        });
-        return vertices;
-    }
+
     public getPointInFrontInDirection(point: Point, direction: Point): Point{
         let along: number = 0;
         let frontMostVertex: Point;
@@ -175,6 +143,7 @@ export class ConvexPolygon implements Area{
         }
         return new ConvexPolygon(halfPlanes);
     }
+
     public getIntersectionsWithLine(point: Point, direction: Point): HalfPlaneLineIntersection[]{
         const result: HalfPlaneLineIntersection[] = [];
         for(let halfPlane of this.halfPlanes){

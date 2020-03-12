@@ -36,6 +36,7 @@ describe("a viewbox infinity for an untransformed context", () => {
     });
 
     it.each([
+        [new Point(9, 7), new Point(1, 0), new Point(10, 1), Transformation.identity, [new Point(10.287128712871286, 7.128712871287129)]],
         [new Point(5, 5), new Point(0, 1), new Point(1, 0), Transformation.identity, [new Point(10, 10), new Point(10, 5)]],
         [new Point(20, 20), new Point(0, 1), new Point(1, 0), Transformation.identity, [new Point(20, 20)]],
         [new Point(5, 20), new Point(0, 1), new Point(1, 0), Transformation.identity, [new Point(10, 20)]],

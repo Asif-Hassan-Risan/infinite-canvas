@@ -14,28 +14,6 @@ import { Line } from "../src/areas/line/line";
 
 describe("this other convex polygon", () => {
     let convexPolygon: ConvexPolygon;
-    let startingPoint: Point;
-    let destinationPoint: Point; 
-
-    beforeEach(() => {
-        convexPolygon = p(p => p
-            .with(hp => hp.base(30.93035006810156, 20.647376785656252).normal(0.045817950876930524, -0))
-            .with(hp => hp.base(58.42112059426067, 20.647376785656252).normal(-0.045817950876930524, -0))
-            .with(hp => hp.base(30.93035006810156, 20.647376785656252).normal(0, 0.045817950876930524))
-            .with(hp => hp.base(30.93035006810156, 48.138147311815366).normal(0, -0.045817950876930524)));
-        startingPoint = new Point(58.42112059426067, 30);
-        destinationPoint = new Point(30, 48.13814731181536);
-        convexPolygon = convexPolygon.expandToIncludePoint(startingPoint).expandToIncludePoint(destinationPoint);
-    });
-
-    it("should", () => {
-        const verticesInBetween: Point[] = convexPolygon.getVerticesBetweenPointsInDirection(startingPoint, destinationPoint, new Point(1, 0), new Point(0, 1));
-        expect(verticesInBetween.length).toBe(2);
-    });
-});
-
-describe("this other convex polygon", () => {
-    let convexPolygon: ConvexPolygon;
 
     beforeEach(() => {
         convexPolygon = p(p => p
@@ -98,15 +76,6 @@ describe("a rectangle", () => {
                 expect(halfPlanes.indexOf(vertex.halfPlane2) > -1).toBe(true);
             }
         });
-    });
-
-    it.each([
-        [new Point(0, 0), new Point(0, 1), new Point(-1, 0), new Point(0, 1), []],
-        [new Point(0, 0), new Point(1, 1), new Point(-1, 0), new Point(0, 1), [new Point(0, 1)]],
-        [new Point(0, 0.5), new Point(0.5, 1), new Point(-1, 0), new Point(0, 1), [new Point(0, 1)]],
-        [new Point(0, 0.5), new Point(1, 0.5), new Point(-1, 0), new Point(0, 1), [new Point(0, 1), new Point(1, 1)]]
-    ])("should get the correct vertices between points", (point1: Point, point2: Point, directionFrom: Point, directionTo: Point, expectedResult: Point[]) => {
-        expect(rectangle.getVerticesBetweenPointsInDirection(point1, point2, directionFrom, directionTo)).toEqual(expectedResult);
     });
 
     it.each([

@@ -3143,6 +3143,22 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that transforms, begins a path, draws line from a point to infinity, rotates, draws a line to infinity and strokes should 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.setTransform(1,1,0,1,50,50)",
+  "context.beginPath()",
+  "context.moveTo(0,0)",
+  "context.lineTo(75.96269241988117,75.96269241988117)",
+  "context.setTransform(0.9238795325112867,1.3065629648763766,-0.3826834323650898,0.5411961001461969,50,50)",
+  "context.lineTo(119.12102512547051,119.12102512547048)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that translates and then draws a line to inifinity should draw a line to the right border of the viewbox 1`] = `
 Array [
   "context.restore()",
