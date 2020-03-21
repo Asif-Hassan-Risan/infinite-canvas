@@ -2570,6 +2570,25 @@ describe("an infinite canvas context", () => {
 				infiniteContext.lineTo(100, 100);
 			});
 
+			describe("and then adds a line to the opposite point at infinity", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineToInfinityInDirection(-1, 0);
+				});
+
+				describe("and then strokes", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.stroke();
+					});
+
+					it("should have added a moveTo", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+			});
+
 			describe("and then adds a line to a different point at infinity", () => {
 
 				beforeEach(() => {

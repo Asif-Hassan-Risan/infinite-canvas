@@ -24,6 +24,12 @@ export class FromPointAtInfinityToPointAtInfinity extends InfiniteCanvasPathBuil
         if(this.initialPosition.direction.inSameDirectionAs(this.currentPosition.direction)){
             return this.moveToInfinityFromPointInDirection(this.firstFinitePoint, this.initialPosition.direction, infinity);
         }
+        if(this.initialPosition.direction.cross(this.currentPosition.direction) === 0){
+            if(this.firstFinitePoint.equals(this.lastFinitePoint)){
+                return this.moveToInfinityFromPointInDirection(this.firstFinitePoint, this.initialPosition.direction, infinity);
+            }
+            
+        }
         return instructionSequence(
             this.moveToInfinityFromPointInDirection(this.lastFinitePoint, this.currentPosition.direction, infinity),
             this.lineToInfinityFromInfinityFromPoint(this.lastFinitePoint, this.currentPosition.direction, this.initialPosition.direction, infinity),
