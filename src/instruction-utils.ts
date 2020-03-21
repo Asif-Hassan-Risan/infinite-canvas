@@ -20,13 +20,10 @@ export function transformInstructionRelatively(instruction: Instruction): Instru
         context.restore();
     };
 }
-
-export function prependToInstruction(toPrepend: Instruction, toInstruction: Instruction){
-    if(!toPrepend){
-        return toInstruction;
-    }
+export function instructionSequence(...instructions: Instruction[]): Instruction{
     return (context: CanvasRenderingContext2D, transformation: Transformation) => {
-        toPrepend(context, transformation);
-        toInstruction(context, transformation);
+        for(const instruction of instructions){
+            instruction(context, transformation);
+        }
     };
 }

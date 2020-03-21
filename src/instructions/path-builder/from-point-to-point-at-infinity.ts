@@ -8,7 +8,7 @@ import { Instruction } from "../instruction";
 import { isPointAtInfinity } from "../../geometry/is-point-at-infinity";
 import { Transformation } from "../../transformation";
 import { PathBuilderProvider } from "./path-builder-provider";
-import { prependToInstruction } from "../../instruction-utils";
+import { instructionSequence } from "../../instruction-utils";
 
 export class FromPointToPointAtInfinity  extends InfiniteCanvasPathBuilder implements PathBuilder{
     constructor(private readonly pathBuilderProvider: PathBuilderProvider, private readonly initialPoint: Point, public readonly currentPosition: PointAtInfinity) {
@@ -24,7 +24,7 @@ export class FromPointToPointAtInfinity  extends InfiniteCanvasPathBuilder imple
             }
             return this.lineToInfinityFromInfinityFromPoint(this.initialPoint, this.currentPosition.direction, position.direction, infinity);
         }
-        return prependToInstruction(this.lineToInfinityFromPointInDirection(position, this.currentPosition.direction, infinity), this.lineTo(position));
+        return instructionSequence(this.lineToInfinityFromPointInDirection(position, this.currentPosition.direction, infinity), this.lineTo(position));
     }
     public getMoveTo(): Instruction{
         return this.moveTo(this.initialPoint);

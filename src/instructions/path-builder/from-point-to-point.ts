@@ -5,7 +5,7 @@ import {ViewboxInfinity} from "../../interfaces/viewbox-infinity";
 import {Instruction} from "../instruction";
 import {isPointAtInfinity} from "../../geometry/is-point-at-infinity";
 import {InfiniteCanvasPathBuilder} from "./infinite-canvas-path-builder";
-import { prependToInstruction } from "../../instruction-utils";
+import { instructionSequence } from "../../instruction-utils";
 import { Transformation } from "../../transformation";
 import { PathBuilderProvider } from "./path-builder-provider";
 
@@ -20,7 +20,7 @@ export class FromPointToPoint extends InfiniteCanvasPathBuilder implements PathB
                 return lineToInfinityFromCurrent;
             }
             const lineToInfinityFromInitial: Instruction = this.lineToInfinityFromPointInDirection(this.initialPoint, position.direction, infinity);
-            return prependToInstruction(lineToInfinityFromCurrent, lineToInfinityFromInitial);
+            return instructionSequence(lineToInfinityFromCurrent, lineToInfinityFromInitial);
         }
         return this.lineTo(position);
     }

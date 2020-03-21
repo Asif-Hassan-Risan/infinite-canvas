@@ -6,7 +6,7 @@ import {Position} from "../../geometry/position";
 import {ViewboxInfinity} from "../../interfaces/viewbox-infinity";
 import {Instruction} from "../instruction";
 import {isPointAtInfinity} from "../../geometry/is-point-at-infinity";
-import {prependToInstruction} from "../../instruction-utils";
+import {instructionSequence} from "../../instruction-utils";
 import {Transformation} from "../../transformation";
 import { PathBuilderProvider } from "./path-builder-provider";
 
@@ -16,7 +16,7 @@ export class FromPointAtInfinityToPoint extends InfiniteCanvasPathBuilder implem
     }
     public getLineTo(position: Position, infinity: ViewboxInfinity): Instruction{
         if(isPointAtInfinity(position)){
-            return undefined;
+            return this.lineToInfinityFromPointInDirection(this.currentPosition, position.direction, infinity);
         }
         return this.lineTo(position);
     }
@@ -26,11 +26,11 @@ export class FromPointAtInfinityToPoint extends InfiniteCanvasPathBuilder implem
             return moveToInfinityFromCurrentPosition;
         }
         const lineToInfinityFromFirstFinitePoint: Instruction = this.lineToInfinityFromPointInDirection(this.firstFinitePoint, this.initialPosition.direction, infinity);
-        return prependToInstruction(moveToInfinityFromCurrentPosition, lineToInfinityFromFirstFinitePoint);
+        return instructionSequence(moveToInfinityFromCurrentPosition, lineToInfinityFromFirstFinitePoint);
     }
     public addPosition(position: Position): PathBuilder{
         if(isPointAtInfinity(position)){
-            return this.pathBuilderProvider.fromPointAtInfinityToPointAtInfinity(this.initialPosition, this.firstFinitePoint, position);
+            return this.pathBuilderProvider.fromPointAtInfinityToPointAtInfinity(this.initialPosition, this.firstFinitePoint, this.currentPosition, position);
         }
         return this.pathBuilderProvider.fromPointAtInfinityToPoint(this.initialPosition, this.firstFinitePoint, position);
     }

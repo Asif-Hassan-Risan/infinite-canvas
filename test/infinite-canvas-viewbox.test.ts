@@ -2570,10 +2570,67 @@ describe("an infinite canvas context", () => {
 				infiniteContext.lineTo(100, 100);
 			});
 
+			describe("and then adds a line to a different point at infinity", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineToInfinityInDirection(0, 1);
+				});
+
+				describe("and then adds a line to a finite point", () => {
+
+					beforeEach(() => {
+						infiniteContext.lineTo(50, 150);
+					});
+
+					describe("and then strokes", () => {
+
+						beforeEach(() => {
+							contextMock.clear();
+							infiniteContext.stroke();
+						});
+	
+						it("should have drawn the correct path", () => {
+							expect(contextMock.getLog()).toMatchSnapshot();
+						});
+					});
+				});
+
+				describe("and then strokes", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.stroke();
+					});
+
+					it("should begin a path with a move to and then draw a line around a corner of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+			});
+
 			describe("and then adds a line to a different finite point", () => {
 
 				beforeEach(() => {
 					infiniteContext.lineTo(100, 200);
+				});
+
+				describe("and then adds a line back to the first point at infinity", () => {
+
+					beforeEach(() => {
+						infiniteContext.lineToInfinityInDirection(1, 0);
+					});
+
+					describe("and then strokes", () => {
+
+						beforeEach(() => {
+							contextMock.clear();
+							infiniteContext.stroke();
+						});
+
+						it("should add a moveTo", () => {
+							expect(contextMock.getLog()).toMatchSnapshot();
+						});
+					});
 				});
 
 				describe("and then strokes", () => {
