@@ -677,6 +677,54 @@
 						},
 						{
 							code:function(ctx){
+								ctx.fillStyle = "#f00"
+								ctx.fillRect(0, 0, 100, 100);
+								ctx.beginPath();
+								ctx.moveTo(10,10);
+								ctx.lineTo(10,90);
+								ctx.lineTo(90,90);
+								ctx.lineTo(90,10);
+								ctx.clip();
+								ctx.fillStyle = "#0f0"
+								ctx.fill();
+								ctx.lineTo(70,30);
+								ctx.clip();
+								ctx.fillStyle = "#00f";
+								ctx.fillRect(0,0,100,100);
+							},
+							title: "fill a rect, begin a path, clip, make it smaller, clip and fill"
+						},
+						{
+							code:function(ctx){
+								ctx.beginPath();
+								ctx.rect(20, 20, 160, 160);
+								ctx.clip();
+								ctx.fillRect(0, 100, 40, 40);
+								ctx.beginPath();
+								ctx.rect(40, 40, 120, 120);
+								ctx.clip();
+								ctx.fillRect(140, 100, 40, 40);
+								ctx.fillRect(100, 100, 20, 40);
+								ctx.clearRect(130, 90, 40, 60);
+							},
+							title: "clip with a rect, fill a rect, clip with another rect and then fill two rects and then remove the second filled rectangle by clearing a rect"
+						},
+						{
+							code:function(ctx){
+								ctx.beginPath();
+								ctx.rect(20, 20, 160, 160);
+								ctx.clip();
+								ctx.fillRect(0, 100, 40, 40);
+								ctx.beginPath();
+								ctx.rect(40, 40, 120, 120);
+								ctx.clip();
+								ctx.fillRect(140, 100, 40, 40);
+								ctx.fillRect(100, 100, 20, 40);
+							},
+							title: "clip with a rect, fill a rect, clip with another rect and then fill two rects"
+						},
+						{
+							code:function(ctx){
 								ctx.save();
 								ctx.beginPath();
 								ctx.rect(20, 20, 40, 40);
@@ -1052,7 +1100,7 @@
 								drawSomething();
 							},
 							title: "infinite rays, transformed",
-							maxDifference: 2005
+							maxDifference: 3381069
 						},
 						{
 							code: function(ctx){

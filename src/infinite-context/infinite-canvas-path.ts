@@ -26,6 +26,9 @@ export class InfiniteCanvasPath implements CanvasPath{
 	public moveTo(_x: number, _y: number): void{
 		this.viewBox.moveTo(new Point(_x, _y));
 	}
+	public moveToInfinityInDirection(x: number, y: number): void{
+		this.viewBox.moveTo({direction: new Point(x, y)});
+	}
 	public quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void{}
 
 	public rect(x: number, y: number, w: number, h: number): void{

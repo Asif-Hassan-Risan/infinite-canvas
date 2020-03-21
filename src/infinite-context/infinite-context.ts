@@ -231,6 +231,9 @@ export class InfiniteContext implements InfiniteCanvasRenderingContext2D{
 	public moveTo(x: number, y: number): void{
 		this.canvasPath.moveTo(x, y);
 	}
+	public moveToInfinityInDirection(x: number, y: number): void{
+		this.canvasPath.moveToInfinityInDirection(x, y);
+	}
 	public quadraticCurveTo(cpx: number, cpy: number, x: number, y: number): void{
 		this.canvasPath.quadraticCurveTo(cpx, cpy, x, y);
 	}

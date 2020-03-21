@@ -13,7 +13,6 @@ export interface CurrentPath{
     moveTo(position: Position, state: InfiniteCanvasState): void;
     lineTo(position: Position, state: InfiniteCanvasState): void;
     rect(x: number, y: number, w: number, h: number, state: InfiniteCanvasState): void;
-    visible: boolean;
     recreatePath(): StateChangingInstructionSetWithAreaAndCurrentPath;
     getClippedArea(previouslyClipped?: Area): Area;
 }

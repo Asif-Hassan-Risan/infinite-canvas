@@ -16,13 +16,19 @@ export class ClippedPaths {
         const instructionsAndStatesFromPreviouslyClippedPaths: InstructionAndState[] = this.previouslyClippedPaths ? this.previouslyClippedPaths.getAllInstructionsAndStates() : [];
         const result: InstructionAndState[] = [];
         for(const instructionAndState of instructionsAndStatesFromPreviouslyClippedPaths.concat(instructionsAndStatesFromLatestClippedPath)){
-            if(!result.find(is => is.instruction === instructionAndState.instruction)){
-                result.push(instructionAndState);
-            }
+            result.push(instructionAndState);
         }
         return result;
     }
-
+    public except(other: ClippedPaths): ClippedPaths{
+        if(other === this){
+            return undefined;
+        }
+        if(this.previouslyClippedPaths){
+            return new ClippedPaths(this.area, this.latestClippedPath, this.previouslyClippedPaths.except(other))
+        }
+        return this;
+    }
     public contains(other: ClippedPaths): boolean{
         if(!other){
             return false;
@@ -52,9 +58,7 @@ export class ClippedPaths {
         return this.createFromInstructionsAndStates(this.getAllInstructionsAndStates());
     }
     public recreateStartingFrom(other: ClippedPaths): StateChangingInstructionSet{
-        const allInstructionsAndStatesFromOther: InstructionAndState[] = other.getAllInstructionsAndStates();
-        const allInstructionsAndStatesFromThis: InstructionAndState[] = this.getAllInstructionsAndStates();
-        const instructionsAndStatesFromThisNotFromOther: InstructionAndState[] = allInstructionsAndStatesFromThis.filter(fromThis => !allInstructionsAndStatesFromOther.find(fromOther => fromOther.instruction === fromThis.instruction));
-        return this.createFromInstructionsAndStates(instructionsAndStatesFromThisNotFromOther);
+        const difference: ClippedPaths = this.except(other);
+        return difference.recreate();
     }
 }

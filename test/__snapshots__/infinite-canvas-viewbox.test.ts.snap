@@ -415,6 +415,14 @@ Array [
   "context.clip()",
   "context.fillStyle = \\"#0f0\\"",
   "context.fill()",
+  "context.fillStyle = \\"#f00\\"",
+  "context.beginPath()",
+  "context.moveTo(10,10)",
+  "context.lineTo(10,90)",
+  "context.lineTo(90,90)",
+  "context.lineTo(90,10)",
+  "context.clip()",
+  "context.fillStyle = \\"#0f0\\"",
   "context.lineTo(70,30)",
   "context.clip()",
   "context.fillStyle = \\"#00f\\"",
@@ -464,6 +472,14 @@ Array [
   "context.clip()",
   "context.fillStyle = \\"#0f0\\"",
   "context.fill()",
+  "context.fillStyle = \\"#f00\\"",
+  "context.beginPath()",
+  "context.moveTo(10,10)",
+  "context.lineTo(10,90)",
+  "context.lineTo(90,90)",
+  "context.lineTo(90,10)",
+  "context.clip()",
+  "context.fillStyle = \\"#0f0\\"",
   "context.lineTo(70,30)",
   "context.clip()",
   "context.fillStyle = \\"#00f\\"",
@@ -601,6 +617,79 @@ Array [
   "context.lineTo(1,2)",
   "context.lineTo(1,1)",
   "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to a different finite point and then strokes and then adds a line to another finite point and then strokes should have created two paths 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,200)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(100,100)",
+  "context.lineTo(100,200)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,300)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(100,100)",
+  "context.lineTo(100,200)",
+  "context.lineWidth = 1",
+  "context.lineTo(100,300)",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to a different finite point and then strokes should begin with a moveTo and a lineTo 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,200)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(100,100)",
+  "context.lineTo(100,200)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then strokes and then lines to a different finite point and then strokes should have created two paths 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,100)",
+  "context.lineTo(100,100)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,200)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(100,100)",
+  "context.lineWidth = 1",
+  "context.lineTo(100,200)",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then strokes should have added a moveTo 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,100)",
+  "context.lineTo(100,100)",
+  "context.lineWidth = 1",
+  "context.stroke()",
 ]
 `;
 
@@ -1914,6 +2003,12 @@ Array [
   "context.lineTo(100,100)",
   "context.lineWidth = 1",
   "context.fill()",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(30,30)",
+  "context.lineTo(30,100)",
+  "context.lineTo(100,100)",
+  "context.lineWidth = 1",
   "context.lineTo(100,30)",
   "context.stroke()",
 ]
@@ -3182,6 +3277,36 @@ Array [
   "context.beginPath()",
   "context.moveTo(30,30)",
   "context.lineTo(141.4142135623731,30)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that translates, begins a path, moves to infinity, and then lines to a point and then lines to a different point and then strokes should move to and line to the correct points 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.setTransform(1,0,0,1,0,100)",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,200)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(100,100)",
+  "context.lineTo(100,200)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that translates, begins a path, moves to infinity, and then lines to a point and then strokes should move to and line to the correct points 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.setTransform(1,0,0,1,0,100)",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,100)",
+  "context.lineTo(100,100)",
   "context.lineWidth = 1",
   "context.stroke()",
 ]

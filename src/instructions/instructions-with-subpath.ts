@@ -8,13 +8,15 @@ import {DrawingPathInstructionWithState} from "./drawing-path-instruction-with-s
 import {ClippingPathInstructionWithState} from "./clipping-path-instruction-with-state";
 import {transformPosition} from "../geometry/transform-position";
 import {PathInstruction} from "../interfaces/path-instruction";
-import {Area} from "../areas/area";
 import {positionsAreEqual} from "../geometry/positions-are-equal";
-import {Point} from "../geometry/point";
 import { ViewboxInfinityProvider } from "../interfaces/viewbox-infinity-provider";
+import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
+import { Instruction } from "./instruction";
+import { PathBuilder } from "./path-builder/path-builder";
+import { infiniteCanvasPathBuilderProvider } from "./path-builder/infinite-canvas-path-builder-provider";
 
 export class InstructionsWithSubpath extends StateChangingInstructionSequence<PathInstructionWithState>{
-    constructor(private _initiallyWithState: PathInstructionWithState, private readonly initialPosition: Position, private currentPosition: Position, private readonly infinityProvider: ViewboxInfinityProvider) {
+    constructor(private _initiallyWithState: PathInstructionWithState, private readonly infinityProvider: ViewboxInfinityProvider, private pathBuilder: PathBuilder) {
         super(_initiallyWithState);
     }
     public addDrawingInstruction(drawingInstruction: DrawingPathInstructionWithState): void{
@@ -31,7 +33,7 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
         this.add(toAdd);
     }
     public copy(): InstructionsWithSubpath{
-        const result: InstructionsWithSubpath = new InstructionsWithSubpath(this._initiallyWithState.copy(), this.initialPosition, this.currentPosition, this.infinityProvider);
+        const result: InstructionsWithSubpath = new InstructionsWithSubpath(this._initiallyWithState.copy(), this.infinityProvider, this.pathBuilder);
         for(const added of this.added){
             result.add(added.copy());
         }
@@ -40,94 +42,35 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
     }
     public lineTo(position: Position, state: InfiniteCanvasState): void{
         const transformedPosition: Position = transformPosition(position, state.current.transformation);
-        const previousPosition: Position = this.currentPosition;
-        this.currentPosition = transformedPosition;
-        let toAdd: PathInstructionWithState = this.getInstructionToDrawLineFromTo(state, transformPosition(this.initialPosition, state.current.transformation.inverse()), transformPosition(previousPosition, state.current.transformation.inverse()), position);
+        const infinity: ViewboxInfinity = this.infinityProvider.getInfinity(state);
+        const instructionToDrawLine: Instruction = this.pathBuilder.transform(state.current.transformation.inverse()).getLineTo(position, infinity);
+        this.pathBuilder = this.pathBuilder.addPosition(transformedPosition);
+        const initialInfinity: ViewboxInfinity = this.infinityProvider.getInfinity(this._initiallyWithState.state);
+        this._initiallyWithState.replaceInstruction(this.pathBuilder.transform(this._initiallyWithState.state.current.transformation.inverse()).getMoveTo(initialInfinity));
+        let toAdd: PathInstructionWithState = PathInstructionWithState.create(state, instructionToDrawLine);
         toAdd.setInitialState(this.state);
         this.add(toAdd);
     }
-    public clearContentsInsideArea(area: Area): void{
-        this.removeAll(i => i instanceof DrawingPathInstructionWithState && area.contains(i.drawnArea));
-    }
     public addPathInstruction(pathInstruction: PathInstruction, pathInstructionWithState: PathInstructionWithState, state: InfiniteCanvasState): void{
-        if(pathInstruction.initialPoint && !positionsAreEqual(this.currentPosition, pathInstruction.initialPoint)){
+        if(pathInstruction.initialPoint && !positionsAreEqual(this.pathBuilder.currentPosition, pathInstruction.initialPoint)){
             this.lineTo(pathInstruction.initialPoint, state);
         }
         if(pathInstruction.positionChange){
-            this.currentPosition = transformPosition(pathInstruction.positionChange, state.current.transformation);
+            this.pathBuilder = this.pathBuilder.addPosition(transformPosition(pathInstruction.positionChange, state.current.transformation));
         }
         pathInstructionWithState.setInitialState(this.state);
         this.add(pathInstructionWithState);
     }
-    private getInstructionToDrawLineFromTo(state: InfiniteCanvasState, initialPosition: Position, from: Position, to: Position): PathInstructionWithState{
-        if(isPointAtInfinity(to)){
-            if(isPointAtInfinity(from)){
-                if(isPointAtInfinity(initialPosition)){
-
-                }else{
-                    if(to.direction.inSameDirectionAs(from.direction)){
-                        return PathInstructionWithState.create(state, () => {});
-                    }
-                    const infinity = this.infinityProvider.getInfinity(state);
-                    if(to.direction.cross(from.direction) === 0){
-                        return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                            const {x, y} = infinity.getInfinityFromPointInDirection(initialPosition, to.direction);
-                            context.lineTo(x, y);
-                        });
-                    }
-                    return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                        const infinities: Point[] = infinity.getInfinitiesFromDirectionFromPointToDirection(initialPosition, from.direction, to.direction);
-                        for(let _infinity of infinities){
-                            let {x, y} = _infinity;
-                            context.lineTo(x, y)
-                        }
-                    });
-                }
-            }else{
-                const infinity = this.infinityProvider.getInfinity(state);
-                if(positionsAreEqual(from, initialPosition) || (!isPointAtInfinity(initialPosition) && from.minus(initialPosition).cross(to.direction) === 0)){
-                    return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                        const {x, y} = infinity.getInfinityFromPointInDirection(from, to.direction);
-                        context.lineTo(x, y);
-                    });
-                }
-                if(isPointAtInfinity(initialPosition)){
-
-                }else{
-                    return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                        let {x, y} = infinity.getInfinityFromPointInDirection(from, to.direction);
-                        context.lineTo(x, y);
-                        ({x,y} = infinity.getInfinityFromPointInDirection(initialPosition, to.direction));
-                        context.lineTo(x, y);
-                    });
-                }
-            }
-        }else{
-            if(isPointAtInfinity(from)){
-                const infinity = this.infinityProvider.getInfinity(state);
-                return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                    let {x, y} = infinity.getInfinityFromPointInDirection(to, from.direction);
-                    context.lineTo(x, y);
-                    ({x, y} = transformation.apply(to));
-                    context.lineTo(x, y);
-                });
-            }else{
-                return PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-                    const {x, y} = transformation.apply(to);
-                    context.lineTo(x, y);
-                });
-            }
-        }
-    }
     public static createSilent(initialState: InfiniteCanvasState, initialPosition: Position, infinityProvider: ViewboxInfinityProvider): InstructionsWithSubpath{
         let initialInstruction: PathInstructionWithState = PathInstructionWithState.create(initialState, () => {});
         initialPosition = transformPosition(initialPosition, initialState.current.transformation);
-        return new InstructionsWithSubpath(initialInstruction, initialPosition, initialPosition, infinityProvider);
+        const pathBuilder: PathBuilder = infiniteCanvasPathBuilderProvider.getBuilderFromPosition(initialPosition);
+        return new InstructionsWithSubpath(initialInstruction, infinityProvider, pathBuilder);
     }
     public static create(initialState: InfiniteCanvasState, initialPosition: Position, infinityProvider: ViewboxInfinityProvider): InstructionsWithSubpath{
         let initialInstruction: PathInstructionWithState;
         if(isPointAtInfinity(initialPosition)){
-
+            initialInstruction = PathInstructionWithState.create(initialState, () => {});
         }else{
             initialInstruction = PathInstructionWithState.create(initialState, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 const {x, y} = transformation.apply(initialPosition);
@@ -135,6 +78,7 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
             });
         }
         const transformedInitialPosition: Position = transformPosition(initialPosition, initialState.current.transformation);
-        return new InstructionsWithSubpath(initialInstruction, transformedInitialPosition, transformedInitialPosition, infinityProvider);
+        const pathBuilder: PathBuilder = infiniteCanvasPathBuilderProvider.getBuilderFromPosition(transformedInitialPosition);
+        return new InstructionsWithSubpath(initialInstruction, infinityProvider, pathBuilder);
     }
 }

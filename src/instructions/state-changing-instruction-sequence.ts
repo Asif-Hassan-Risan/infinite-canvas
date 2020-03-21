@@ -7,7 +7,7 @@ import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../interfaces
 export class StateChangingInstructionSequence<TInstructionSet extends StateChangingInstructionSet> implements StateChangingInstructionSet{
     protected added: TInstructionSet[] = [];
     private addedLast: TInstructionSet;
-    constructor(protected readonly initiallyWithState: StateChangingInstructionSet){}
+    constructor(protected initiallyWithState: StateChangingInstructionSet){}
     public get length(): number{return this.added.length;}
     protected get currentlyWithState(): StateChangingInstructionSet{
         if(this.addedLast){

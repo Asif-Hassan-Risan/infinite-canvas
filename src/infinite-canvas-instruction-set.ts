@@ -39,11 +39,20 @@ export class InfiniteCanvasInstructionSet{
     }
 
     public drawPath(instruction: Instruction): void{
+        if(!this.currentInstructionsWithPath){
+            return;
+        }
         const stateIsTransformable: boolean = this.state.current.isTransformable();
         if(!stateIsTransformable){
             instruction = transformInstructionRelatively(instruction);
         }
-        this.drawCurrentPath(instruction);
+        this.state = this.state.currentlyTransformed(stateIsTransformable);
+        const recreatedPath: StateChangingInstructionSetWithAreaAndCurrentPath = this.currentInstructionsWithPath.recreatePath();
+        this.currentInstructionsWithPath.drawPath(instruction, this.state);
+        this.previousInstructionsWithPath.add(this.currentInstructionsWithPath);
+        recreatedPath.setInitialStateWithClippedPaths(this.previousInstructionsWithPath.state);
+        this.currentInstructionsWithPath = recreatedPath;
+        this.setInstructionToRestoreState();
         this.onChange();
     }
 
@@ -81,26 +90,12 @@ export class InfiniteCanvasInstructionSet{
     }
 
     private replaceCurrentInstructionsWithPath(newInstructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath, ...instructionsToInterject: StateChangingInstructionSetWithArea[]): void{
-        if(this.currentInstructionsWithPath){
-            if(this.currentInstructionsWithPath.visible){
-                this.previousInstructionsWithPath.add(this.currentInstructionsWithPath);
-            }
-        }
         for(const instructionToInterject of instructionsToInterject){
             instructionToInterject.setInitialStateWithClippedPaths(this.previousInstructionsWithPath.state);
             this.previousInstructionsWithPath.add(instructionToInterject);
         }
         newInstructionsWithPath.setInitialStateWithClippedPaths(this.previousInstructionsWithPath.state);
         this.currentInstructionsWithPath = newInstructionsWithPath;
-        this.setInstructionToRestoreState();
-    }
-
-    private drawCurrentPath(instruction: Instruction): void{
-        if(!this.currentInstructionsWithPath){
-            return;
-        }
-        this.state = this.state.currentlyTransformed(this.state.current.isTransformable());
-        this.currentInstructionsWithPath.drawPath(instruction, this.state);
         this.setInstructionToRestoreState();
     }
 
@@ -113,7 +108,7 @@ export class InfiniteCanvasInstructionSet{
     }
 
     private setInstructionToRestoreState(): void{
-        const latestVisibleState: InfiniteCanvasState = this.currentInstructionsWithPath && this.currentInstructionsWithPath.visible ? this.currentInstructionsWithPath.state : this.previousInstructionsWithPath.state;
+        const latestVisibleState: InfiniteCanvasState = this.previousInstructionsWithPath.state;
         this.instructionToRestoreState = latestVisibleState.getInstructionToClearStack();
     }
 
@@ -160,12 +155,9 @@ export class InfiniteCanvasInstructionSet{
     }
 
     public clearContentsInsideArea(area: Area): void{
+        this.previousInstructionsWithPath.clearContentsInsideArea(area);
         if(this.currentInstructionsWithPath){
-            this.previousInstructionsWithPath.clearContentsInsideArea(area);
-            this.currentInstructionsWithPath.clearContentsInsideArea(area);
             this.currentInstructionsWithPath.setInitialStateWithClippedPaths(this.previousInstructionsWithPath.state);
-        }else{
-            this.previousInstructionsWithPath.clearContentsInsideArea(area);
         }
     }
 
@@ -175,9 +167,7 @@ export class InfiniteCanvasInstructionSet{
             return;
         }
         this.clearContentsInsideArea(transformedRectangle);
-        if(this.currentInstructionsWithPath && this.currentInstructionsWithPath.hasDrawingAcrossBorderOf(transformedRectangle)){
-            this.currentInstructionsWithPath.addClearRect(rectangle, this.state, instructionToClear);
-        }else if(this.previousInstructionsWithPath.hasDrawingAcrossBorderOf(transformedRectangle)){
+        if(this.previousInstructionsWithPath.hasDrawingAcrossBorderOf(transformedRectangle)){
             this.previousInstructionsWithPath.addClearRect(rectangle, this.state, instructionToClear);
             if(this.currentInstructionsWithPath){
                 this.currentInstructionsWithPath.setInitialStateWithClippedPaths(this.state);
@@ -187,11 +177,8 @@ export class InfiniteCanvasInstructionSet{
     }
     
     public execute(context: CanvasRenderingContext2D, transformation: Transformation){
-        if(this.previousInstructionsWithPath.length || this.currentInstructionsWithPath && this.currentInstructionsWithPath.visible){
+        if(this.previousInstructionsWithPath.length){
             this.previousInstructionsWithPath.execute(context, transformation);
-        }
-        if(this.currentInstructionsWithPath){
-            this.currentInstructionsWithPath.execute(context, transformation);
         }
         if(this.instructionToRestoreState){
             this.instructionToRestoreState(context, transformation);

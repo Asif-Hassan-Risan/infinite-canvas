@@ -1,4 +1,5 @@
 import { Point } from "./geometry/point"
+import { PointAtInfinity } from "./geometry/point-at-infinity";
 
 export class Transformation{
 	public scale: number;
@@ -45,6 +46,9 @@ export class Transformation{
 			return Math.PI;
 		}
 		return Math.PI + atan;
+	}
+	public applyToPointAtInfinity(pointAtInfinity: PointAtInfinity): PointAtInfinity{
+		return {direction: this.untranslated().apply(pointAtInfinity.direction)};
 	}
 	public apply(point: Point): Point{
 		return new Point(this.a * point.x + this.c * point.y + this.e, this.b * point.x + this.d * point.y + this.f);

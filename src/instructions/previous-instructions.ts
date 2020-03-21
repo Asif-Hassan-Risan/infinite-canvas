@@ -5,11 +5,11 @@ import { InfiniteCanvasState } from "../state/infinite-canvas-state";
 import { StateChangingInstructionSetWithArea } from "../interfaces/state-changing-instruction-set-with-area";
 import { StateAndInstruction } from "./state-and-instruction";
 import { ClearRectWithState } from "./clear-rect-with-state";
-import { Drawing } from "../interfaces/drawing";
 import { Instruction } from "./instruction";
 import { Area } from "../areas/area";
+import { PartOfDrawing } from "../interfaces/part-of-drawing";
 
-export class PreviousInstructions extends StateChangingInstructionSequence<StateChangingInstructionSetWithArea> implements Drawing{
+export class PreviousInstructions extends StateChangingInstructionSequence<StateChangingInstructionSetWithArea> implements PartOfDrawing{
     constructor(initiallyWithState: StateAndInstruction){
         super(initiallyWithState);
     }

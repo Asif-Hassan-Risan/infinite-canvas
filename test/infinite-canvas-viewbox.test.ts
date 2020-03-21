@@ -2515,4 +2515,129 @@ describe("an infinite canvas context", () => {
 			expect(contextMock.getLog()).toMatchSnapshot();
 		});
 	});
+
+	describe("that translates, begins a path, moves to infinity, and then lines to a point", () => {
+
+		beforeEach(() => {
+			infiniteContext.translate(0, 100);
+			infiniteContext.beginPath();
+			infiniteContext.moveToInfinityInDirection(1, 0);
+			infiniteContext.lineTo(100, 100);
+		});
+
+		describe("and then lines to a different point", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineTo(100, 200);
+			});
+
+			describe("and then strokes", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.stroke();
+				});
+	
+				it("should move to and line to the correct points", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+
+		describe("and then strokes", () => {
+
+			beforeEach(() => {
+				contextMock.clear();
+				infiniteContext.stroke();
+			});
+
+			it("should move to and line to the correct points", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
+
+	describe("that begins a path and moves to infinity", () => {
+
+		beforeEach(() =>{
+			infiniteContext.beginPath();
+			infiniteContext.moveToInfinityInDirection(1, 0);
+		});
+
+		describe("and then adds a line to a finite point", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineTo(100, 100);
+			});
+
+			describe("and then adds a line to a different finite point", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineTo(100, 200);
+				});
+
+				describe("and then strokes", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.stroke();
+					});
+
+					describe("and then adds a line to another finite point", () => {
+
+						beforeEach(() => {
+							infiniteContext.lineTo(100, 300);
+						});
+
+						describe("and then strokes", () => {
+
+							beforeEach(() => {
+								contextMock.clear();
+								infiniteContext.stroke();
+							});
+
+							it("should have created two paths", () => {
+								expect(contextMock.getLog()).toMatchSnapshot();
+							});
+						});
+					});
+
+					it("should begin with a moveTo and a lineTo", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+			});
+
+			describe("and then strokes", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.stroke();
+				});
+
+				describe("and then lines to a different finite point", () => {
+
+					beforeEach(() => {
+						infiniteContext.lineTo(100, 200);
+					});
+
+					describe("and then strokes", () => {
+
+						beforeEach(() => {
+							contextMock.clear();
+							infiniteContext.stroke();
+						});
+
+						it("should have created two paths", () => {
+							expect(contextMock.getLog()).toMatchSnapshot();
+						});
+					});
+				});
+
+				it("should have added a moveTo", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+	});
 })

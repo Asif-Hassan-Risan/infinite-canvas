@@ -18,6 +18,6 @@ export class ClearRectWithState extends StateAndInstruction implements StateChan
         return area.contains(this.area);
     }
     public static createClearRect(initialState: InfiniteCanvasState, area: Area, instructionToClear: Instruction): ClearRectWithState{
-        return new ClearRectWithState(initialState, initialState, instructionToClear, instructionToClear, area);
+        return new ClearRectWithState(initialState, initialState, instructionToClear, () => {}, area);
     }
 }

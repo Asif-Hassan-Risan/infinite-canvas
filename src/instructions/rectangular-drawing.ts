@@ -18,6 +18,6 @@ export class RectangularDrawing extends StateAndInstruction implements StateChan
         return area.contains(this.area);
     }
     public static createDrawing(initialState: InfiniteCanvasState, instruction: Instruction, area: Area): RectangularDrawing{
-        return new RectangularDrawing(initialState, initialState, instruction, instruction, area);
+        return new RectangularDrawing(initialState, initialState, instruction, () => {}, area);
     }
 }
