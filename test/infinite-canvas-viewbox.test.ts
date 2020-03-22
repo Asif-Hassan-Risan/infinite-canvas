@@ -2567,7 +2567,7 @@ describe("an infinite canvas context", () => {
 		describe("and then adds a line to a finite point", () => {
 
 			beforeEach(() => {
-				infiniteContext.lineTo(100, 100);
+				infiniteContext.lineTo(50, 100);
 			});
 
 			describe("and then adds a line to the opposite point at infinity", () => {
