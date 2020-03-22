@@ -691,6 +691,26 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to a different point at infinity and then adds a line to yet a different point at infinity and then strokes should draw the correct path 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(-26.414213562373092,23.585786437626908)",
+  "context.lineTo(-1.4142135623730951,-1.4142135623730951)",
+  "context.lineTo(201.4142135623731,-1.4142135623730951)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,201.4142135623731)",
+  "context.lineTo(-1.4142135623730951,201.4142135623731)",
+  "context.lineTo(-26.414213562373092,23.585786437626908)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to a different point at infinity and then strokes should begin a path with a move to and then draw a line around a corner of the viewbox 1`] = `
 Array [
   "context.restore()",

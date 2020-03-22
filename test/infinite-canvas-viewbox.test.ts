@@ -2595,6 +2595,25 @@ describe("an infinite canvas context", () => {
 					infiniteContext.lineToInfinityInDirection(0, 1);
 				});
 
+				describe("and then adds a line to yet a different point at infinity", () => {
+
+					beforeEach(() => {
+						infiniteContext.lineToInfinityInDirection(-1, -1);
+					});
+
+					describe("and then strokes", () => {
+
+						beforeEach(() => {
+							contextMock.clear();
+							infiniteContext.stroke();
+						});
+	
+						it("should draw the correct path", () => {
+							expect(contextMock.getLog()).toMatchSnapshot();
+						});
+					});
+				});
+
 				describe("and then adds a line to a finite point", () => {
 
 					beforeEach(() => {

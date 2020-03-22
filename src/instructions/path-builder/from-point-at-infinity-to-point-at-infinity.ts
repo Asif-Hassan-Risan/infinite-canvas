@@ -16,7 +16,7 @@ export class FromPointAtInfinityToPointAtInfinity extends InfiniteCanvasPathBuil
     }
     public getLineTo(position: Position, infinity: ViewboxInfinity): Instruction{
         if(isPointAtInfinity(position)){
-            return undefined;
+            return this.lineToInfinityFromInfinityFromPoint(this.lastFinitePoint, this.currentPosition.direction, position.direction, infinity);
         }
         return instructionSequence(this.lineToInfinityFromPointInDirection(position, this.currentPosition.direction, infinity), this.lineTo(position));
     }
