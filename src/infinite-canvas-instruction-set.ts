@@ -37,7 +37,9 @@ export class InfiniteCanvasInstructionSet{
         this.state = this.state.restored();
         this.setInstructionToRestoreState();
     }
-
+    public currentPathIsClosable(): boolean{
+        return !this.currentInstructionsWithPath || this.currentInstructionsWithPath.isClosable();
+    }
     public drawPath(instruction: Instruction): void{
         if(!this.currentInstructionsWithPath){
             return;

@@ -40,6 +40,9 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
         result.removeAll(i => (i instanceof DrawingPathInstructionWithState));
         return result;
     }
+    public isClosable(): boolean{
+        return this.pathBuilder.isClosable();
+    }
     public lineTo(position: Position, state: InfiniteCanvasState): void{
         const transformedPosition: Position = transformPosition(position, state.current.transformation);
         const infinity: ViewboxInfinity = this.infinityProvider.getInfinity(state);

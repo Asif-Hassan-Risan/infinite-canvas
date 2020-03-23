@@ -2671,6 +2671,38 @@ describe("an infinite canvas context", () => {
 					});
 				});
 
+				describe("and then adds a line to the point at infinity opposite the starting point", () => {
+
+					beforeEach(() => {
+						infiniteContext.lineToInfinityInDirection(-1, 0);
+					});
+
+					describe("and then closes the path and strokes", () => {
+
+						beforeEach(() => {
+							infiniteContext.closePath();
+							contextMock.clear();
+							infiniteContext.stroke();
+						});
+
+						it("should have stroked but not closed the path", () => {
+							expect(contextMock.getLog()).toMatchSnapshot();
+						});
+					});
+
+					describe("and then fills", () => {
+
+						beforeEach(() => {
+							contextMock.clear();
+							infiniteContext.fill();
+						});
+
+						it("should do nothing", () => {
+							expect(contextMock.getLog()).toMatchSnapshot();
+						});
+					});
+				});
+
 				describe("and then strokes", () => {
 
 					beforeEach(() => {

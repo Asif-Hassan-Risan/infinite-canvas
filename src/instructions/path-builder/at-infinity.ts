@@ -18,6 +18,9 @@ export class AtInfinity extends InfiniteCanvasPathBuilder implements PathBuilder
         }
         return this.lineTo(position);
     }
+    public isClosable(): boolean{
+        return true;
+    }
     public getMoveTo(infinity: ViewboxInfinity): Instruction{
         return undefined;
     }

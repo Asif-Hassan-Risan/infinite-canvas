@@ -26,6 +26,9 @@ export class FromPointToPointAtInfinity  extends InfiniteCanvasPathBuilder imple
         }
         return instructionSequence(this.lineToInfinityFromPointInDirection(position, this.currentPosition.direction, infinity), this.lineTo(position));
     }
+    public isClosable(): boolean{
+        return true;
+    }
     public getMoveTo(): Instruction{
         return this.moveTo(this.initialPoint);
     }

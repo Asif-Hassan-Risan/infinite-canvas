@@ -24,6 +24,9 @@ export class FromPointToPoint extends InfiniteCanvasPathBuilder implements PathB
         }
         return this.lineTo(position);
     }
+    public isClosable(): boolean{
+        return true;
+    }
     public getMoveTo(): Instruction{
         return this.moveTo(this.initialPoint);
     }

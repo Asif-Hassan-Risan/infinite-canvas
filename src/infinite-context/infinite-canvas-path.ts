@@ -12,6 +12,9 @@ export class InfiniteCanvasPath implements CanvasPath{
 	}
 	public bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void{}
 	public closePath(): void{
+		if(!this.viewBox.currentPathIsClosable()){
+			return;
+		}
 		this.viewBox.closePath();
 	}
 	public ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number, anticlockwise?: boolean): void{

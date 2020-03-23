@@ -8,5 +8,6 @@ export interface PathBuilder{
     getMoveTo(infinity: ViewboxInfinity): Instruction;
     addPosition(position: Position): PathBuilder;
     transform(transformation: Transformation): PathBuilder;
+    isClosable(): boolean;
     readonly currentPosition: Position;
 }

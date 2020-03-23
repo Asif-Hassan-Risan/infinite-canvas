@@ -40,6 +40,17 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         }
         return result;
     }
+    public isClosable(): boolean{
+        if(this.added.length === 0){
+            return true;
+        }
+        for(const subPath of this.added){
+            if(!subPath.isClosable()){
+                return false;
+            }
+        }
+        return true;
+    }
     public drawPath(instruction: Instruction, state: InfiniteCanvasState): void{
         if(this.added.length === 0){
             return;

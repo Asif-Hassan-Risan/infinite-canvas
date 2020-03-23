@@ -21,19 +21,16 @@ export class FromPointAtInfinityToPointAtInfinity extends InfiniteCanvasPathBuil
         return instructionSequence(this.lineToInfinityFromPointInDirection(position, this.currentPosition.direction, infinity), this.lineTo(position));
     }
     public getMoveTo(infinity: ViewboxInfinity): Instruction{
-        if(this.initialPosition.direction.inSameDirectionAs(this.currentPosition.direction)){
-            return this.moveToInfinityFromPointInDirection(this.firstFinitePoint, this.initialPosition.direction, infinity);
-        }
         if(this.initialPosition.direction.cross(this.currentPosition.direction) === 0){
-            if(this.firstFinitePoint.equals(this.lastFinitePoint)){
-                return this.moveToInfinityFromPointInDirection(this.firstFinitePoint, this.initialPosition.direction, infinity);
-            }
-            
+            return this.moveToInfinityFromPointInDirection(this.firstFinitePoint, this.initialPosition.direction, infinity);
         }
         return instructionSequence(
             this.moveToInfinityFromPointInDirection(this.lastFinitePoint, this.currentPosition.direction, infinity),
             this.lineToInfinityFromInfinityFromPoint(this.lastFinitePoint, this.currentPosition.direction, this.initialPosition.direction, infinity),
             this.lineToInfinityFromPointInDirection(this.firstFinitePoint, this.initialPosition.direction, infinity));
+    }
+    public isClosable(): boolean{
+        return this.initialPosition.direction.dot(this.currentPosition.direction) >= 0 || this.initialPosition.direction.cross(this.currentPosition.direction) !== 0;
     }
     public addPosition(position: Position): PathBuilder{
         if(isPointAtInfinity(position)){

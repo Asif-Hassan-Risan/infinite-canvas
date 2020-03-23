@@ -20,6 +20,9 @@ export class InfiniteCanvasDrawPath implements CanvasDrawPath{
 		this.viewBox.clipPath(instruction);
 	}
 	public fill(pathOrFillRule?: Path2D | CanvasFillRule, fillRule?: CanvasFillRule): void{
+		if((!pathOrFillRule || this.isFillRule(pathOrFillRule)) && !this.viewBox.currentPathIsClosable()){
+			return;
+		}
 		let instruction: Instruction = this.isFillRule(pathOrFillRule) ?
 			(context: CanvasRenderingContext2D) => {
 				context.fill(pathOrFillRule);

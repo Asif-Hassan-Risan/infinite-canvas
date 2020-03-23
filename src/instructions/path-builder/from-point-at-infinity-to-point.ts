@@ -20,6 +20,9 @@ export class FromPointAtInfinityToPoint extends InfiniteCanvasPathBuilder implem
         }
         return this.lineTo(position);
     }
+    public isClosable(): boolean{
+        return true;
+    }
     public getMoveTo(infinity: ViewboxInfinity): Instruction{
         const moveToInfinityFromCurrentPosition: Instruction = this.moveToInfinityFromPointInDirection(this.currentPosition, this.initialPosition.direction, infinity);
         if(this.currentPosition.equals(this.firstFinitePoint)){

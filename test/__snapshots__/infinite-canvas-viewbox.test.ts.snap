@@ -635,6 +635,23 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to a different finite point and then adds a line to the point at infinity opposite the starting point and then closes the path and strokes should have stroked but not closed the path 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(100,200)",
+  "context.lineTo(-1.4142135623730923,200)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to a different finite point and then adds a line to the point at infinity opposite the starting point and then fills should do nothing 1`] = `Array []`;
+
 exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to a different finite point and then strokes and then adds a line to another finite point and then strokes should have created two paths 1`] = `
 Array [
   "context.restore()",
