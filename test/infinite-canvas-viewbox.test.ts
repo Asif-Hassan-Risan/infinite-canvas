@@ -2265,6 +2265,18 @@ describe("an infinite canvas context", () => {
 					});
 				});
 
+				describe("and then clears the entire plane differently", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(Infinity, Infinity, -Infinity, -Infinity);
+					});
+
+					it("should clear everything", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
 				describe("and then clears a rect with infinite width, infinite height and no left", () => {
 
 					beforeEach(() => {
@@ -2277,11 +2289,35 @@ describe("an infinite canvas context", () => {
 					});
 				});
 
+				describe("and then clears a rect with negative infinite width, infinite height and no right", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(Infinity, 50, -Infinity, Infinity);
+					});
+
+					it("should clear a rect extending to the left and right and bottom of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
 				describe("and then clears a rect with infinite width, infinite height and no top", () => {
 
 					beforeEach(() => {
 						contextMock.clear();
 						infiniteContext.clearRect(50, -Infinity, Infinity, Infinity);
+					});
+
+					it("should clear a rect extending to the top and bottom and right of the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+
+				describe("and then clears a rect with infinite width, negative infinite height and no bottom", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.clearRect(50, Infinity, Infinity, -Infinity);
 					});
 
 					it("should clear a rect extending to the top and bottom and right of the viewbox", () => {

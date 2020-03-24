@@ -104,10 +104,12 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		this.instructionSet.drawRect(x, y, w, h, instruction);
 	}
 	private getFiniteRectangle(x: number, y: number, width: number, height: number, infinity: ViewboxInfinity): (transformation: Transformation) => Rectangle{
-		const xStart: (transformation: Transformation) => number = Number.isFinite(x) ? () => x : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), new Point(-1, 0))).x;
+		const xStartDirection: Point = x > 0 ? new Point(1, 0) : new Point(-1, 0);
+		const xStart: (transformation: Transformation) => number = Number.isFinite(x) ? () => x : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), xStartDirection)).x;
 		const xEndDirection: Point = width > 0 ? new Point(1, 0) : new Point(-1, 0);
 		const xEnd: (transformation: Transformation) => number = Number.isFinite(width) ? () => x + width : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), xEndDirection)).x;
-		const yStart: (transformation: Transformation) => number = Number.isFinite(y) ? () => y : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), new Point(0, -1))).y;
+		const yStartDirection: Point = y > 0 ? new Point(0, 1) : new Point(0, -1);
+		const yStart: (transformation: Transformation) => number = Number.isFinite(y) ? () => y : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), yStartDirection)).y;
 		const yEndDirection: Point = height > 0 ? new Point(0, 1) : new Point(0, -1);
 		const yEnd: (transformation: Transformation) => number = Number.isFinite(height) ? () => y + height : (transformation: Transformation) => transformation.inverse().apply(infinity.getInfinityFromPointInDirection(new Point(0, 0), yEndDirection)).y;
 		return (transformation: Transformation) => {
@@ -141,7 +143,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		if(Number.isFinite(length)){
 			return false;
 		}
-		return start < 0 && length > 0;
+		return start < 0 && length > 0 || start > 0 && length < 0;
 	}
 	private lineSegmentIsLine(start: number, length: number): boolean{
 		return !Number.isFinite(start) && start < 0 && !Number.isFinite(length) && length > 0;
