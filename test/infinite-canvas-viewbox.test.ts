@@ -2677,6 +2677,28 @@ describe("an infinite canvas context", () => {
 						infiniteContext.lineToInfinityInDirection(-1, 0);
 					});
 
+					describe("and then adds a new subpath that is closable and closes it", () => {
+
+						beforeEach(() => {
+							infiniteContext.moveTo(150, 0);
+							infiniteContext.lineTo(100, 0);
+							infiniteContext.lineTo(100, 50);
+							infiniteContext.closePath();
+						});
+
+						describe("and then strokes", () => {
+
+							beforeEach(() => {
+								contextMock.clear();
+								infiniteContext.stroke();
+							});
+
+							it("should close the second subpath but not the first", () => {
+								expect(contextMock.getLog()).toMatchSnapshot();
+							});
+						});
+					});
+
 					describe("and then closes the path and strokes", () => {
 
 						beforeEach(() => {

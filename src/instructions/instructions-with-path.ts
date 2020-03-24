@@ -12,7 +12,6 @@ import { InfiniteCanvasAreaBuilder } from "../areas/infinite-canvas-area-builder
 import { Position } from "../geometry/position";
 import { transformPosition } from "../geometry/transform-position";
 import { Point } from "../geometry/point";
-import { isPointAtInfinity } from "../geometry/is-point-at-infinity";
 import {InstructionsWithSubpath} from "./instructions-with-subpath";
 import {down, left, right, up} from "../geometry/points-at-infinity";
 import { ViewboxInfinityProvider } from "../interfaces/viewbox-infinity-provider";
@@ -40,7 +39,13 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         }
         return result;
     }
-    public isClosable(): boolean{
+    public currentSubpathIsClosable(): boolean{
+        if(this.added.length === 0){
+            return true;
+        }
+        return this.added[this.added.length - 1].isClosable();
+    }
+    public allSubpathsAreClosable(): boolean{
         if(this.added.length === 0){
             return true;
         }

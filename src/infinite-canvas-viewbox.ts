@@ -87,8 +87,11 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public rect(x: number, y: number, w: number, h: number): void{
 		this.instructionSet.rect(x, y, w, h);
 	}
-	public currentPathIsClosable(): boolean{
-		return this.instructionSet.currentPathIsClosable();
+	public currentSubpathIsClosable(): boolean{
+		return this.instructionSet.currentSubpathIsClosable();
+	}
+	public allSubpathsAreClosable(): boolean{
+		return this.instructionSet.allSubpathsAreClosable();
 	}
 	public drawPath(instruction: Instruction): void{
 		this.infinityProvider.addDrawnLineWidth(this.state.current.lineWidth * this.state.current.transformation.getMaximumLineWidthScale());

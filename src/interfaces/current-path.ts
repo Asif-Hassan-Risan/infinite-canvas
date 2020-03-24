@@ -6,7 +6,8 @@ import { Area } from "../areas/area";
 import { Position } from "../geometry/position"
 
 export interface CurrentPath{
-    isClosable(): boolean;
+    allSubpathsAreClosable(): boolean;
+    currentSubpathIsClosable(): boolean;
     drawPath(instruction: Instruction, state: InfiniteCanvasState): void;
     clipPath(instruction: Instruction, state: InfiniteCanvasState): void;
     addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void;
