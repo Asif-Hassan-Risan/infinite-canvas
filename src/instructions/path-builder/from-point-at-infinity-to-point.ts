@@ -20,6 +20,9 @@ export class FromPointAtInfinityToPoint extends InfiniteCanvasPathBuilder implem
         }
         return this.lineTo(position);
     }
+    public canAddLineTo(position: Position): boolean{
+        return true;
+    }
     public isClosable(): boolean{
         return true;
     }

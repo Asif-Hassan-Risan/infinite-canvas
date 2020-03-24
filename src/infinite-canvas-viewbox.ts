@@ -82,7 +82,9 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		this.instructionSet.moveTo(position);
 	}
 	public lineTo(position: Position): void{
-		this.instructionSet.lineTo(position);
+		if(this.instructionSet.canAddLineTo(position)){
+			this.instructionSet.lineTo(position);
+		}
 	}
 	public rect(x: number, y: number, w: number, h: number): void{
 		this.instructionSet.rect(x, y, w, h);

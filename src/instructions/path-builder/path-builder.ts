@@ -5,6 +5,7 @@ import {Transformation} from "../../transformation";
 
 export interface PathBuilder{
     getLineTo(position: Position, infinity: ViewboxInfinity): Instruction;
+    canAddLineTo(position: Position): boolean;
     getMoveTo(infinity: ViewboxInfinity): Instruction;
     addPosition(position: Position): PathBuilder;
     transform(transformation: Transformation): PathBuilder;

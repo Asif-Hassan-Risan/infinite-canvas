@@ -2179,7 +2179,7 @@ describe("an infinite canvas context", () => {
 				infiniteContext.stroke();
 			});
 
-			it("should draw a path that is on a line", () => {
+			it("should still have drawn only a ray", () => {
 				expect(contextMock.getLog()).toMatchSnapshot();
 			});
 		});
@@ -2709,6 +2709,25 @@ describe("an infinite canvas context", () => {
 
 						it("should have stroked but not closed the path", () => {
 							expect(contextMock.getLog()).toMatchSnapshot();
+						});
+					});
+
+					describe("and then adds a line back to the original point at infinity", () => {
+
+						beforeEach(() => {
+							infiniteContext.lineToInfinityInDirection(1, 0);
+						});
+
+						describe("and then fills", () => {
+
+							beforeEach(() => {
+								contextMock.clear();
+								infiniteContext.fill();
+							});
+
+							it("should do nothing", () => {
+								expect(contextMock.getLog()).toMatchSnapshot();
+							});
 						});
 					});
 

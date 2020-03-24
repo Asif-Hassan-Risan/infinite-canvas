@@ -30,7 +30,10 @@ export class FromPointAtInfinityToPointAtInfinity extends InfiniteCanvasPathBuil
             this.lineToInfinityFromPointInDirection(this.firstFinitePoint, this.initialPosition.direction, infinity));
     }
     public isClosable(): boolean{
-        return this.initialPosition.direction.dot(this.currentPosition.direction) >= 0 || this.initialPosition.direction.cross(this.currentPosition.direction) !== 0;
+        return !this.initialPosition.direction.isInOppositeDirectionAs(this.currentPosition.direction);
+    }
+    public canAddLineTo(position: Position): boolean{
+        return !isPointAtInfinity(position) || !position.direction.isInOppositeDirectionAs(this.currentPosition.direction);
     }
     public addPosition(position: Position): PathBuilder{
         if(isPointAtInfinity(position)){

@@ -18,6 +18,9 @@ export class AtInfinity extends InfiniteCanvasPathBuilder implements PathBuilder
         }
         return this.lineTo(position);
     }
+    public canAddLineTo(position: Position): boolean{
+        return !isPointAtInfinity(position) || !position.direction.isInOppositeDirectionAs(this.currentPosition.direction);
+    }
     public isClosable(): boolean{
         return true;
     }

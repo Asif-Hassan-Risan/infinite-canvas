@@ -145,6 +145,9 @@ export class InfiniteCanvasInstructionSet{
             this.currentInstructionsWithPath.moveTo(position, this.state);
         }
     }
+    public canAddLineTo(position: Position): boolean{
+        return !this.currentInstructionsWithPath || this.currentInstructionsWithPath.canAddLineTo(position);
+    }
     public lineTo(position: Position): void{
         if(this.currentInstructionsWithPath){
             this.currentInstructionsWithPath.lineTo(position, this.state);

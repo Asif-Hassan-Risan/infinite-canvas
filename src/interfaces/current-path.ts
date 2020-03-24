@@ -13,6 +13,7 @@ export interface CurrentPath{
     addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void;
     closePath(): void;
     moveTo(position: Position, state: InfiniteCanvasState): void;
+    canAddLineTo(position: Position): boolean;
     lineTo(position: Position, state: InfiniteCanvasState): void;
     rect(x: number, y: number, w: number, h: number, state: InfiniteCanvasState): void;
     recreatePath(): StateChangingInstructionSetWithAreaAndCurrentPath;
