@@ -163,6 +163,26 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
+	describe("that fills a rect and adds a clearRect that partially covers it", () => {
+
+		beforeEach(() => {
+			infiniteContext.fillRect(50, 50, 50, 50);
+			infiniteContext.clearRect(40, 40, 20, 20);
+		});
+
+		describe("and then adds a clearRect with negative width and height that covers the previous clearRect entirely", () => {
+
+			beforeEach(() => {
+				contextMock.clear();
+				infiniteContext.clearRect(75, 75, -50, -50);
+			});
+
+			it("should end up with only one clearRect", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
+
 	describe("whose state is changed and who draws something", () => {
 		let red: string;
 		let blue: string;

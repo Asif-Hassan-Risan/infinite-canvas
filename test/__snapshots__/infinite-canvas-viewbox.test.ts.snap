@@ -2290,6 +2290,26 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that fills a rect and adds a clearRect that partially covers it and then adds a clearRect with negative width and height that covers the previous clearRect entirely should end up with only one clearRect 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(100,50)",
+  "context.lineTo(100,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.fill()",
+  "context.save()",
+  "context.transform(1,0,0,1,0,0)",
+  "context.clearRect(75,75,-50,-50)",
+  "context.restore()",
+]
+`;
+
 exports[`an infinite canvas context that fills a rect with finite width and negative infinite height should fill a rect that extends to outside of the viewbox 1`] = `
 Array [
   "context.restore()",

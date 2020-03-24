@@ -462,15 +462,15 @@ export class ConvexPolygon implements Area{
     public static createRectangle(x: number, y: number, width: number, height: number): ConvexPolygon{
         const halfPlanes: HalfPlane[] = [];
         if(Number.isFinite(x)){
-            halfPlanes.push(new HalfPlane(new Point(x, 0), new Point(1, 0)));
+            halfPlanes.push(new HalfPlane(new Point(x, 0), width > 0 ? new Point(1, 0): new Point(-1, 0)));
             if(Number.isFinite(width)){
-                halfPlanes.push(new HalfPlane(new Point(x + width, 0), new Point(-1, 0)))
+                halfPlanes.push(new HalfPlane(new Point(x + width, 0), width > 0 ? new Point(-1, 0) : new Point(1, 0)))
             }
         }
         if(Number.isFinite(y)){
-            halfPlanes.push(new HalfPlane(new Point(0, y), new Point(0, 1)));
+            halfPlanes.push(new HalfPlane(new Point(0, y), height > 0 ? new Point(0, 1): new Point(0, -1)));
             if(Number.isFinite(height)){
-                halfPlanes.push(new HalfPlane(new Point(0, y + height), new Point(0, -1)))
+                halfPlanes.push(new HalfPlane(new Point(0, y + height), height > 0 ? new Point(0, -1): new Point(0, 1)))
             }
         }
         return new ConvexPolygon(halfPlanes);
