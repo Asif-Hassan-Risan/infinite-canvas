@@ -2562,11 +2562,71 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
+	describe("that fills a rect with only a top edge", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(-Infinity, 100, Infinity, Infinity);
+		});
+
+		it("should fill a rect that fills the bottom half of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that fills a rect with only a right edge", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(100, -Infinity, -Infinity, Infinity);
+		});
+
+		xit("should fill a rect that fills the left half of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that fills a rect without top edge with positive infinite height and a finite width", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(20, -Infinity, 30, Infinity);
+		});
+
+		it("should fill a rect that extends to the top and bottom of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that fills a rect without bottom edge with negative infinite height and a finite width", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(20, Infinity, 30, -Infinity);
+		});
+
+		it("should fill a rect that extends to the top and bottom of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
 	describe("that fills a rect without left edge with positive infinite width and a finite height", () => {
 
 		beforeEach(() => {
 			contextMock.clear();
 			infiniteContext.fillRect(-Infinity, 20, Infinity, 30);
+		});
+
+		it("should fill a rect that extends to the left and right of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that fills a rect without right edge with negative infinite width and a finite height", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(Infinity, 20, -Infinity, 30);
 		});
 
 		it("should fill a rect that extends to the left and right of the viewbox", () => {

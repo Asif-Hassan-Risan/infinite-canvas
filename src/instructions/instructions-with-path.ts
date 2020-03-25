@@ -147,7 +147,14 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
                 }
                 this.lineTo(new Point(x, y), state);
             }else{
-
+                if(Number.isFinite(w)){
+                    this.lineTo(new Point(x + w, 0), state);      
+                }else{
+                    this.lineTo(w > 0 ? right : left, state);
+                }
+                this.lineTo(h > 0 ? down : up, state);
+                this.lineTo(new Point(x, 0), state);
+                this.lineTo(y < 0 ? up : down, state);
             }
         }else{
             this.lineTo(new Point(0, y), state);

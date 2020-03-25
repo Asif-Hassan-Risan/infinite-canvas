@@ -2360,6 +2360,24 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that fills a rect with only a top edge should fill a rect that fills the bottom half of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(-1.4142135623730951,100)",
+  "context.lineTo(0,100)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(201.4142135623731,201.4142135623731)",
+  "context.lineTo(0,201.4142135623731)",
+  "context.lineTo(-1.4142135623730951,201.4142135623731)",
+  "context.lineTo(-1.4142135623730951,100)",
+  "context.fill()",
+]
+`;
+
 exports[`an infinite canvas context that fills a rect with positive infinite width and a finite height should fill a rect that extends to outside of the viewbox 1`] = `
 Array [
   "context.restore()",
@@ -2372,6 +2390,23 @@ Array [
   "context.lineTo(201.4142135623731,50)",
   "context.lineTo(20,50)",
   "context.lineTo(20,20)",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that fills a rect without bottom edge with negative infinite height and a finite width should fill a rect that extends to the top and bottom of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(50,201.4142135623731)",
+  "context.lineTo(50,0)",
+  "context.lineTo(50,-1.4142135623730951)",
+  "context.lineTo(20,-1.4142135623730951)",
+  "context.lineTo(20,0)",
+  "context.lineTo(20,201.4142135623731)",
   "context.fill()",
 ]
 `;
@@ -2389,6 +2424,40 @@ Array [
   "context.lineTo(201.4142135623731,50)",
   "context.lineTo(0,50)",
   "context.lineTo(-1.4142135623730951,50)",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that fills a rect without right edge with negative infinite width and a finite height should fill a rect that extends to the left and right of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,20)",
+  "context.lineTo(0,20)",
+  "context.lineTo(-1.4142135623730951,20)",
+  "context.lineTo(-1.4142135623730951,50)",
+  "context.lineTo(0,50)",
+  "context.lineTo(201.4142135623731,50)",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that fills a rect without top edge with positive infinite height and a finite width should fill a rect that extends to the top and bottom of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(50,-1.4142135623730951)",
+  "context.lineTo(50,0)",
+  "context.lineTo(50,201.4142135623731)",
+  "context.lineTo(20,201.4142135623731)",
+  "context.lineTo(20,0)",
+  "context.lineTo(20,-1.4142135623730951)",
   "context.fill()",
 ]
 `;
