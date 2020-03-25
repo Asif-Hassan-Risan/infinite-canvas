@@ -257,19 +257,6 @@ Array [
   "context.restore()",
   "context.save()",
   "context.clearRect(0,0,200,200)",
-  "context.beginPath()",
-  "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
-  "context.lineWidth = 1",
-  "context.fill()",
-  "context.save()",
-  "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(201.4142135623731,201.4142135623731,-202.8284271247462,-202.8284271247462)",
-  "context.restore()",
 ]
 `;
 

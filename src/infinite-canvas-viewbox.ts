@@ -20,6 +20,8 @@ import { Rectangle } from "./interfaces/rectangle";
 import { plane } from "./areas/plane";
 import {InfiniteCanvasViewboxInfinityProvider} from "./infinite-canvas-viewbox-infinity-provider";
 import {ViewboxInfinity} from "./interfaces/viewbox-infinity";
+import {rectangleHasArea} from "./geometry/rectangle-has-area";
+import {rectangleIsPlane} from "./geometry/rectangle-is-plane";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
@@ -136,29 +138,11 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public clipPath(instruction: Instruction): void{
 		this.instructionSet.clipPath(instruction);
 	}
-	private lineSegmentHasLength(start: number, length: number): boolean{
-		if(Number.isFinite(start)){
-			return true;
-		}
-		if(Number.isFinite(length)){
-			return false;
-		}
-		return start < 0 && length > 0 || start > 0 && length < 0;
-	}
-	private lineSegmentIsLine(start: number, length: number): boolean{
-		return !Number.isFinite(start) && start < 0 && !Number.isFinite(length) && length > 0;
-	}
-	private rectangleHasArea(x: number, y: number, width: number, height: number): boolean{
-		return this.lineSegmentHasLength(x, width) && this.lineSegmentHasLength(y, height);
-	}
-	private rectangleIsPlane(x: number, y: number, width: number, height: number): boolean{
-		return this.lineSegmentIsLine(x, width) && this.lineSegmentIsLine(y, height);
-	}
 	public clearArea(x: number, y: number, width: number, height: number): void{
-		if(!this.rectangleHasArea(x, y, width, height)){
+		if(!rectangleHasArea(x, y, width, height)){
 			return;
 		}
-		const area: Area = this.rectangleIsPlane(x, y, width, height) ? plane : ConvexPolygon.createRectangle(x, y, width, height);
+		const area: Area = rectangleIsPlane(x, y, width, height) ? plane : ConvexPolygon.createRectangle(x, y, width, height);
 		this.instructionSet.clearArea(area, this.getInstructionToClearRectangle(x, y, width, height));
 	}
 	public createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient{
