@@ -2529,6 +2529,51 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
+	describe("that begins a path", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+		});
+
+		it("should get an error if it tries to add a rect with x and y that do not determine a direction", () => {
+			expect(() => {
+				infiniteContext.rect(-Infinity, -Infinity, Infinity, Infinity);
+			}).toThrow();
+		});
+
+		describe("and then adds a rect that has no area", () => {
+
+			beforeEach(() => {
+				infiniteContext.rect(-Infinity, 100, 100, 100);
+			});
+
+			describe("and then adds a line to a finite point and strokes it", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineTo(100, 100);
+					contextMock.clear();
+					infiniteContext.stroke();
+				});
+
+				it("should have drawn a ray from the position of the rect without area", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+	});
+
+	describe("that fills a rect without left edge with positive infinite width and a finite height", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(-Infinity, 20, Infinity, 30);
+		});
+
+		it("should fill a rect that extends to the left and right of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
 	describe("that fills a rect with positive infinite width and a finite height", () => {
 
 		beforeEach(() => {

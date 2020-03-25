@@ -15,6 +15,7 @@ import { Point } from "../geometry/point";
 import {InstructionsWithSubpath} from "./instructions-with-subpath";
 import {down, left, right, up} from "../geometry/points-at-infinity";
 import { ViewboxInfinityProvider } from "../interfaces/viewbox-infinity-provider";
+import {rectangleHasArea} from "../geometry/rectangle-has-area";
 
 export class InstructionsWithPath extends StateChangingInstructionSequence<InstructionsWithSubpath> implements StateChangingInstructionSetWithAreaAndCurrentPath{
     private areaBuilder: InfiniteCanvasAreaBuilder = new InfiniteCanvasAreaBuilder();
@@ -110,10 +111,24 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         this.areaBuilder.addPosition(transformedPosition);
         currentSubpath.lineTo(position, state);
     }
-    public rect(x: number, y: number, w: number, h: number, state: InfiniteCanvasState): void{
+    private moveToPositionDeterminedBy(x: number, y: number, state: InfiniteCanvasState): void{
         if(Number.isFinite(x)){
             if(Number.isFinite(y)){
                 this.moveTo(new Point(x, y), state);
+            }else{
+                this.moveTo(y < 0 ? up : down, state);
+            }
+        }else{
+            this.moveTo(x < 0 ? left : right, state);
+        }
+    }
+    public rect(x: number, y: number, w: number, h: number, state: InfiniteCanvasState): void{
+        this.moveToPositionDeterminedBy(x, y, state);
+        if(!rectangleHasArea(x, y, w, h)){
+           return;
+        }
+        if(Number.isFinite(x)){
+            if(Number.isFinite(y)){
                 if(Number.isFinite(w)){
                     this.lineTo(new Point(x + w, y), state);
                     if(Number.isFinite(h)){
@@ -135,7 +150,14 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
 
             }
         }else{
-
+            this.lineTo(new Point(0, y), state);
+            this.lineTo(w > 0 ? right : left, state);
+            if(Number.isFinite(h)){
+                this.lineTo(new Point(0, y + h), state);
+            }else{
+                this.lineTo(h > 0 ? down : up, state)
+            }
+            this.lineTo(x < 0 ? left : right, state);
         }
     }
     public addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void{
