@@ -2872,6 +2872,26 @@ describe("an infinite canvas context", () => {
 							expect(contextMock.getLog()).toMatchSnapshot();
 						});
 					});
+          
+          describe("and then transforms and adds a line back to the original point at infinity", () => {
+            
+            beforeEach(() => {
+              infiniteContext.transform(0, 1, 1, 0, 0, 0);
+              infiniteContext.lineToInfinityInDirection(0, 1);
+            });
+            
+            describe("and then fills", () => {
+              
+              beforeEach(() => {
+                contextMock.clear();
+                infiniteContext.fill();
+              });
+              
+              xit("should", () => {
+                console.log(contextMock.getLog())
+              })
+            })
+          })
 
 					describe("and then adds a line back to the original point at infinity", () => {
 
