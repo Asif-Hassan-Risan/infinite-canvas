@@ -99,7 +99,11 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         this.add(newSubpath);
     }
     public canAddLineTo(position: Position, state: InfiniteCanvasState): boolean{
-        return this.added.length === 0 || this.added[this.added.length - 1].canAddLineTo(position);
+        if(this.added.length === 0){
+          return true;
+        }
+        const transformedPosition: Position = transformPosition(position, state.current.transformation);
+        return this.added[this.added.length - 1].canAddLineTo(transformedPosition);
     }
     public lineTo(position: Position, state: InfiniteCanvasState): void{
         if(this.added.length === 0){

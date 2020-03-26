@@ -2887,8 +2887,8 @@ describe("an infinite canvas context", () => {
                 infiniteContext.fill();
               });
               
-              xit("should", () => {
-                console.log(contextMock.getLog())
+              it("should do nothing", () => {
+                expect(contextMock.getLog()).toMatchSnapshot();
               })
             })
           })
