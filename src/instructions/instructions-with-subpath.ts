@@ -53,9 +53,14 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
     }
     public lineTo(position: Position, state: InfiniteCanvasState): void{
         const transformedPosition: Position = transformPosition(position, state.current.transformation);
-        const instructionToDrawLine: Instruction = this.getPathInstructionBuilder(state).getLineTo(position);
+        if(!isPointAtInfinity(position) || this.pathBuilder.containsFinitePoint()){
+            this.addInstructionToDrawLineTo(position, state);
+        }
         this.pathBuilder = this.pathBuilder.addPosition(transformedPosition);
         this._initiallyWithState.replaceInstruction(this.getPathInstructionBuilder(this._initiallyWithState.state).getMoveTo());
+    }
+    private addInstructionToDrawLineTo(position: Position, state: InfiniteCanvasState): void{
+        const instructionToDrawLine: Instruction = this.getPathInstructionBuilder(state).getLineTo(position);
         let toAdd: PathInstructionWithState = PathInstructionWithState.create(state, instructionToDrawLine);
         toAdd.setInitialState(this.state);
         this.add(toAdd);

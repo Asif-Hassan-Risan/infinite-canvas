@@ -18,6 +18,9 @@ export class PathBuilderFromPointToPointAtInfinity implements PathBuilder{
     public canAddLineTo(position: Position): boolean{
         return !isPointAtInfinity(position) || !position.direction.isInOppositeDirectionAs(this.currentPosition.direction);
     }
+    public containsFinitePoint(): boolean{
+        return true;
+    }
     public isClosable(): boolean{
         return true;
     }

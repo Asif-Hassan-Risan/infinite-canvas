@@ -2725,6 +2725,25 @@ describe("an infinite canvas context", () => {
 			infiniteContext.moveToInfinityInDirection(1, 0);
 		});
 
+		describe("and then adds a line to another point at infinity", () => {
+
+			beforeEach(() => {
+				infiniteContext.moveToInfinityInDirection(0, 1);
+			});
+
+			describe("and then fills", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.fill();
+				});
+
+				fit("should", () => {
+					console.log(contextMock.getLog());
+				});
+			});
+		});
+
 		describe("and then adds a line to a finite point", () => {
 
 			beforeEach(() => {

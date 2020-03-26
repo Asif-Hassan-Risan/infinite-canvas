@@ -9,5 +9,6 @@ export interface PathBuilder{
     addPosition(position: Position): PathBuilder;
     transform(transformation: Transformation): PathBuilder;
     isClosable(): boolean;
+    containsFinitePoint(): boolean;
     readonly currentPosition: Position;
 }

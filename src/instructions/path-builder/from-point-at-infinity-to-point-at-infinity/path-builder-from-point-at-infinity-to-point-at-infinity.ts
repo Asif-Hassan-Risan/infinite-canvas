@@ -15,6 +15,9 @@ export class PathBuilderFromPointAtInfinityToPointAtInfinity implements PathBuil
     public getPathInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder{
         return new PathInstructionBuilderFromPointAtInfinityToPointAtInfinity(infinity, this.initialPosition, this.firstFinitePoint, this.lastFinitePoint, this.currentPosition);
     }
+    public containsFinitePoint(): boolean{
+        return true;
+    }
     public isClosable(): boolean{
         return !this.initialPosition.direction.isInOppositeDirectionAs(this.currentPosition.direction);
     }

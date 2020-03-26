@@ -17,6 +17,9 @@ export class PathBuilderFromPointToPoint implements PathBuilder{
     public canAddLineTo(position: Position): boolean{
         return true;
     }
+    public containsFinitePoint(): boolean{
+        return true;
+    }
     public isClosable(): boolean{
         return true;
     }
