@@ -9,6 +9,7 @@
     "build": "npx webpack",
     "update-snapshot": "jest --updateSnapshot",
     "run:dev": "node run-dev.js",
+    "run:dev-codeanywhere": "node run-dev.js --port 3000",
     "build:dev": "webpack --mode=development"
   },
   "keywords": [
