@@ -1,12 +1,11 @@
-import {Instruction} from "../instruction";
 import { Position } from "../../geometry/position";
 import {ViewboxInfinity} from "../../interfaces/viewbox-infinity";
 import {Transformation} from "../../transformation";
+import { PathInstructionBuilder } from "./path-instruction-builder";
 
 export interface PathBuilder{
-    getLineTo(position: Position, infinity: ViewboxInfinity): Instruction;
+    getPathInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder;
     canAddLineTo(position: Position): boolean;
-    getMoveTo(infinity: ViewboxInfinity): Instruction;
     addPosition(position: Position): PathBuilder;
     transform(transformation: Transformation): PathBuilder;
     isClosable(): boolean;

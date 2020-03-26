@@ -14,6 +14,7 @@ import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
 import { Instruction } from "./instruction";
 import { PathBuilder } from "./path-builder/path-builder";
 import { infiniteCanvasPathBuilderProvider } from "./path-builder/infinite-canvas-path-builder-provider";
+import { PathInstructionBuilder } from "./path-builder/path-instruction-builder";
 
 export class InstructionsWithSubpath extends StateChangingInstructionSequence<PathInstructionWithState>{
     constructor(private _initiallyWithState: PathInstructionWithState, private readonly infinityProvider: ViewboxInfinityProvider, private pathBuilder: PathBuilder) {
@@ -46,13 +47,15 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
     public canAddLineTo(position: Position): boolean{
         return this.pathBuilder.canAddLineTo(position);
     }
+    private getPathInstructionBuilder(state: InfiniteCanvasState): PathInstructionBuilder{
+        const infinity: ViewboxInfinity = this.infinityProvider.getInfinity(state);
+        return this.pathBuilder.transform(state.current.transformation.inverse()).getPathInstructionBuilder(infinity);
+    }
     public lineTo(position: Position, state: InfiniteCanvasState): void{
         const transformedPosition: Position = transformPosition(position, state.current.transformation);
-        const infinity: ViewboxInfinity = this.infinityProvider.getInfinity(state);
-        const instructionToDrawLine: Instruction = this.pathBuilder.transform(state.current.transformation.inverse()).getLineTo(position, infinity);
+        const instructionToDrawLine: Instruction = this.getPathInstructionBuilder(state).getLineTo(position);
         this.pathBuilder = this.pathBuilder.addPosition(transformedPosition);
-        const initialInfinity: ViewboxInfinity = this.infinityProvider.getInfinity(this._initiallyWithState.state);
-        this._initiallyWithState.replaceInstruction(this.pathBuilder.transform(this._initiallyWithState.state.current.transformation.inverse()).getMoveTo(initialInfinity));
+        this._initiallyWithState.replaceInstruction(this.getPathInstructionBuilder(this._initiallyWithState.state).getMoveTo());
         let toAdd: PathInstructionWithState = PathInstructionWithState.create(state, instructionToDrawLine);
         toAdd.setInitialState(this.state);
         this.add(toAdd);
