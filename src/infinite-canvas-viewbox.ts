@@ -78,6 +78,9 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		this.instructionSet.addPathInstruction(pathInstruction);
 	}
 	public closePath(): void{
+		if(!this.instructionSet.currentSubpathIsClosable()){
+			return;
+		}
 		this.instructionSet.closePath();
 	}
 	public moveTo(position: Position): void{
@@ -91,11 +94,11 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public rect(x: number, y: number, w: number, h: number): void{
 		this.instructionSet.rect(x, y, w, h);
 	}
+	public currentPathCanBeFilled(): boolean{
+		return this.instructionSet.allSubpathsAreClosable() && this.instructionSet.currentPathContainsFinitePoint();
+	}
 	public currentSubpathIsClosable(): boolean{
 		return this.instructionSet.currentSubpathIsClosable();
-	}
-	public allSubpathsAreClosable(): boolean{
-		return this.instructionSet.allSubpathsAreClosable();
 	}
 	public drawPath(instruction: Instruction): void{
 		this.infinityProvider.addDrawnLineWidth(this.state.current.lineWidth * this.state.current.transformation.getMaximumLineWidthScale());

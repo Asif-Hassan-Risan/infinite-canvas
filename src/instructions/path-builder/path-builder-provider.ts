@@ -8,6 +8,6 @@ export interface PathBuilderProvider{
     fromPointAtInfinityToPoint(initialPosition: PointAtInfinity, firstFinitePoint: Point, currentPosition: Point): PathBuilder;
     fromPointToPointAtInfinity(initialPoint: Point, currentPosition: PointAtInfinity): PathBuilder;
     fromPointToPoint(initialPoint: Point, currentPoint: Point): PathBuilder;
-    atInfinity(initialPosition: PointAtInfinity, currentPosition: PointAtInfinity): PathBuilder;
+    atInfinity(initialPosition: PointAtInfinity, containsFinitePoint: boolean, positionsSoFar: PointAtInfinity[], currentPosition: PointAtInfinity): PathBuilder;
     getBuilderFromPosition(position: Position): PathBuilder;
 }

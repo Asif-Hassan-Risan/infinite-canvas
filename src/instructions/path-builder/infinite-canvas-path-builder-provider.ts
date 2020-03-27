@@ -23,12 +23,12 @@ export const infiniteCanvasPathBuilderProvider: PathBuilderProvider = {
     fromPointToPoint(initialPoint: Point, currentPoint: Point): PathBuilder{
         return new PathBuilderFromPointToPoint(infiniteCanvasPathBuilderProvider, initialPoint, currentPoint);
     },
-    atInfinity(initialPosition: PointAtInfinity, currentPosition: PointAtInfinity): PathBuilder{
-        return new PathBuilderAtInfinity(infiniteCanvasPathBuilderProvider, initialPosition, currentPosition);
+    atInfinity(initialPosition: PointAtInfinity, containsFinitePoint: boolean, positionsSoFar: PointAtInfinity[], currentPosition: PointAtInfinity): PathBuilder{
+        return new PathBuilderAtInfinity(infiniteCanvasPathBuilderProvider, initialPosition, containsFinitePoint, positionsSoFar, currentPosition);
     },
     getBuilderFromPosition(position: Position): PathBuilder{
         if(isPointAtInfinity(position)){
-           return new PathBuilderAtInfinity(infiniteCanvasPathBuilderProvider, position, position);
+           return new PathBuilderAtInfinity(infiniteCanvasPathBuilderProvider, position, false, [position], position);
         }
         return new PathBuilderFromPointToPoint(infiniteCanvasPathBuilderProvider, position, position);
     }

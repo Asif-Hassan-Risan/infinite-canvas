@@ -865,6 +865,23 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to another point at infinity and then adds a line to a finite point and then fills should have drawn the right path 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(201.4142135623731,100)",
+  "context.lineTo(201.4142135623731,201.4142135623731)",
+  "context.lineTo(100,201.4142135623731)",
+  "context.lineTo(100,100)",
+  "context.lineWidth = 1",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to another point at infinity and then fills should do nothing 1`] = `Array []`;
+
 exports[`an infinite canvas context that begins a path and then adds a rect that has no area and then adds a line to a finite point and strokes it should have drawn a ray from the position of the rect without area 1`] = `
 Array [
   "context.restore()",
@@ -2358,6 +2375,24 @@ Array [
   "context.lineTo(-1.4142135623730958,50)",
   "context.lineTo(20,50)",
   "context.lineTo(20,20)",
+  "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that fills a rect with only a right edge should fill a rect that fills the left half of the viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(100,-1.4142135623730951)",
+  "context.lineTo(-1.4142135623730951,-1.4142135623730951)",
+  "context.lineTo(-1.4142135623730923,0)",
+  "context.lineTo(-1.4142135623730951,201.4142135623731)",
+  "context.lineTo(100,201.4142135623731)",
+  "context.lineTo(100,0)",
+  "context.lineTo(100,-1.4142135623730951)",
   "context.fill()",
 ]
 `;

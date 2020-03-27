@@ -40,6 +40,14 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         }
         return result;
     }
+    public containsFinitePoint(): boolean{
+        for(const subpath of this.added){
+            if(subpath.containsFinitePoint()){
+                return true;
+            }
+        }
+        return false;
+    }
     public currentSubpathIsClosable(): boolean{
         if(this.added.length === 0){
             return true;

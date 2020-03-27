@@ -41,6 +41,9 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
         result.removeAll(i => (i instanceof DrawingPathInstructionWithState));
         return result;
     }
+    public containsFinitePoint(): boolean{
+        return this.pathBuilder.containsFinitePoint();
+    }
     public isClosable(): boolean{
         return this.pathBuilder.isClosable();
     }

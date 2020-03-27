@@ -20,6 +20,13 @@ export function transformInstructionRelatively(instruction: Instruction): Instru
         context.restore();
     };
 }
+export function combineInstructions(instructions: Instruction[]): Instruction{
+    return (context: CanvasRenderingContext2D, transformation: Transformation) => {
+        for(const instruction of instructions){
+            instruction(context, transformation);
+        }
+    };
+}
 export function instructionSequence(...instructions: Instruction[]): Instruction{
     return (context: CanvasRenderingContext2D, transformation: Transformation) => {
         for(const instruction of instructions){

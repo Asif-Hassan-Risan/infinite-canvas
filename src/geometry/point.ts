@@ -39,11 +39,22 @@ export class Point{
 	public isInOppositeDirectionAs(other: Point): boolean{
 		return this.cross(other) === 0 && this.dot(other) < 0;
 	}
+	public isOnSameSideOfOriginAs(other1: Point, other2: Point){
+		return this.isInSmallerAngleBetweenPoints(other1, other2) || 
+			   other1.isInSmallerAngleBetweenPoints(this, other2) ||
+			   other2.isInSmallerAngleBetweenPoints(this, other1);
+	}
 	public isInSmallerAngleBetweenPoints(point1: Point, point2: Point): boolean{
-		if(point1.cross(point2) > 0){
-            return point1.cross(this) >= 0 && this.cross(point2) >= 0;
-        }
-        return point1.cross(this) <= 0 && this.cross(point2) <= 0;
+		const cross: number = point1.cross(point2);
+		if(cross > 0){
+			return point1.cross(this) >= 0 && this.cross(point2) >= 0;
+		}else if(cross < 0){
+			return point1.cross(this) <= 0 && this.cross(point2) <= 0;
+		}else if(point1.dot(point2) > 0){
+			return this.cross(point1) === 0 && this.dot(point1) > 0;
+		}else{
+			return true;
+		}
 	}
 	public static origin: Point = new Point(0, 0);
 }

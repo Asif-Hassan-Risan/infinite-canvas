@@ -2581,7 +2581,7 @@ describe("an infinite canvas context", () => {
 			infiniteContext.fillRect(100, -Infinity, -Infinity, Infinity);
 		});
 
-		xit("should fill a rect that fills the left half of the viewbox", () => {
+		it("should fill a rect that fills the left half of the viewbox", () => {
 			expect(contextMock.getLog()).toMatchSnapshot();
 		});
 	});
@@ -2728,7 +2728,26 @@ describe("an infinite canvas context", () => {
 		describe("and then adds a line to another point at infinity", () => {
 
 			beforeEach(() => {
-				infiniteContext.moveToInfinityInDirection(0, 1);
+				infiniteContext.lineToInfinityInDirection(0, 1);
+			});
+
+			describe("and then adds a line to a finite point", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineTo(100, 100);
+				});
+
+				describe("and then fills", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.fill();
+					});
+
+					it("should have drawn the right path", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
 			});
 
 			describe("and then fills", () => {
@@ -2738,8 +2757,8 @@ describe("an infinite canvas context", () => {
 					infiniteContext.fill();
 				});
 
-				fit("should", () => {
-					console.log(contextMock.getLog());
+				it("should do nothing", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
 				});
 			});
 		});

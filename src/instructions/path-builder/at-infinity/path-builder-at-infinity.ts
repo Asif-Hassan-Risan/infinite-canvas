@@ -9,27 +9,34 @@ import { PathInstructionBuilder } from "../path-instruction-builder";
 import { PathInstructionBuilderAtInfinity } from "./path-instruction-builder-at-infinity";
 
 export class PathBuilderAtInfinity implements PathBuilder{
-    constructor(private readonly pathBuilderProvider: PathBuilderProvider, private readonly initialPosition: PointAtInfinity, public readonly currentPosition: PointAtInfinity){
+    constructor(private readonly pathBuilderProvider: PathBuilderProvider, private readonly initialPosition: PointAtInfinity, private readonly _containsFinitePoint: boolean, private readonly positionsSoFar: PointAtInfinity[], public readonly currentPosition: PointAtInfinity){
     }
     public getPathInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder{
-        return new PathInstructionBuilderAtInfinity(infinity, this.initialPosition, this.currentPosition);
+        return new PathInstructionBuilderAtInfinity(infinity, this.initialPosition, this._containsFinitePoint, this.positionsSoFar, this.currentPosition);
     }
     public canAddLineTo(position: Position): boolean{
         return !isPointAtInfinity(position) || !position.direction.isInOppositeDirectionAs(this.currentPosition.direction);
     }
     public containsFinitePoint(): boolean{
-        return false;
+        return this._containsFinitePoint;
     }
     public isClosable(): boolean{
         return true;
     }
     public addPosition(position: Position): PathBuilder{
         if(isPointAtInfinity(position)){
-            return this.pathBuilderProvider.atInfinity(this.initialPosition, position);
+            const newDirectionOnSameSideAsOrigin: boolean = position.direction.isOnSameSideOfOriginAs(this.initialPosition.direction, this.currentPosition.direction);
+            const newContainsFinitePoint: boolean = newDirectionOnSameSideAsOrigin ? this._containsFinitePoint : !this._containsFinitePoint;
+            return this.pathBuilderProvider.atInfinity(this.initialPosition, newContainsFinitePoint, this.positionsSoFar.concat([position]), position);
         }
         return this.pathBuilderProvider.fromPointAtInfinityToPoint(this.initialPosition, position, position);
     }
     public transform(transformation: Transformation): PathBuilder{
-        return new PathBuilderAtInfinity(this.pathBuilderProvider, transformation.applyToPointAtInfinity(this.initialPosition), transformation.applyToPointAtInfinity(this.currentPosition));
+        return new PathBuilderAtInfinity(
+            this.pathBuilderProvider, 
+            transformation.applyToPointAtInfinity(this.initialPosition),
+            this._containsFinitePoint,
+            this.positionsSoFar.map(p => transformation.applyToPointAtInfinity(p)),
+            transformation.applyToPointAtInfinity(this.currentPosition));
     }
 }
