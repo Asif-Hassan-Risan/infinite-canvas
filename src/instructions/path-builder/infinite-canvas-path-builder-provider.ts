@@ -9,27 +9,29 @@ import { PathBuilderFromPointAtInfinityToPoint } from "./from-point-at-infinity-
 import { PathBuilderFromPointToPointAtInfinity } from "./from-point-to-point-at-infinity/path-builder-from-point-to-point-at-infinity";
 import { PathBuilderFromPointToPoint } from "./from-point-to-point/path-builder-from-point-to-point";
 import { PathBuilderAtInfinity } from "./at-infinity/path-builder-at-infinity";
+import { ViewboxInfinityProvider } from "../../interfaces/viewbox-infinity-provider";
 
-export const infiniteCanvasPathBuilderProvider: PathBuilderProvider = {
+export class InfiniteCanvasPathBuilderProvider implements PathBuilderProvider {
+    constructor(private readonly infinityProvider: ViewboxInfinityProvider){}
     fromPointAtInfinityToPointAtInfinity(initialPosition: PointAtInfinity, firstFinitePoint: Point, lastFinitePoint: Point, currentPosition: PointAtInfinity): PathBuilder{
-        return new PathBuilderFromPointAtInfinityToPointAtInfinity(infiniteCanvasPathBuilderProvider, initialPosition, firstFinitePoint, lastFinitePoint, currentPosition);
-    },
+        return new PathBuilderFromPointAtInfinityToPointAtInfinity(this, this.infinityProvider, initialPosition, firstFinitePoint, lastFinitePoint, currentPosition);
+    }
     fromPointAtInfinityToPoint(initialPosition: PointAtInfinity, firstFinitePoint: Point, currentPosition: Point): PathBuilder{
-        return new PathBuilderFromPointAtInfinityToPoint(infiniteCanvasPathBuilderProvider, initialPosition, firstFinitePoint, currentPosition);
-    },
+        return new PathBuilderFromPointAtInfinityToPoint(this, this.infinityProvider, initialPosition, firstFinitePoint, currentPosition);
+    }
     fromPointToPointAtInfinity(initialPoint: Point, currentPosition: PointAtInfinity): PathBuilder{
-        return new PathBuilderFromPointToPointAtInfinity(infiniteCanvasPathBuilderProvider, initialPoint, currentPosition);
-    },
+        return new PathBuilderFromPointToPointAtInfinity(this, this.infinityProvider, initialPoint, currentPosition);
+    }
     fromPointToPoint(initialPoint: Point, currentPoint: Point): PathBuilder{
-        return new PathBuilderFromPointToPoint(infiniteCanvasPathBuilderProvider, initialPoint, currentPoint);
-    },
+        return new PathBuilderFromPointToPoint(this, this.infinityProvider, initialPoint, currentPoint);
+    }
     atInfinity(initialPosition: PointAtInfinity, containsFinitePoint: boolean, positionsSoFar: PointAtInfinity[], currentPosition: PointAtInfinity): PathBuilder{
-        return new PathBuilderAtInfinity(infiniteCanvasPathBuilderProvider, initialPosition, containsFinitePoint, positionsSoFar, currentPosition);
-    },
+        return new PathBuilderAtInfinity(this, this.infinityProvider, initialPosition, containsFinitePoint, positionsSoFar, currentPosition);
+    }
     getBuilderFromPosition(position: Position): PathBuilder{
         if(isPointAtInfinity(position)){
-           return new PathBuilderAtInfinity(infiniteCanvasPathBuilderProvider, position, false, [position], position);
+           return new PathBuilderAtInfinity(this, this.infinityProvider, position, false, [position], position);
         }
-        return new PathBuilderFromPointToPoint(infiniteCanvasPathBuilderProvider, position, position);
+        return new PathBuilderFromPointToPoint(this, this.infinityProvider, position, position);
     }
 };

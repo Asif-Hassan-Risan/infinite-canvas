@@ -7,11 +7,14 @@ import { Transformation } from "../../../transformation";
 import { PathBuilderProvider } from "../path-builder-provider";
 import { PathInstructionBuilder } from "../path-instruction-builder";
 import { PathInstructionBuilderFromPointToPoint } from "./path-instruction-builder-from-point-to-point";
+import { ViewboxInfinityProvider } from "../../../interfaces/viewbox-infinity-provider";
+import { InfiniteCanvasPathBuilder } from "../infinite-canvas-path-builder";
 
-export class PathBuilderFromPointToPoint implements PathBuilder{
-    constructor(private readonly pathBuilderProvider: PathBuilderProvider, private readonly initialPoint: Point, public readonly currentPosition: Point) {
+export class PathBuilderFromPointToPoint extends InfiniteCanvasPathBuilder implements PathBuilder{
+    constructor(private readonly pathBuilderProvider: PathBuilderProvider, infinityProvider: ViewboxInfinityProvider, private readonly initialPoint: Point, public readonly currentPosition: Point) {
+        super(infinityProvider);
     }
-    public getPathInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder{
+    protected getInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder{
         return new PathInstructionBuilderFromPointToPoint(infinity, this.initialPoint, this.currentPosition);
     }
     public canAddLineTo(position: Position): boolean{
@@ -29,7 +32,7 @@ export class PathBuilderFromPointToPoint implements PathBuilder{
         }
         return this.pathBuilderProvider.fromPointToPoint(this.initialPoint, position);
     }
-    public transform(transformation: Transformation): PathBuilder{
-        return new PathBuilderFromPointToPoint(this.pathBuilderProvider, transformation.apply(this.initialPoint), transformation.apply(this.currentPosition));
+    protected transform(transformation: Transformation): InfiniteCanvasPathBuilder{
+        return new PathBuilderFromPointToPoint(this.pathBuilderProvider, this.infinityProvider, transformation.apply(this.initialPoint), transformation.apply(this.currentPosition));
     }
 }

@@ -8,11 +8,14 @@ import { Transformation } from "../../../transformation";
 import { PathBuilderProvider } from "../path-builder-provider";
 import { PathInstructionBuilder } from "../path-instruction-builder";
 import { PathInstructionBuilderFromPointToPointAtInfinity } from "./path-instruction-builder-from-point-to-point-at-infinity";
+import { ViewboxInfinityProvider } from "../../../interfaces/viewbox-infinity-provider";
+import { InfiniteCanvasPathBuilder } from "../infinite-canvas-path-builder";
 
-export class PathBuilderFromPointToPointAtInfinity implements PathBuilder{
-    constructor(private readonly pathBuilderProvider: PathBuilderProvider, private readonly initialPoint: Point, public readonly currentPosition: PointAtInfinity) {
+export class PathBuilderFromPointToPointAtInfinity extends InfiniteCanvasPathBuilder implements PathBuilder{
+    constructor(private readonly pathBuilderProvider: PathBuilderProvider, infinityProvider: ViewboxInfinityProvider, private readonly initialPoint: Point, public readonly currentPosition: PointAtInfinity) {
+        super(infinityProvider);
     }
-    public getPathInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder{
+    protected getInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder{
         return new PathInstructionBuilderFromPointToPointAtInfinity(infinity, this.initialPoint, this.currentPosition);
     }
     public canAddLineTo(position: Position): boolean{
@@ -30,7 +33,7 @@ export class PathBuilderFromPointToPointAtInfinity implements PathBuilder{
         }
         return this.pathBuilderProvider.fromPointToPoint(this.initialPoint, position);
     }
-    public transform(transformation: Transformation): PathBuilder{
-        return new PathBuilderFromPointToPointAtInfinity(this.pathBuilderProvider, transformation.apply(this.initialPoint), transformation.applyToPointAtInfinity(this.currentPosition));
+    protected transform(transformation: Transformation): InfiniteCanvasPathBuilder{
+        return new PathBuilderFromPointToPointAtInfinity(this.pathBuilderProvider, this.infinityProvider, transformation.apply(this.initialPoint), transformation.applyToPointAtInfinity(this.currentPosition));
     }
 }

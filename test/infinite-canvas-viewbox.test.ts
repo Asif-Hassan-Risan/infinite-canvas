@@ -2731,6 +2731,25 @@ describe("an infinite canvas context", () => {
 				infiniteContext.lineToInfinityInDirection(0, 1);
 			});
 
+			describe("and then adds a line to a third point at infinity that is not in the same half plane", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineToInfinityInDirection(-1, -1);
+				});
+
+				describe("and then fills", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.fill();
+					});
+
+					it("should draw a path around the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+			});
+
 			describe("and then adds a line to a finite point", () => {
 
 				beforeEach(() => {

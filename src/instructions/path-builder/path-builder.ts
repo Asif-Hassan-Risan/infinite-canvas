@@ -1,13 +1,11 @@
 import { Position } from "../../geometry/position";
-import {ViewboxInfinity} from "../../interfaces/viewbox-infinity";
-import {Transformation} from "../../transformation";
 import { PathInstructionBuilder } from "./path-instruction-builder";
+import { InfiniteCanvasState } from "../../state/infinite-canvas-state";
 
 export interface PathBuilder{
-    getPathInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder;
+    getPathInstructionBuilder(state: InfiniteCanvasState): PathInstructionBuilder;
     canAddLineTo(position: Position): boolean;
     addPosition(position: Position): PathBuilder;
-    transform(transformation: Transformation): PathBuilder;
     isClosable(): boolean;
     containsFinitePoint(): boolean;
     readonly currentPosition: Position;
