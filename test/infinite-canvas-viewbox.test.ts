@@ -2646,6 +2646,18 @@ describe("an infinite canvas context", () => {
 		});
 	});
 
+	describe("that fills the entire plane", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(-Infinity, -Infinity, Infinity, Infinity);
+		});
+
+		it("should fill the entire viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
 	describe("that fills a rect with negative infinite width and a finite height", () => {
 
 		beforeEach(() => {

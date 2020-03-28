@@ -135,6 +135,12 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         }
     }
     public rect(x: number, y: number, w: number, h: number, state: InfiniteCanvasState): void{
+        if(!Number.isFinite(x) && !Number.isFinite(y)){
+            this.moveTo({direction: new Point(1, 0)}, state);
+            this.lineTo({direction: new Point(0, 1)}, state);
+            this.lineTo({direction: new Point(-1, -1)}, state);
+            return;
+        }
         this.moveToPositionDeterminedBy(x, y, state);
         if(!rectangleHasArea(x, y, w, h)){
            return;

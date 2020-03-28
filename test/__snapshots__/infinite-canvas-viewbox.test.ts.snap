@@ -2604,6 +2604,21 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that fills the entire plane should fill the entire viewbox 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.save()",
+  "context.setTransform(1,0,0,1,0,0)",
+  "context.rect(-1.4142135623730951,-1.4142135623730951,202.82842712474618,202.82842712474618)",
+  "context.restore()",
+  "context.fill()",
+]
+`;
+
 exports[`an infinite canvas context that is translated and then adds a rectangular path and fills it and then clears a rectangle partly covering the place where the rectangle was drawn should have added an instruction to clear a rect 1`] = `
 Array [
   "context.restore()",
