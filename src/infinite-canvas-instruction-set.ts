@@ -24,7 +24,7 @@ export class InfiniteCanvasInstructionSet{
         this.state = this.previousInstructionsWithPath.state;
     }
     public beginPath(): void{
-        this.replaceCurrentInstructionsWithPath(InstructionsWithPath.create(this.state, this.infinityProvider));
+        this.replaceCurrentInstructionsWithPath(InstructionsWithPath.create(this.state, this.infinityProvider, this.infinityProvider.getForPath()));
     }
     public changeState(change: (state: InfiniteCanvasStateInstance) => InfiniteCanvasStateInstance): void{
         this.state = this.state.withCurrentState(change(this.state.current));
@@ -70,7 +70,7 @@ export class InfiniteCanvasInstructionSet{
             instruction = transformInstructionRelatively(instruction);
         }
         const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
-        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityProvider);
+        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityProvider, this.infinityProvider.getForPath());
         pathToDraw.rect(x, y, w, h, stateToDrawWith);
         pathToDraw.drawPath(instruction, stateToDrawWith);
         this.drawBeforeCurrentPath(pathToDraw);

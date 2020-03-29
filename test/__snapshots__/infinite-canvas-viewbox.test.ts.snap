@@ -56,7 +56,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,-1.4142135623730951,50,202.8284271247462)",
+  "context.clearRect(50,0,50,200)",
   "context.restore()",
 ]
 `;
@@ -79,7 +79,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(-1.4142135623730951,50,202.8284271247462,151.4142135623731)",
+  "context.clearRect(0,50,200,150)",
   "context.restore()",
 ]
 `;
@@ -100,7 +100,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,-1.4142135623730951,151.4142135623731,202.8284271247462)",
+  "context.clearRect(50,0,150,200)",
   "context.restore()",
 ]
 `;
@@ -121,7 +121,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,201.4142135623731,151.4142135623731,-202.8284271247462)",
+  "context.clearRect(50,200,150,-200)",
   "context.restore()",
 ]
 `;
@@ -142,7 +142,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,50,-51.41421356237309)",
+  "context.clearRect(50,50,50,-50)",
   "context.restore()",
 ]
 `;
@@ -163,7 +163,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,-51.41421356237309,50)",
+  "context.clearRect(50,50,-50,50)",
   "context.restore()",
 ]
 `;
@@ -184,7 +184,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(201.4142135623731,50,-202.8284271247462,151.4142135623731)",
+  "context.clearRect(200,50,-200,150)",
   "context.restore()",
 ]
 `;
@@ -205,7 +205,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,50,151.4142135623731)",
+  "context.clearRect(50,50,50,150)",
   "context.restore()",
 ]
 `;
@@ -226,7 +226,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,151.4142135623731,151.4142135623731)",
+  "context.clearRect(50,50,150,150)",
   "context.restore()",
 ]
 `;
@@ -247,7 +247,7 @@ Array [
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,151.4142135623731,50)",
+  "context.clearRect(50,50,150,50)",
   "context.restore()",
 ]
 `;
@@ -403,7 +403,7 @@ Array [
   "context.stroke()",
   "context.save()",
   "context.transform(2,0,0,2,0,0)",
-  "context.clearRect(40,20,61.41421356237309,20)",
+  "context.clearRect(40,20,60,20)",
   "context.restore()",
 ]
 `;
@@ -420,7 +420,7 @@ Array [
   "context.stroke()",
   "context.save()",
   "context.transform(1,0,0,1,-10,0)",
-  "context.clearRect(40,20,171.4142135623731,20)",
+  "context.clearRect(40,20,170,20)",
   "context.restore()",
 ]
 `;
@@ -437,7 +437,7 @@ Array [
   "context.stroke()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(40,20,161.4142135623731,20)",
+  "context.clearRect(40,20,160,20)",
   "context.restore()",
 ]
 `;
@@ -2613,7 +2613,7 @@ Array [
   "context.beginPath()",
   "context.save()",
   "context.setTransform(1,0,0,1,0,0)",
-  "context.rect(-1.4142135623730951,-1.4142135623730951,202.82842712474618,202.82842712474618)",
+  "context.rect(0,0,200,200)",
   "context.restore()",
   "context.fill()",
 ]

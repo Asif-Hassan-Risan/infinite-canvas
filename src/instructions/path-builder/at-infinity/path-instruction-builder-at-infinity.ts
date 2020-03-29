@@ -6,10 +6,10 @@ import { Instruction } from "../../instruction";
 import { isPointAtInfinity } from "../../../geometry/is-point-at-infinity";
 import {Position} from "../../../geometry/position";
 import { combineInstructions, instructionSequence } from "../../../instruction-utils";
-import { ViewboxInfinityProvider } from "../../../interfaces/viewbox-infinity-provider";
+import { PathInfinityProvider } from "../../../interfaces/path-infinity-provider";
 
 export class PathInstructionBuilderAtInfinity extends InfiniteCanvasPathInstructionBuilder implements PathInstructionBuilder{
-    constructor(infinity: ViewboxInfinity, private readonly initialPosition: PointAtInfinity, private readonly infinityProvider: ViewboxInfinityProvider, private readonly containsFinitePoint: boolean, private readonly positionsSoFar: PointAtInfinity[], private readonly currentPosition: PointAtInfinity){
+    constructor(infinity: ViewboxInfinity, private readonly initialPosition: PointAtInfinity, private readonly infinityProvider: PathInfinityProvider, private readonly containsFinitePoint: boolean, private readonly positionsSoFar: PointAtInfinity[], private readonly currentPosition: PointAtInfinity){
         super(infinity);
     }
     public getLineTo(position: Position): Instruction{

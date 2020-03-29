@@ -5,6 +5,7 @@ import {ViewboxInfinity} from "../src/interfaces/viewbox-infinity";
 import { InfiniteCanvasState } from "../src/state/infinite-canvas-state";
 import { defaultState } from "../src/state/default-state";
 import { transformation } from "../src/state/dimensions/transformation";
+import { PathInfinityProvider } from "../src/interfaces/path-infinity-provider";
 
 function getStateWithTransformation(_transformation: Transformation): InfiniteCanvasState{
     let result: InfiniteCanvasState = defaultState;
@@ -15,10 +16,12 @@ function getStateWithTransformation(_transformation: Transformation): InfiniteCa
 describe("a viewbox infinity for an untransformed context", () => {
     let infinity: ViewboxInfinity;
     let infinityProvider: InfiniteCanvasViewboxInfinityProvider;
+    let pathInfinityProvider: PathInfinityProvider;
 
     beforeEach(() => {
         infinityProvider = new InfiniteCanvasViewboxInfinityProvider(10, 10);
-        infinity = infinityProvider.getInfinity(getStateWithTransformation(Transformation.identity));
+        pathInfinityProvider = infinityProvider.getForPath();
+        infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(Transformation.identity));
     });
 
     it.each([
@@ -65,10 +68,12 @@ describe("a viewbox infinity for an untransformed context", () => {
 describe("a viewbox infinity for a translated context", () => {
     let infinity: ViewboxInfinity;
     let infinityProvider: InfiniteCanvasViewboxInfinityProvider;
+    let pathInfinityProvider: PathInfinityProvider;
 
     beforeEach(() => {
         infinityProvider = new InfiniteCanvasViewboxInfinityProvider(10, 10);
-        infinity = infinityProvider.getInfinity(getStateWithTransformation(new Transformation(1, 0, 0, 1, 5, 5)));
+        pathInfinityProvider = infinityProvider.getForPath();
+        infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(new Transformation(1, 0, 0, 1, 5, 5)));
     });
 
     it("should return the right infinity", () => {
@@ -83,10 +88,12 @@ describe("a viewbox infinity for a translated context", () => {
 describe("a viewbox infinity for skewed context", () => {
     let infinity: ViewboxInfinity;
     let infinityProvider: InfiniteCanvasViewboxInfinityProvider;
+    let pathInfinityProvider: PathInfinityProvider;
 
     beforeEach(() => {
         infinityProvider = new InfiniteCanvasViewboxInfinityProvider(10, 10);
-        infinity = infinityProvider.getInfinity(getStateWithTransformation(new Transformation(1, 0.2, 0, 1, 0, 0)));
+        pathInfinityProvider = infinityProvider.getForPath();
+        infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(new Transformation(1, 0.2, 0, 1, 0, 0)));
     });
 
     it.each([
@@ -102,10 +109,12 @@ describe("a viewbox infinity for skewed context", () => {
 describe("a viewbox infinity for a scaled context", () => {
     let infinity: ViewboxInfinity;
     let infinityProvider: InfiniteCanvasViewboxInfinityProvider;
+    let pathInfinityProvider: PathInfinityProvider;
 
     beforeEach(() => {
         infinityProvider = new InfiniteCanvasViewboxInfinityProvider(10, 10);
-        infinity = infinityProvider.getInfinity(getStateWithTransformation(Transformation.scale(2)));
+        pathInfinityProvider = infinityProvider.getForPath();
+        infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(Transformation.scale(2)));
     });
 
     it.each([

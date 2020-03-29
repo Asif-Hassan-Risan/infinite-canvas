@@ -9,10 +9,10 @@ import {ClippingPathInstructionWithState} from "./clipping-path-instruction-with
 import {transformPosition} from "../geometry/transform-position";
 import {PathInstruction} from "../interfaces/path-instruction";
 import {positionsAreEqual} from "../geometry/positions-are-equal";
-import { ViewboxInfinityProvider } from "../interfaces/viewbox-infinity-provider";
 import { Instruction } from "./instruction";
 import { PathBuilder } from "./path-builder/path-builder";
 import { InfiniteCanvasPathBuilderProvider } from "./path-builder/infinite-canvas-path-builder-provider";
+import { PathInfinityProvider } from "../interfaces/path-infinity-provider";
 
 export class InstructionsWithSubpath extends StateChangingInstructionSequence<PathInstructionWithState>{
     constructor(private _initiallyWithState: PathInstructionWithState, private pathBuilder: PathBuilder) {
@@ -72,13 +72,13 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Pa
         pathInstructionWithState.setInitialState(this.state);
         this.add(pathInstructionWithState);
     }
-    public static createSilent(initialState: InfiniteCanvasState, initialPosition: Position, infinityProvider: ViewboxInfinityProvider): InstructionsWithSubpath{
+    public static createSilent(initialState: InfiniteCanvasState, initialPosition: Position, infinityProvider: PathInfinityProvider): InstructionsWithSubpath{
         let initialInstruction: PathInstructionWithState = PathInstructionWithState.create(initialState, () => {});
         initialPosition = transformPosition(initialPosition, initialState.current.transformation);
         const pathBuilder: PathBuilder = new InfiniteCanvasPathBuilderProvider(infinityProvider).getBuilderFromPosition(initialPosition);
         return new InstructionsWithSubpath(initialInstruction, pathBuilder);
     }
-    public static create(initialState: InfiniteCanvasState, initialPosition: Position, infinityProvider: ViewboxInfinityProvider): InstructionsWithSubpath{
+    public static create(initialState: InfiniteCanvasState, initialPosition: Position, infinityProvider: PathInfinityProvider): InstructionsWithSubpath{
         let initialInstruction: PathInstructionWithState;
         if(isPointAtInfinity(initialPosition)){
             initialInstruction = PathInstructionWithState.create(initialState, () => {});

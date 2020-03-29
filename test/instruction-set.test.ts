@@ -5,6 +5,7 @@ import { InfiniteCanvasInstructionSet } from "../src/infinite-canvas-instruction
 import { transformInstructionRelatively } from "../src/instruction-utils";
 import { Point } from "../src/geometry/point";
 import {ConvexPolygon} from "../src/areas/polygons/convex-polygon";
+import { FakeViewboxInfinityProvider } from "./fake-viewbox-infinity-provider";
 
 describe("an instruction set", () => {
     let instructionSet: InfiniteCanvasInstructionSet;
@@ -12,7 +13,7 @@ describe("an instruction set", () => {
 
     beforeEach(() => {
         onChangeSpy = jest.fn();
-        instructionSet = new InfiniteCanvasInstructionSet(onChangeSpy, {getInfinity: () => undefined, getPathInstructionToGoAroundViewbox: () => undefined});
+        instructionSet = new InfiniteCanvasInstructionSet(onChangeSpy, new FakeViewboxInfinityProvider());
     });
 
     describe("that begins drawing a path", () => {

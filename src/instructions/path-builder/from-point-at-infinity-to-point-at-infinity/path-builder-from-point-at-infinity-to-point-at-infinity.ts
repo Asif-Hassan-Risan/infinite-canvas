@@ -8,11 +8,11 @@ import {Transformation} from "../../../transformation";
 import { PathBuilderProvider } from "../path-builder-provider";
 import { PathInstructionBuilder } from "../path-instruction-builder";
 import { PathInstructionBuilderFromPointAtInfinityToPointAtInfinity } from "./path-instruction-builder-from-point-at-infinity-to-point-at-infinity";
-import { ViewboxInfinityProvider } from "../../../interfaces/viewbox-infinity-provider";
 import { InfiniteCanvasPathBuilder } from "../infinite-canvas-path-builder";
+import { PathInfinityProvider } from "../../../interfaces/path-infinity-provider";
 
 export class PathBuilderFromPointAtInfinityToPointAtInfinity extends InfiniteCanvasPathBuilder implements PathBuilder{
-    constructor(private readonly pathBuilderProvider: PathBuilderProvider, infinityProvider: ViewboxInfinityProvider, private readonly initialPosition: PointAtInfinity, private readonly firstFinitePoint: Point, private readonly lastFinitePoint: Point, public currentPosition: PointAtInfinity) {
+    constructor(private readonly pathBuilderProvider: PathBuilderProvider, infinityProvider: PathInfinityProvider, private readonly initialPosition: PointAtInfinity, private readonly firstFinitePoint: Point, private readonly lastFinitePoint: Point, public currentPosition: PointAtInfinity) {
         super(infinityProvider);
     }
     protected getInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder{

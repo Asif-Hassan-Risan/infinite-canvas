@@ -101,11 +101,9 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		return this.instructionSet.currentSubpathIsClosable();
 	}
 	public drawPath(instruction: Instruction): void{
-		this.infinityProvider.addDrawnLineWidth(this.state.current.lineWidth * this.state.current.transformation.getMaximumLineWidthScale());
 		this.instructionSet.drawPath(instruction);
 	}
 	public drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
-		this.infinityProvider.addDrawnLineWidth(this.state.current.lineWidth * this.state.current.transformation.getMaximumLineWidthScale());
 		this.instructionSet.drawRect(x, y, w, h, instruction);
 	}
 	private getFiniteRectangle(x: number, y: number, width: number, height: number, infinity: ViewboxInfinity): (transformation: Transformation) => Rectangle{
@@ -131,7 +129,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		};
 	}
 	private getInstructionToClearRectangle(x: number, y: number, width: number, height: number): Instruction{
-		const infinity: ViewboxInfinity = this.infinityProvider.getInfinity(this.state);
+		const infinity: ViewboxInfinity = this.infinityProvider.getForPath().getInfinity(this.state);
 		const finiteRectangle: (transformation: Transformation) => Rectangle = this.getFiniteRectangle(x, y, width, height, infinity);
 		return transformInstructionRelatively((context: CanvasRenderingContext2D, transformation: Transformation) => {
 			const {x, y, width, height} = finiteRectangle(transformation);

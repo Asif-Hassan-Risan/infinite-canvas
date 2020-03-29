@@ -9,10 +9,10 @@ import { PathBuilderFromPointAtInfinityToPoint } from "./from-point-at-infinity-
 import { PathBuilderFromPointToPointAtInfinity } from "./from-point-to-point-at-infinity/path-builder-from-point-to-point-at-infinity";
 import { PathBuilderFromPointToPoint } from "./from-point-to-point/path-builder-from-point-to-point";
 import { PathBuilderAtInfinity } from "./at-infinity/path-builder-at-infinity";
-import { ViewboxInfinityProvider } from "../../interfaces/viewbox-infinity-provider";
+import { PathInfinityProvider } from "../../interfaces/path-infinity-provider";
 
 export class InfiniteCanvasPathBuilderProvider implements PathBuilderProvider {
-    constructor(private readonly infinityProvider: ViewboxInfinityProvider){}
+    constructor(private readonly infinityProvider: PathInfinityProvider){}
     fromPointAtInfinityToPointAtInfinity(initialPosition: PointAtInfinity, firstFinitePoint: Point, lastFinitePoint: Point, currentPosition: PointAtInfinity): PathBuilder{
         return new PathBuilderFromPointAtInfinityToPointAtInfinity(this, this.infinityProvider, initialPosition, firstFinitePoint, lastFinitePoint, currentPosition);
     }
