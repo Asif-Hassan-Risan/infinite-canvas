@@ -74,13 +74,8 @@ describe("a set of instructions that is also about a path", () => {
             instructionsWithPath.lineTo(new Point(10, 10), currentState);
             instructionsWithPath.lineTo(new Point(0, 10), currentState);
             currentState = currentState.withCurrentState(fillStyle.changeInstanceValue(currentState.current, "#00f"));
-            instructionsWithPath.drawPath((context: CanvasRenderingContext2D) => {context.fill();}, currentState);
             instructionsWithPath.lineTo(new Point(5, 5), currentState);
             recreatedPath = instructionsWithPath.recreatePath();
-        });
-
-        it("should not contain the intermediate drawing instruction", () => {
-            expect(drawAndLog(recreatedPath, currentState)).toMatchSnapshot();
         });
 
         it("should have the same area", () => {

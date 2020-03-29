@@ -2011,7 +2011,6 @@ Array [
 ]
 `;
 
-
 exports[`an infinite canvas context that creates a rect that extends to infinity and strokes it should have taken the current line width into account 1`] = `
 Array [
   "context.restore()",
@@ -2323,6 +2322,7 @@ Array [
   "context.save()",
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
+  "context.moveTo(60,30)",
   "context.arc(30,30,30,0,6.283185307179586,)",
   "context.lineWidth = 1",
   "context.fill()",
@@ -2335,6 +2335,7 @@ Array [
   "context.save()",
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
+  "context.moveTo(150,50)",
   "context.ellipse(50,50,100,40,0,0,3.141592653589793,)",
   "context.lineWidth = 1",
   "context.fill()",

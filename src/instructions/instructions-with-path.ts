@@ -1,12 +1,9 @@
 import { StateChangingInstructionSequence } from "./state-changing-instruction-sequence";
-import { PathInstructionWithState } from "./path-instruction-with-state";
 import { StateAndInstruction } from "./state-and-instruction";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../interfaces/state-changing-instruction-set-with-area-and-current-path";
 import { PathInstruction } from "../interfaces/path-instruction";
 import { InfiniteCanvasState } from "../state/infinite-canvas-state";
 import { Instruction } from "./instruction";
-import { ClippingPathInstructionWithState } from "./clipping-path-instruction-with-state";
-import { DrawingPathInstructionWithState } from "./drawing-path-instruction-with-state";
 import { Area } from "../areas/area";
 import { InfiniteCanvasAreaBuilder } from "../areas/infinite-canvas-area-builder";
 import { Position } from "../geometry/position";
@@ -74,7 +71,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         const currentSubpath: InstructionsWithSubpath = this.added[this.added.length - 1];
         const newlyDrawnArea: Area = this.getCurrentlyDrawableArea();
         this.drawnArea = newlyDrawnArea;
-        const toAdd: DrawingPathInstructionWithState = DrawingPathInstructionWithState.createDrawing(state, instruction);
+        const toAdd: StateAndInstruction = StateAndInstruction.create(state, instruction);
         currentSubpath.addDrawingInstruction(toAdd);
     }
     public clipPath(instruction: Instruction, state: InfiniteCanvasState): void{
@@ -82,7 +79,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
             return;
         }
         const currentSubpath: InstructionsWithSubpath = this.added[this.added.length - 1];
-        const toAdd: ClippingPathInstructionWithState = ClippingPathInstructionWithState.create(state, instruction);
+        const toAdd: StateAndInstruction = StateAndInstruction.create(state, instruction);
         currentSubpath.addClippingInstruction(toAdd);
         const clippedPath: StateChangingInstructionSetWithAreaAndCurrentPath = this.recreatePath();
         this.addClippedPath(clippedPath);
@@ -93,13 +90,6 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         }
         const currentSubpath: InstructionsWithSubpath = this.added[this.added.length - 1];
         currentSubpath.closePath();
-    }
-    private silentlyMoveTo(position: Position, state: InfiniteCanvasState): void{
-        const transformedPointToMoveTo: Position = transformPosition(position, state.current.transformation);
-        this.areaBuilder.addPosition(transformedPointToMoveTo);
-        const newSubpath: InstructionsWithSubpath = InstructionsWithSubpath.createSilent(state, position, this.pathInfinityProvider);
-        newSubpath.setInitialState(this.state);
-        this.add(newSubpath);
     }
     public moveTo(position: Position, state: InfiniteCanvasState): void{
         const transformedPointToMoveTo: Position = transformPosition(position, state.current.transformation);
@@ -190,13 +180,13 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
     public addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void{
         if(this.added.length === 0){
             if(pathInstruction.initialPoint){
-                this.silentlyMoveTo(pathInstruction.initialPoint, state);
+                this.moveTo(pathInstruction.initialPoint, state);
             }else{
                 return;
             }
         }
         const currentSubpath: InstructionsWithSubpath = this.added[this.added.length - 1];
-        const toAdd: PathInstructionWithState = PathInstructionWithState.create(state, pathInstruction.instruction);
+        const toAdd: StateAndInstruction = StateAndInstruction.create(state, pathInstruction.instruction);
         pathInstruction.changeArea(this.areaBuilder.transformedWith(state.current.transformation));
         currentSubpath.addPathInstruction(pathInstruction, toAdd, state);
     }
