@@ -48,7 +48,7 @@ describe("a clipped paths", () => {
                 let recreation: InstructionSet;
 
                 beforeEach(() => {
-                    recreation = otherOne.recreateStartingFrom(clippedPaths);
+                    recreation = otherOne.except(clippedPaths).recreate();
                 });
 
                 it("then the recreation should contain the difference", () => {
@@ -70,7 +70,7 @@ describe("a clipped paths", () => {
                     let recreation: InstructionSet;
     
                     beforeEach(() => {
-                        recreation = otherOne.recreateStartingFrom(clippedPaths);
+                        recreation = otherOne.except(clippedPaths).recreate();
                     });
     
                     it("then the recreation should contain the difference", () => {
@@ -96,7 +96,7 @@ describe("a clipped paths", () => {
                     let recreation: InstructionSet;
     
                     beforeEach(() => {
-                        recreation = otherOne.recreateStartingFrom(clippedPaths);
+                        recreation = otherOne.except(clippedPaths).recreate();
                     });
     
                     it("then the recreation should contain the difference", () => {

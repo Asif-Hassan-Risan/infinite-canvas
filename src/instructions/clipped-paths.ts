@@ -4,9 +4,10 @@ import { StateChangingInstructionSet } from "../interfaces/state-changing-instru
 import { InfiniteCanvasStatesAndInstructions } from "./infinite-canvas-states-and-instructions";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../interfaces/state-changing-instruction-set-with-area-and-current-path";
 import { Area } from "../areas/area";
+import { InfiniteCanvasState } from "../state/infinite-canvas-state";
 
 export class ClippedPaths {
-    constructor(public area: Area, public latestClippedPath: StateChangingInstructionSetWithAreaAndCurrentPath, public readonly previouslyClippedPaths?: ClippedPaths){}
+    constructor(public area: Area, public latestClippedPath: StateChangingInstructionSet, public readonly previouslyClippedPaths?: ClippedPaths){}
     public withClippedPath(latestClippedPath: StateChangingInstructionSetWithAreaAndCurrentPath): ClippedPaths{
         const newArea: Area = latestClippedPath.getClippedArea(this.area);
         return new ClippedPaths(newArea, latestClippedPath, this);

@@ -28,9 +28,8 @@ export class StateConversionWithClippedPaths extends StateConversion{
             if(instanceClippedPathsEqualsPreviouslyClippedPaths){
                 super.changeCurrentInstanceTo(instance);
             }else{
-                const instructionsToRecreateClippedPaths: StateChangingInstructionSet = previouslyClippedPaths
-                    ? instance.clippedPaths.recreateStartingFrom(previouslyClippedPaths)
-                    : instance.clippedPaths.recreate();
+                const clippedPathsToRecreate: ClippedPaths = instance.clippedPaths.except(previouslyClippedPaths);
+                const instructionsToRecreateClippedPaths: StateChangingInstructionSet = clippedPathsToRecreate.recreate();
                 this.convertToState(instructionsToRecreateClippedPaths.initialState);
                 this.addChangeToState(instructionsToRecreateClippedPaths.state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                     instructionsToRecreateClippedPaths.execute(context, transformation);
