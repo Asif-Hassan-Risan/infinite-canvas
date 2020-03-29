@@ -2011,6 +2011,23 @@ Array [
 ]
 `;
 
+
+exports[`an infinite canvas context that creates a rect that extends to infinity and strokes it should have taken the current line width into account 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that creates a rectangular path, fills another rectangle and then fills the created path should have filled both rectangles 1`] = `
 Array [
   "context.restore()",
@@ -3547,6 +3564,46 @@ Array [
   "context.lineTo(2,4)",
   "context.lineTo(2,2)",
   "context.fill()",
+]
+`;
+
+exports[`an infinite canvas context that strokes a rect that extends to infinity and then changes the line width and strokes another rect that extends to infinity should have taken a different line width into account for the second rectangle 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.stroke()",
+  "context.lineWidth = 4",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(205.65685424949237,50)",
+  "context.lineTo(205.65685424949237,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that strokes a rect that extends to infinity should have taken the current line width into account 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.stroke()",
 ]
 `;
 

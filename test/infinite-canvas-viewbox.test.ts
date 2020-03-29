@@ -3058,4 +3058,57 @@ describe("an infinite canvas context", () => {
 			});
 		});
 	});
+
+	describe("that creates a rect that extends to infinity and strokes it", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.rect(50, 50, Infinity, 50);
+			contextMock.clear();
+			infiniteContext.stroke();
+		});
+
+		it("should have taken the current line width into account", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+
+		describe("and then changes the line width and strokes the rectangle again", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineWidth = 4;
+				contextMock.clear();
+				infiniteContext.stroke();
+			});
+
+			xit("should have taken a different line width into account this time", () => {
+				console.log(contextMock.getLog());
+				//expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
+
+	describe("that strokes a rect that extends to infinity", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.strokeRect(50, 50, Infinity, 50);
+		});
+
+		it("should have taken the current line width into account", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+
+		describe("and then changes the line width and strokes another rect that extends to infinity", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineWidth = 4;
+				contextMock.clear();
+				infiniteContext.strokeRect(50, 50, Infinity, 50);
+			});
+
+			it("should have taken a different line width into account for the second rectangle", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
 })
