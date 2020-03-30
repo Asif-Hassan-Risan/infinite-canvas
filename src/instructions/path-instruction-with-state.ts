@@ -1,18 +1,26 @@
-import { StateAndInstruction } from "./state-and-instruction";
 import { InfiniteCanvasState } from "../state/infinite-canvas-state";
 import { Instruction } from "./instruction";
+import { InstructionWithState } from "./instruction-with-state";
+import { InstructionUsingInfinity } from "./instruction-using-infinity";
+import { Transformation } from "../transformation";
+import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
+import { CopyableInstructionSet } from "../interfaces/copyable-instruction-set";
 
-export class PathInstructionWithState extends StateAndInstruction{
-    constructor(initialState: InfiniteCanvasState, state: InfiniteCanvasState, instruction: Instruction, stateConversion: Instruction){
-        super(initialState, state, instruction, stateConversion);
+export class PathInstructionWithState extends InstructionWithState implements CopyableInstructionSet{
+    constructor(initialState: InfiniteCanvasState, private infinity: ViewboxInfinity, state: InfiniteCanvasState, private instruction: InstructionUsingInfinity, stateConversion: Instruction){
+        super(initialState, state);
+        this.stateConversion = stateConversion;
     }
-    public replaceInstruction(instruction: Instruction): void{
+    protected executeInstruction(context: CanvasRenderingContext2D, transformation: Transformation): void{
+        this.instruction(context, transformation, this.infinity);
+    }
+    public replaceInstruction(instruction: InstructionUsingInfinity): void{
         this.instruction = instruction;
     }
     public copy(): PathInstructionWithState{
-        return new PathInstructionWithState(this.initialState, this.state, this.instruction, this.stateConversion);
+        return new PathInstructionWithState(this.initialState, this.infinity, this.state, this.instruction, this.stateConversion);
     }
-    public static create(initialState: InfiniteCanvasState, initialInstruction: Instruction): PathInstructionWithState{
-        return new PathInstructionWithState(initialState, initialState, initialInstruction, () => {});
+    public static create(initialState: InfiniteCanvasState, infinity: ViewboxInfinity, initialInstruction: InstructionUsingInfinity): PathInstructionWithState{
+        return new PathInstructionWithState(initialState, infinity, initialState, initialInstruction, () => {});
     }
 }

@@ -6,7 +6,6 @@ import {isPointAtInfinity} from "../geometry/is-point-at-infinity";
 import {transformPosition} from "../geometry/transform-position";
 import {PathInstruction} from "../interfaces/path-instruction";
 import {positionsAreEqual} from "../geometry/positions-are-equal";
-import { Instruction } from "./instruction";
 import { PathBuilder } from "./path-builder/path-builder";
 import { InfiniteCanvasPathBuilderProvider } from "./path-builder/infinite-canvas-path-builder-provider";
 import { PathInfinityProvider } from "../interfaces/path-infinity-provider";
@@ -14,8 +13,9 @@ import { StateAndInstruction } from "./state-and-instruction";
 import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
 import { InstructionUsingInfinity } from "./instruction-using-infinity";
 import { Transformation } from "../transformation";
+import { CopyableInstructionSet } from "../interfaces/copyable-instruction-set";
 
-export class InstructionsWithSubpath extends StateChangingInstructionSequence<StateAndInstruction>{
+export class InstructionsWithSubpath extends StateChangingInstructionSequence<CopyableInstructionSet>{
     constructor(private _initiallyWithState: PathInstructionWithState, private readonly pathInfinityProvider: PathInfinityProvider, private pathBuilder: PathBuilder) {
         super(_initiallyWithState);
     }
@@ -63,9 +63,7 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<St
     private addInstructionToDrawLineTo(position: Position, state: InfiniteCanvasState): void{
         const instructionToDrawLine: InstructionUsingInfinity = this.pathBuilder.getPathInstructionBuilder(state).getLineTo(position);
         const infinityAtState: ViewboxInfinity = this.pathInfinityProvider.getInfinity(state);
-        let toAdd: PathInstructionWithState = PathInstructionWithState.create(state, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-            instructionToDrawLine(context, transformation, infinityAtState);
-        });
+        let toAdd: PathInstructionWithState = PathInstructionWithState.create(state, infinityAtState, instructionToDrawLine);
         toAdd.setInitialState(this.state);
         this.add(toAdd);
     }
@@ -85,9 +83,7 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<St
         const pathBuilder: PathBuilder = new InfiniteCanvasPathBuilderProvider(instructionToGoAroundViewbox).getBuilderFromPosition(transformedInitialPosition);
         const instructionToMoveTo: InstructionUsingInfinity = pathBuilder.getPathInstructionBuilder(initialState).getMoveTo();
         const infinityAtInitialState: ViewboxInfinity = infinityProvider.getInfinity(initialState);
-        let initialInstruction: PathInstructionWithState = PathInstructionWithState.create(initialState, (context: CanvasRenderingContext2D, transformation: Transformation) => {
-            instructionToMoveTo(context, transformation, infinityAtInitialState);
-        });        
+        let initialInstruction: PathInstructionWithState = PathInstructionWithState.create(initialState, infinityAtInitialState, instructionToMoveTo);        
         return new InstructionsWithSubpath(initialInstruction, infinityProvider, pathBuilder);
     }
 }
