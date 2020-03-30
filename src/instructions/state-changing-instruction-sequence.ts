@@ -18,6 +18,9 @@ export class StateChangingInstructionSequence<TInstructionSet extends StateChang
     protected reconstructState(fromState: InfiniteCanvasState, toInstructionSet: TInstructionSet): void{
         toInstructionSet.setInitialState(fromState);
     }
+    public get stateOfFirstInstruction(): InfiniteCanvasState{
+        return this.initiallyWithState.stateOfFirstInstruction;
+    }
     public get state(): InfiniteCanvasState{return this.currentlyWithState.state;}
     public get initialState(): InfiniteCanvasState{return this.initiallyWithState.initialState;}
     public getAllInstructionsAndStates(): InstructionAndState[]{

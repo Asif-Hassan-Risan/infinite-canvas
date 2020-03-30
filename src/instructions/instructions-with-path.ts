@@ -212,6 +212,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
     public recreatePath(): StateChangingInstructionSetWithAreaAndCurrentPath{
         const result: InstructionsWithPath = this.copy();
         result.areaBuilder = this.areaBuilder.copy();
+        result.setInitialState(result.stateOfFirstInstruction);
         return result;
     }
     public static create(initialState: InfiniteCanvasState, viewboxInfinityProvider: ViewboxInfinityProvider, pathInfinityProvider: PathInfinityProvider): InstructionsWithPath{

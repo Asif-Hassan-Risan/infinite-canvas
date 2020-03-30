@@ -13,6 +13,9 @@ export class StateAndInstruction implements StateChangingInstructionSet{
         const instructionToConvert: Instruction = this.initialState.getInstructionToConvertToState(this.state);
         this.stateConversion = instructionToConvert;
     }
+    public get stateOfFirstInstruction(): InfiniteCanvasState{
+        return this.state;
+    }
     public addClippedPath(clippedPath: StateChangingInstructionSetWithAreaAndCurrentPath): void{
         this.state = this.state.withClippedPath(clippedPath);
     }

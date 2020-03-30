@@ -21,6 +21,9 @@ export class ClippedPaths {
         }
         return result;
     }
+    public get initialState(): InfiniteCanvasState{
+        return this.previouslyClippedPaths ? this.previouslyClippedPaths.initialState : this.latestClippedPath.initialState;
+    }
     public except(other: ClippedPaths): ClippedPaths{
         if(other === this){
             return undefined;
@@ -57,9 +60,5 @@ export class ClippedPaths {
     }
     public recreate(): StateChangingInstructionSet{
         return this.createFromInstructionsAndStates(this.getAllInstructionsAndStates());
-    }
-    public recreateStartingFrom(other: ClippedPaths): StateChangingInstructionSet{
-        const difference: ClippedPaths = this.except(other);
-        return difference.recreate();
     }
 }
