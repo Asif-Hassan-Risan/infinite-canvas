@@ -1,25 +1,16 @@
-import { InstructionAndState } from "../interfaces/instruction-and-state";
-import { StateAndInstruction } from "./state-and-instruction";
 import { StateChangingInstructionSet } from "../interfaces/state-changing-instruction-set";
-import { InfiniteCanvasStatesAndInstructions } from "./infinite-canvas-states-and-instructions";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../interfaces/state-changing-instruction-set-with-area-and-current-path";
 import { Area } from "../areas/area";
 import { InfiniteCanvasState } from "../state/infinite-canvas-state";
+import { Instruction } from "./instruction";
+import { Transformation } from "../transformation";
+import { instructionSequence } from "../instruction-utils";
 
 export class ClippedPaths {
     constructor(public area: Area, public latestClippedPath: StateChangingInstructionSet, public readonly previouslyClippedPaths?: ClippedPaths){}
     public withClippedPath(latestClippedPath: StateChangingInstructionSetWithAreaAndCurrentPath): ClippedPaths{
         const newArea: Area = latestClippedPath.getClippedArea(this.area);
         return new ClippedPaths(newArea, latestClippedPath, this);
-    }
-    private getAllInstructionsAndStates(): InstructionAndState[]{
-        const instructionsAndStatesFromLatestClippedPath: InstructionAndState[] = this.latestClippedPath.getAllInstructionsAndStates();
-        const instructionsAndStatesFromPreviouslyClippedPaths: InstructionAndState[] = this.previouslyClippedPaths ? this.previouslyClippedPaths.getAllInstructionsAndStates() : [];
-        const result: InstructionAndState[] = [];
-        for(const instructionAndState of instructionsAndStatesFromPreviouslyClippedPaths.concat(instructionsAndStatesFromLatestClippedPath)){
-            result.push(instructionAndState);
-        }
-        return result;
     }
     public get initialState(): InfiniteCanvasState{
         return this.previouslyClippedPaths ? this.previouslyClippedPaths.initialState : this.latestClippedPath.initialState;
@@ -45,20 +36,15 @@ export class ClippedPaths {
         }
         return false;
     }
-    private createFromInstructionsAndStates(instructionsAndStates: InstructionAndState[]): StateChangingInstructionSet{
-        let result: InfiniteCanvasStatesAndInstructions;
-        for(const instructionAndStateFromThis of instructionsAndStates){
-            if(!result){
-                result = InfiniteCanvasStatesAndInstructions.create(instructionAndStateFromThis.state, instructionAndStateFromThis.instruction);
-            }else{
-                const toAdd: StateAndInstruction = StateAndInstruction.create(instructionAndStateFromThis.state, instructionAndStateFromThis.instruction);
-                toAdd.setInitialState(result.state);
-                result.add(toAdd);
-            }
+    public getInstructionToRecreate(): Instruction{
+        const instructionToRecreateLatest: Instruction = (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            this.latestClippedPath.execute(context, transformation);
+        };
+        if(this.previouslyClippedPaths){
+            const instructionToRecreatePrevious: Instruction = this.previouslyClippedPaths.getInstructionToRecreate();
+            const instructionToConvertToLatest: Instruction = this.previouslyClippedPaths.latestClippedPath.state.getInstructionToConvertToState(this.latestClippedPath.initialState);
+            return instructionSequence(instructionToRecreatePrevious, instructionToConvertToLatest, instructionToRecreateLatest);
         }
-        return result;
-    }
-    public recreate(): StateChangingInstructionSet{
-        return this.createFromInstructionsAndStates(this.getAllInstructionsAndStates());
+        return instructionToRecreateLatest;
     }
 }

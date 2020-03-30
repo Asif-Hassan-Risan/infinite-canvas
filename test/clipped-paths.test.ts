@@ -10,6 +10,7 @@ import { InstructionsWithPath } from "../src/instructions/instructions-with-path
 import { Point } from "../src/geometry/point";
 import { FakeViewboxInfinityProvider } from "./fake-viewbox-infinity-provider";
 import { FakePathInfinityProvider } from "./fake-path-infinity-provider";
+import { Instruction } from "../src/instructions/instruction";
 
 describe("a clipped paths", () => {
     let clippedPaths: ClippedPaths;
@@ -45,16 +46,14 @@ describe("a clipped paths", () => {
             });
 
             describe("and then the other is recreated, starting from the first", () => {
-                let recreation: InstructionSet;
+                let recreation: Instruction;
 
                 beforeEach(() => {
-                    recreation = otherOne.except(clippedPaths).recreate();
+                    recreation = otherOne.except(clippedPaths).getInstructionToRecreate();
                 });
 
                 it("then the recreation should contain the difference", () => {
-                    expect(logInstruction((context: CanvasRenderingContext2D, transformation: Transformation) => {
-                        recreation.execute(context, transformation);
-                    })).toMatchSnapshot();
+                    expect(logInstruction(recreation)).toMatchSnapshot();
                 });
             });
 
@@ -67,16 +66,14 @@ describe("a clipped paths", () => {
                 });
 
                 describe("and then the other is recreated, starting from the first", () => {
-                    let recreation: InstructionSet;
+                    let recreation: Instruction;
     
                     beforeEach(() => {
-                        recreation = otherOne.except(clippedPaths).recreate();
+                        recreation = otherOne.except(clippedPaths).getInstructionToRecreate();
                     });
     
                     it("then the recreation should contain the difference", () => {
-                        expect(logInstruction((context: CanvasRenderingContext2D, transformation: Transformation) => {
-                            recreation.execute(context, transformation);
-                        })).toMatchSnapshot();
+                        expect(logInstruction(recreation)).toMatchSnapshot();
                     });
                 });
             });
@@ -93,16 +90,14 @@ describe("a clipped paths", () => {
                 });
 
                 describe("and then the other is recreated, starting from the first", () => {
-                    let recreation: InstructionSet;
+                    let recreation: Instruction;
     
                     beforeEach(() => {
-                        recreation = otherOne.except(clippedPaths).recreate();
+                        recreation = otherOne.except(clippedPaths).getInstructionToRecreate();
                     });
     
                     it("then the recreation should contain the difference", () => {
-                        expect(logInstruction((context: CanvasRenderingContext2D, transformation: Transformation) => {
-                            recreation.execute(context, transformation);
-                        })).toMatchSnapshot();
+                        expect(logInstruction(recreation)).toMatchSnapshot();
                     });
                 });
             });
