@@ -1,7 +1,7 @@
-import { Instruction } from "../instruction";
 import { Position } from "../../geometry/position";
+import { InstructionUsingInfinity } from "../instruction-using-infinity";
 
 export interface PathInstructionBuilder{
-    getLineTo(position: Position): Instruction;
-    getMoveTo(): Instruction;
+    getLineTo(position: Position): InstructionUsingInfinity;
+    getMoveTo(): InstructionUsingInfinity;
 }

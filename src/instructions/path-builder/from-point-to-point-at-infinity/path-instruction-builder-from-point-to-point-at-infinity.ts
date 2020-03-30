@@ -1,18 +1,17 @@
 import { InfiniteCanvasPathInstructionBuilder } from "../infinite-canvas-path-instruction-builder";
 import { PathInstructionBuilder } from "../path-instruction-builder";
-import { ViewboxInfinity } from "../../../interfaces/viewbox-infinity";
 import { Point } from "../../../geometry/point";
 import { PointAtInfinity } from "../../../geometry/point-at-infinity";
 import {Position} from "../../../geometry/position";
-import { Instruction } from "../../instruction";
 import { isPointAtInfinity } from "../../../geometry/is-point-at-infinity";
 import { instructionSequence } from "../../../instruction-utils";
+import { InstructionUsingInfinity } from "../../instruction-using-infinity";
 
 export class PathInstructionBuilderFromPointToPointAtInfinity extends InfiniteCanvasPathInstructionBuilder implements PathInstructionBuilder{
-    constructor(infinity: ViewboxInfinity, private readonly initialPoint: Point, private readonly currentPosition: PointAtInfinity){
-        super(infinity);
+    constructor(private readonly initialPoint: Point, private readonly currentPosition: PointAtInfinity){
+        super();
     }
-    public getLineTo(position: Position): Instruction{
+    public getLineTo(position: Position): InstructionUsingInfinity{
         if(isPointAtInfinity(position)){
             if(position.direction.inSameDirectionAs(this.currentPosition.direction)){
                 return () => {};
@@ -24,7 +23,7 @@ export class PathInstructionBuilderFromPointToPointAtInfinity extends InfiniteCa
         }
         return instructionSequence(this.lineToInfinityFromPointInDirection(position, this.currentPosition.direction), this.lineTo(position));
     }
-    public getMoveTo(): Instruction{
+    public getMoveTo(): InstructionUsingInfinity{
         return this.moveTo(this.initialPoint);
     }
 }

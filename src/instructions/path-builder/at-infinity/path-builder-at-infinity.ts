@@ -1,6 +1,5 @@
 import { PathBuilder } from "../path-builder";
 import { PointAtInfinity } from "../../../geometry/point-at-infinity";
-import { ViewboxInfinity } from "../../../interfaces/viewbox-infinity";
 import {Position} from "../../../geometry/position";
 import { isPointAtInfinity } from "../../../geometry/is-point-at-infinity";
 import { PathBuilderProvider } from "../path-builder-provider";
@@ -8,14 +7,14 @@ import { Transformation } from "../../../transformation";
 import { PathInstructionBuilder } from "../path-instruction-builder";
 import { PathInstructionBuilderAtInfinity } from "./path-instruction-builder-at-infinity";
 import { InfiniteCanvasPathBuilder } from "../infinite-canvas-path-builder";
-import { PathInfinityProvider } from "../../../interfaces/path-infinity-provider";
+import { InstructionUsingInfinity } from "../../instruction-using-infinity";
 
 export class PathBuilderAtInfinity extends InfiniteCanvasPathBuilder implements PathBuilder{
-    constructor(private readonly pathBuilderProvider: PathBuilderProvider, infinityProvider: PathInfinityProvider, private readonly initialPosition: PointAtInfinity, private readonly _containsFinitePoint: boolean, private readonly positionsSoFar: PointAtInfinity[], public readonly currentPosition: PointAtInfinity){
-        super(infinityProvider);
+    constructor(private readonly pathBuilderProvider: PathBuilderProvider, private readonly instructionToGoAroundViewbox: InstructionUsingInfinity, private readonly initialPosition: PointAtInfinity, private readonly _containsFinitePoint: boolean, private readonly positionsSoFar: PointAtInfinity[], public readonly currentPosition: PointAtInfinity){
+        super();
     }
-    protected getInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder{
-        return new PathInstructionBuilderAtInfinity(infinity, this.initialPosition, this.infinityProvider, this._containsFinitePoint, this.positionsSoFar, this.currentPosition);
+    protected getInstructionBuilder(): PathInstructionBuilder{
+        return new PathInstructionBuilderAtInfinity(this.initialPosition, this.instructionToGoAroundViewbox, this._containsFinitePoint, this.positionsSoFar, this.currentPosition);
     }
     public canAddLineTo(position: Position): boolean{
         return !isPointAtInfinity(position) || !position.direction.isInOppositeDirectionAs(this.currentPosition.direction);
@@ -37,7 +36,7 @@ export class PathBuilderAtInfinity extends InfiniteCanvasPathBuilder implements 
     protected transform(transformation: Transformation): InfiniteCanvasPathBuilder{
         return new PathBuilderAtInfinity(
             this.pathBuilderProvider, 
-            this.infinityProvider,
+            this.instructionToGoAroundViewbox,
             transformation.applyToPointAtInfinity(this.initialPosition),
             this._containsFinitePoint,
             this.positionsSoFar.map(p => transformation.applyToPointAtInfinity(p)),

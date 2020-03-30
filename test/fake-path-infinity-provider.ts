@@ -9,7 +9,7 @@ export class FakePathInfinityProvider implements PathInfinityProvider{
         return new FakeViewboxInfinity();
     }
     getPathInstructionToGoAroundViewbox(): Instruction {
-        throw new Error("Method not implemented.");
+        return () => {};
     }
     addDrawnLineWidth(lineWidth: number): void {
     }

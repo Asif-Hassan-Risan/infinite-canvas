@@ -1,21 +1,19 @@
 import {Point} from "../../../geometry/point";
 import {PathBuilder} from "../path-builder";
 import {Position} from "../../../geometry/position";
-import {ViewboxInfinity} from "../../../interfaces/viewbox-infinity";
 import {isPointAtInfinity} from "../../../geometry/is-point-at-infinity";
 import { Transformation } from "../../../transformation";
 import { PathBuilderProvider } from "../path-builder-provider";
 import { PathInstructionBuilder } from "../path-instruction-builder";
 import { PathInstructionBuilderFromPointToPoint } from "./path-instruction-builder-from-point-to-point";
 import { InfiniteCanvasPathBuilder } from "../infinite-canvas-path-builder";
-import { PathInfinityProvider } from "../../../interfaces/path-infinity-provider";
 
 export class PathBuilderFromPointToPoint extends InfiniteCanvasPathBuilder implements PathBuilder{
-    constructor(private readonly pathBuilderProvider: PathBuilderProvider, infinityProvider: PathInfinityProvider, private readonly initialPoint: Point, public readonly currentPosition: Point) {
-        super(infinityProvider);
+    constructor(private readonly pathBuilderProvider: PathBuilderProvider, private readonly initialPoint: Point, public readonly currentPosition: Point) {
+        super();
     }
-    protected getInstructionBuilder(infinity: ViewboxInfinity): PathInstructionBuilder{
-        return new PathInstructionBuilderFromPointToPoint(infinity, this.initialPoint, this.currentPosition);
+    protected getInstructionBuilder(): PathInstructionBuilder{
+        return new PathInstructionBuilderFromPointToPoint(this.initialPoint, this.currentPosition);
     }
     public canAddLineTo(position: Position): boolean{
         return true;
@@ -33,6 +31,6 @@ export class PathBuilderFromPointToPoint extends InfiniteCanvasPathBuilder imple
         return this.pathBuilderProvider.fromPointToPoint(this.initialPoint, position);
     }
     protected transform(transformation: Transformation): InfiniteCanvasPathBuilder{
-        return new PathBuilderFromPointToPoint(this.pathBuilderProvider, this.infinityProvider, transformation.apply(this.initialPoint), transformation.apply(this.currentPosition));
+        return new PathBuilderFromPointToPoint(this.pathBuilderProvider, transformation.apply(this.initialPoint), transformation.apply(this.currentPosition));
     }
 }

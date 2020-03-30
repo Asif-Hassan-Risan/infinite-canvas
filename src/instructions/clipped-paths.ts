@@ -43,7 +43,11 @@ export class ClippedPaths {
         if(this.previouslyClippedPaths){
             const instructionToRecreatePrevious: Instruction = this.previouslyClippedPaths.getInstructionToRecreate();
             const instructionToConvertToLatest: Instruction = this.previouslyClippedPaths.latestClippedPath.state.getInstructionToConvertToState(this.latestClippedPath.initialState);
-            return instructionSequence(instructionToRecreatePrevious, instructionToConvertToLatest, instructionToRecreateLatest);
+            return (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                instructionToRecreatePrevious(context, transformation);
+                instructionToConvertToLatest(context, transformation);
+                instructionToRecreateLatest(context, transformation);
+            };
         }
         return instructionToRecreateLatest;
     }
