@@ -1,0 +1,25 @@
+<html>
+  <head>
+	  <meta 
+	name='viewport' 
+	content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'/>
+	  <script type="text/javascript" src="infinite-canvas.js"></script>
+	  <link rel="stylesheet" type="text/css" href="fullscreen.css">
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      (function(){
+        var canvasEl = document.getElementById("canvas");
+        var clientRect = canvasEl.getBoundingClientRect();
+        canvasEl.setAttribute("width", clientRect.width);
+        canvasEl.setAttribute("height", clientRect.height);
+        var infCanvas = new InfiniteCanvas(canvasEl);
+        infCanvas.greedyGestureHandling = true;
+        var ctx = infCanvas.getContext("2d");
+        ctx.fillStyle = "#00f";
+        ctx.fillRect(50, 50, 100, 100);
+      })();
+    </script>
+  </body>
+</html>
