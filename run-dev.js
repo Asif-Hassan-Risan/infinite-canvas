@@ -1,3 +1,7 @@
+const yargs = require('yargs');
+
+const argv = yargs.option('port', {type: 'number'}).argv;
+const port = argv.port || 8080;
 const fs = require("fs");
 const { exec } = require('child_process');
 var static = require('node-static');
@@ -37,8 +41,8 @@ var serveFiles = function(){
 	var file = new(static.Server)('./dist', {cache: 0});
 	http.createServer(function (req, res) {
 		file.serve(req, res);
-	}).listen(3000);
-	console.log("listening on port 8080...");
+	}).listen(port);
+	console.log("listening on port "+port+"...");
 };
 
 var File = function(fileName){
