@@ -100,11 +100,17 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public currentSubpathIsClosable(): boolean{
 		return this.instructionSet.currentSubpathIsClosable();
 	}
-	public drawPath(instruction: Instruction): void{
-		this.instructionSet.drawPath(instruction);
+	public fillPath(instruction: Instruction): void{
+		this.instructionSet.fillPath(instruction);
 	}
-	public drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
-		this.instructionSet.drawRect(x, y, w, h, instruction);
+	public strokePath(instruction: Instruction): void{
+		this.instructionSet.strokePath(instruction);
+	}
+	public fillRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+		this.instructionSet.fillRect(x, y, w, h, instruction);
+	}
+	public strokeRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+		this.instructionSet.strokeRect(x, y, w, h, instruction);
 	}
 	private getFiniteRectangle(x: number, y: number, width: number, height: number, infinity: ViewboxInfinity): (transformation: Transformation) => Rectangle{
 		const xStartDirection: Point = x > 0 ? new Point(1, 0) : new Point(-1, 0);

@@ -9,7 +9,7 @@ import { FakePathInfinityProvider } from "./fake-path-infinity-provider";
 import { FakeViewboxInfinityProvider } from "./fake-viewbox-infinity-provider";
 
 function drawAndLog(instructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath, state: InfiniteCanvasState): string[]{
-    instructionsWithPath.drawPath((context: CanvasRenderingContext2D) => {context.fill();}, state);
+    instructionsWithPath.fillPath((context: CanvasRenderingContext2D) => {context.fill();}, state);
     return logWithState(instructionsWithPath);
 }
 
@@ -51,7 +51,7 @@ describe("a set of instructions that is also about a path", () => {
                 describe("and then draws the path and receives another change of state on the same property", () => {
 
                     beforeEach(() => {
-                        instructionsWithPath.drawPath((context: CanvasRenderingContext2D) => {
+                        instructionsWithPath.fillPath((context: CanvasRenderingContext2D) => {
                             context.fill();
                         }, currentState);
                         currentState = currentState.withCurrentState(fillStyle.changeInstanceValue(currentState.current, "#ff0"));
@@ -103,7 +103,7 @@ describe("a set of instructions that describe a rectangle path that is drawn", (
         currentState = defaultState;
         instructionsWithPath = InstructionsWithPath.create(currentState, new FakeViewboxInfinityProvider(), new FakePathInfinityProvider());
         instructionsWithPath.rect(0, 0, 1, 1, currentState);
-        instructionsWithPath.drawPath((context: CanvasRenderingContext2D) => {
+        instructionsWithPath.fillPath((context: CanvasRenderingContext2D) => {
             context.fill();
         }, currentState)
     });

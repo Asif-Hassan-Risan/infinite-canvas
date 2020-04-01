@@ -46,7 +46,17 @@ export class InfiniteCanvasInstructionSet{
     public currentSubpathIsClosable(): boolean{
         return !this.currentInstructionsWithPath || this.currentInstructionsWithPath.currentSubpathIsClosable();
     }
-    public drawPath(instruction: Instruction): void{
+    public fillPath(instruction: Instruction): void{
+        this.drawPath(instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.fillPath(_instruction, state);
+        });
+    }
+    public strokePath(instruction: Instruction): void{
+        this.drawPath(instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.strokePath(_instruction, state);
+        });
+    }
+    private drawPath(instruction: Instruction, drawPath: (path: StateChangingInstructionSetWithAreaAndCurrentPath, instruction: Instruction, state: InfiniteCanvasState) => void): void{
         if(!this.currentInstructionsWithPath){
             return;
         }
@@ -56,7 +66,7 @@ export class InfiniteCanvasInstructionSet{
         }
         this.state = this.state.currentlyTransformed(stateIsTransformable);
         const recreatedPath: StateChangingInstructionSetWithAreaAndCurrentPath = this.currentInstructionsWithPath.recreatePath();
-        this.currentInstructionsWithPath.drawPath(instruction, this.state);
+        drawPath(this.currentInstructionsWithPath, instruction, this.state);
         this.previousInstructionsWithPath.add(this.currentInstructionsWithPath);
         recreatedPath.setInitialStateWithClippedPaths(this.previousInstructionsWithPath.state);
         this.currentInstructionsWithPath = recreatedPath;
@@ -64,7 +74,19 @@ export class InfiniteCanvasInstructionSet{
         this.onChange();
     }
 
-    public drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+    public strokeRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+        this.drawRect(x, y, w, h, instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.strokePath(_instruction, state);
+        });
+    }
+
+    public fillRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+        this.drawRect(x, y, w, h, instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.fillPath(_instruction, state);
+        });
+    }
+
+    private drawRect(x: number, y: number, w: number, h: number, instruction: Instruction, drawPath: (path: StateChangingInstructionSetWithAreaAndCurrentPath, instruction: Instruction, state: InfiniteCanvasState) => void): void{
         const stateIsTransformable: boolean = this.state.current.isTransformable();
         if(!stateIsTransformable){
             instruction = transformInstructionRelatively(instruction);
@@ -72,7 +94,7 @@ export class InfiniteCanvasInstructionSet{
         const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
         const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityProvider, this.infinityProvider.getForPath());
         pathToDraw.rect(x, y, w, h, stateToDrawWith);
-        pathToDraw.drawPath(instruction, stateToDrawWith);
+        drawPath(pathToDraw, instruction, stateToDrawWith);
         this.drawBeforeCurrentPath(pathToDraw);
         this.onChange();
 	}

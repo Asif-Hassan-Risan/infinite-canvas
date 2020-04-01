@@ -56,8 +56,14 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         }
         return true;
     }
-    public drawPath(instruction: Instruction, state: InfiniteCanvasState): void{
+    public fillPath(instruction: Instruction, state: InfiniteCanvasState): void{
+        this.drawPath(instruction, state);
+    }
+    public strokePath(instruction: Instruction, state: InfiniteCanvasState): void{
         this.pathInfinityProvider.addDrawnLineWidth(state.current.lineWidth * state.current.transformation.getMaximumLineWidthScale());
+        this.drawPath(instruction, state);
+    }
+    private drawPath(instruction: Instruction, state: InfiniteCanvasState): void{ 
         if(this.added.length === 0){
             return;
         }
