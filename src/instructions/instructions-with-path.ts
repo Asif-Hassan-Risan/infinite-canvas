@@ -31,13 +31,6 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         }
         return this.state.current.clippingRegion.intersectWith(this.area);
     }
-    private copy(): InstructionsWithPath{
-        const result: InstructionsWithPath = new InstructionsWithPath(this._initiallyWithState.copy(), this.viewboxInfinityProvider, this.viewboxInfinityProvider.getForPath());
-        for(const added of this.added){
-            result.add(added.copy());
-        }
-        return result;
-    }
     public containsFinitePoint(): boolean{
         for(const subpath of this.added){
             if(subpath.containsFinitePoint()){
@@ -72,7 +65,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         const newlyDrawnArea: Area = this.getCurrentlyDrawableArea();
         this.drawnArea = newlyDrawnArea;
         const toAdd: StateAndInstruction = StateAndInstruction.create(state, instruction);
-        currentSubpath.addDrawingInstruction(toAdd);
+        currentSubpath.addInstruction(toAdd);
     }
     public clipPath(instruction: Instruction, state: InfiniteCanvasState): void{
         if(this.added.length === 0){
@@ -80,7 +73,7 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         }
         const currentSubpath: InstructionsWithSubpath = this.added[this.added.length - 1];
         const toAdd: StateAndInstruction = StateAndInstruction.create(state, instruction);
-        currentSubpath.addClippingInstruction(toAdd);
+        currentSubpath.addInstruction(toAdd);
         const clippedPath: StateChangingInstructionSetWithAreaAndCurrentPath = this.recreatePath();
         this.addClippedPath(clippedPath);
     }
@@ -210,7 +203,11 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         return previouslyClipped ? this.area.intersectWith(previouslyClipped): this.area;
     }
     public recreatePath(): StateChangingInstructionSetWithAreaAndCurrentPath{
-        const result: InstructionsWithPath = this.copy();
+        const newInfinityProvider: PathInfinityProvider = this.viewboxInfinityProvider.getForPath();
+        const result: InstructionsWithPath = new InstructionsWithPath(this._initiallyWithState.copy(), this.viewboxInfinityProvider, newInfinityProvider);
+        for(const added of this.added){
+            result.add(added.copy(newInfinityProvider));
+        }
         result.areaBuilder = this.areaBuilder.copy();
         result.setInitialState(result.stateOfFirstInstruction);
         return result;

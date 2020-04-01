@@ -5,6 +5,7 @@ import { InstructionUsingInfinity } from "./instruction-using-infinity";
 import { Transformation } from "../transformation";
 import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
 import { CopyableInstructionSet } from "../interfaces/copyable-instruction-set";
+import { PathInfinityProvider } from "../interfaces/path-infinity-provider";
 
 export class PathInstructionWithState extends InstructionWithState implements CopyableInstructionSet{
     constructor(initialState: InfiniteCanvasState, private infinity: ViewboxInfinity, state: InfiniteCanvasState, private instruction: InstructionUsingInfinity, stateConversion: Instruction){
@@ -17,8 +18,8 @@ export class PathInstructionWithState extends InstructionWithState implements Co
     public replaceInstruction(instruction: InstructionUsingInfinity): void{
         this.instruction = instruction;
     }
-    public copy(): PathInstructionWithState{
-        return new PathInstructionWithState(this.initialState, this.infinity, this.state, this.instruction, this.stateConversion);
+    public copy(pathInfinityProvider: PathInfinityProvider): PathInstructionWithState{
+        return new PathInstructionWithState(this.initialState, pathInfinityProvider.getInfinity(this.state), this.state, this.instruction, this.stateConversion);
     }
     public static create(initialState: InfiniteCanvasState, infinity: ViewboxInfinity, initialInstruction: InstructionUsingInfinity): PathInstructionWithState{
         return new PathInstructionWithState(initialState, infinity, initialState, initialInstruction, () => {});

@@ -19,23 +19,19 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Co
     constructor(private _initiallyWithState: PathInstructionWithState, private readonly pathInfinityProvider: PathInfinityProvider, private pathInstructionBuilder: PathInstructionBuilder) {
         super(_initiallyWithState);
     }
-    public addDrawingInstruction(drawingInstruction: StateAndInstruction): void{
-        drawingInstruction.setInitialState(this.state);
-        this.add(drawingInstruction);
-    }
-    public addClippingInstruction(clippingInstruction: StateAndInstruction): void{
-        clippingInstruction.setInitialState(this.state);
-        this.add(clippingInstruction);
+    public addInstruction(instruction: StateAndInstruction): void{
+        instruction.setInitialState(this.state);
+        this.add(instruction);
     }
     public closePath(): void{
         const toAdd: StateAndInstruction = StateAndInstruction.create(this.state, (context: CanvasRenderingContext2D) => {context.closePath();});
         toAdd.setInitialState(this.state);
         this.add(toAdd);
     }
-    public copy(): InstructionsWithSubpath{
-        const result: InstructionsWithSubpath = new InstructionsWithSubpath(this._initiallyWithState.copy(), this.pathInfinityProvider, this.pathInstructionBuilder);
+    public copy(pathInfinityProvider: PathInfinityProvider): InstructionsWithSubpath{
+        const result: InstructionsWithSubpath = new InstructionsWithSubpath(this._initiallyWithState.copy(pathInfinityProvider), pathInfinityProvider, this.pathInstructionBuilder);
         for(const added of this.added){
-            result.add(added.copy());
+            result.add(added.copy(pathInfinityProvider));
         }
         return result;
     }

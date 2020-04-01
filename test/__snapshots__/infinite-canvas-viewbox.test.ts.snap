@@ -2011,6 +2011,31 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that creates a rect that extends to infinity and strokes it and then changes the line width and strokes the rectangle again should have taken a different line width into account this time 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(205.65685424949237,50)",
+  "context.lineTo(205.65685424949237,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.lineWidth = 4",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that creates a rect that extends to infinity and strokes it should have taken the current line width into account 1`] = `
 Array [
   "context.restore()",

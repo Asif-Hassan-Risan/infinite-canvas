@@ -3080,9 +3080,8 @@ describe("an infinite canvas context", () => {
 				infiniteContext.stroke();
 			});
 
-			xit("should have taken a different line width into account this time", () => {
-				console.log(contextMock.getLog());
-				//expect(contextMock.getLog()).toMatchSnapshot();
+			it("should have taken a different line width into account this time", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
 			});
 		});
 	});
