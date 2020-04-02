@@ -11,7 +11,6 @@ export class InfiniteCanvasRect implements CanvasRect{
         this.viewBox.fillRect(x, y, w, h, instruction);
     }
     public strokeRect(x: number, y: number, w: number, h: number): void{
-        let instruction: Instruction = (context: CanvasRenderingContext2D) => context.stroke();
-        this.viewBox.strokeRect(x, y, w, h, instruction);
+        this.viewBox.strokeRect(x, y, w, h);
     }
 }

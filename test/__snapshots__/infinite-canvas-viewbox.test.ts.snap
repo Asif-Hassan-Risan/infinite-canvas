@@ -2487,6 +2487,8 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that fills a rect without area should do nothing 1`] = `Array []`;
+
 exports[`an infinite canvas context that fills a rect without bottom edge with negative infinite height and a finite width should fill a rect that extends to the top and bottom of the viewbox 1`] = `
 Array [
   "context.restore()",
@@ -3630,6 +3632,10 @@ Array [
   "context.stroke()",
 ]
 `;
+
+exports[`an infinite canvas context that strokes a rect without area should do nothing 1`] = `Array []`;
+
+exports[`an infinite canvas context that strokes the entire plane should do nothing 1`] = `Array []`;
 
 exports[`an infinite canvas context that takes text and fills it and clears it should forget the instructions 1`] = `
 Array [

@@ -3110,4 +3110,40 @@ describe("an infinite canvas context", () => {
 			});
 		});
 	});
+
+	describe("that fills a rect without area", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(-Infinity, 50, 50, 50);
+		});
+
+		it("should do nothing", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that strokes a rect without area", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.strokeRect(-Infinity, 50, 50, 50);
+		});
+
+		it("should do nothing", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that strokes the entire plane", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.strokeRect(-Infinity, -Infinity, Infinity, Infinity);
+		});
+
+		it("should do nothing", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
 })

@@ -51,8 +51,19 @@ export class InfiniteCanvasInstructionSet{
             path.fillPath(_instruction, state);
         });
     }
-    public strokePath(instruction: Instruction): void{
-        this.drawPath(instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+    public strokePath(): void{
+        this.drawPath((context: CanvasRenderingContext2D) => {context.stroke();}, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.strokePath(_instruction, state);
+        });
+    }
+    public fillRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+        this.drawRect(x, y, w, h, instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.fillPath(_instruction, state);
+        });
+    }
+
+    public strokeRect(x: number, y: number, w: number, h: number): void{
+        this.drawRect(x, y, w, h, (context: CanvasRenderingContext2D) => {context.stroke();}, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
             path.strokePath(_instruction, state);
         });
     }
@@ -72,18 +83,6 @@ export class InfiniteCanvasInstructionSet{
         this.currentInstructionsWithPath = recreatedPath;
         this.setInstructionToRestoreState();
         this.onChange();
-    }
-
-    public strokeRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
-        this.drawRect(x, y, w, h, instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
-            path.strokePath(_instruction, state);
-        });
-    }
-
-    public fillRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
-        this.drawRect(x, y, w, h, instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
-            path.fillPath(_instruction, state);
-        });
     }
 
     private drawRect(x: number, y: number, w: number, h: number, instruction: Instruction, drawPath: (path: StateChangingInstructionSetWithAreaAndCurrentPath, instruction: Instruction, state: InfiniteCanvasState) => void): void{
