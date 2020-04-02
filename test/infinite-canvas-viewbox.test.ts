@@ -3172,4 +3172,21 @@ describe("an infinite canvas context", () => {
 			expect(contextMock.getLog()).toMatchSnapshot();
 		});
 	});
+
+	describe("that strokes a path using a line dash", () => {
+
+		beforeEach(() => {
+			infiniteContext.setLineDash([3, 2]);
+			infiniteContext.beginPath();
+			infiniteContext.moveTo(100, -50);
+			infiniteContext.lineToInfinityInDirection(0, -1);
+			infiniteContext.lineTo(50, 100);
+			contextMock.clear();
+			infiniteContext.stroke();
+		});
+
+		xit("should draw a path whose length is a multiple of the line dash period", () => {
+			console.log(contextMock.getLog());
+		});
+	});
 })
