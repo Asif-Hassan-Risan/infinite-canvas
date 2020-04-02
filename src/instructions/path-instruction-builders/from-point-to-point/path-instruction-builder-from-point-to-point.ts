@@ -21,7 +21,7 @@ export class PathInstructionBuilderFromPointToPoint extends InfiniteCanvasPathIn
             if(shape.currentPosition.minus(shape.initialPoint).cross(position.direction) === 0){
                 return lineToInfinityFromCurrent;
             }
-            const lineToInfinityFromInitial: InstructionUsingInfinity = this.lineToInfinityFromPointInDirection(shape.initialPoint, position.direction);
+            const lineToInfinityFromInitial: InstructionUsingInfinity = this.lineFromInfinityFromPointToInfinityFromPoint(shape.currentPosition, shape.initialPoint, position.direction);
             return instructionSequence(lineToInfinityFromCurrent, lineToInfinityFromInitial);
         }
         return this.lineTo(position);

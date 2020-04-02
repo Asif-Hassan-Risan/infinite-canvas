@@ -19,13 +19,13 @@ export class PathInstructionBuilderFromPointAtInfinityToPointAtInfinity extends 
         return instructionSequence(
             this.moveToInfinityFromPointInDirection(shape.lastFinitePoint, shape.currentPosition.direction),
             this.lineToInfinityFromInfinityFromPoint(shape.lastFinitePoint, shape.currentPosition.direction, shape.initialPosition.direction),
-            this.lineToInfinityFromPointInDirection(shape.firstFinitePoint, shape.initialPosition.direction));
+            this.lineFromInfinityFromPointToInfinityFromPoint(shape.lastFinitePoint, shape.firstFinitePoint, shape.initialPosition.direction));
     }
     protected getInstructionToExtendShapeWithLineTo(shape: FromPointAtInfinityToPointAtInfinity, position: Position): InstructionUsingInfinity{
         if(isPointAtInfinity(position)){
             return this.lineToInfinityFromInfinityFromPoint(shape.lastFinitePoint, shape.currentPosition.direction, position.direction);
         }
-        return instructionSequence(this.lineToInfinityFromPointInDirection(position, shape.currentPosition.direction), this.lineTo(position));
+        return instructionSequence(this.lineFromInfinityFromPointToInfinityFromPoint(this.shape.lastFinitePoint, position, shape.currentPosition.direction), this.lineTo(position));
     }
     public containsFinitePoint(): boolean{
         return true;

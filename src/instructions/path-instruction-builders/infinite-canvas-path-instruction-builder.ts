@@ -25,6 +25,13 @@ export abstract class InfiniteCanvasPathInstructionBuilder<TPathShape extends Pa
         };
     }
 
+    protected lineFromInfinityFromPointToInfinityFromPoint(point1: Point, point2: Point, direction: Point): InstructionUsingInfinity{
+        return (context: CanvasRenderingContext2D, transformation: Transformation, infinity: ViewboxInfinity) => {
+            const {x, y} = infinity.getInfinityFromPointInDirection(point2, direction);
+            context.lineTo(x, y);
+        };
+    }
+
     protected lineToInfinityFromPointInDirection(point: Point, direction: Point): InstructionUsingInfinity{
         return (context: CanvasRenderingContext2D, transformation: Transformation, infinity: ViewboxInfinity) => {
             const {x, y} = infinity.getInfinityFromPointInDirection(point, direction);

@@ -17,7 +17,7 @@ export class PathInstructionBuilderFromPointAtInfinityToPoint extends InfiniteCa
         if(shape.currentPosition.equals(shape.firstFinitePoint)){
             return moveToInfinityFromCurrentPosition;
         }
-        const lineToInfinityFromFirstFinitePoint: InstructionUsingInfinity = this.lineToInfinityFromPointInDirection(shape.firstFinitePoint, shape.initialPosition.direction);
+        const lineToInfinityFromFirstFinitePoint: InstructionUsingInfinity = this.lineFromInfinityFromPointToInfinityFromPoint(shape.currentPosition, shape.firstFinitePoint, shape.initialPosition.direction);
         return instructionSequence(moveToInfinityFromCurrentPosition, lineToInfinityFromFirstFinitePoint);
     }
     protected getInstructionToExtendShapeWithLineTo(shape: FromPointAtInfinityToPoint, position: Position): InstructionUsingInfinity{

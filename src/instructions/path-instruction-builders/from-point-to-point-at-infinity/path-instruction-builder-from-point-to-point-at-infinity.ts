@@ -20,12 +20,9 @@ export class PathInstructionBuilderFromPointToPointAtInfinity extends InfiniteCa
             if(position.direction.inSameDirectionAs(shape.currentPosition.direction)){
                 return () => {};
             }
-            if(position.direction.cross(shape.currentPosition.direction) === 0){
-                return this.lineToInfinityFromPointInDirection(shape.initialPoint, position.direction);
-            }
             return this.lineToInfinityFromInfinityFromPoint(shape.initialPoint, shape.currentPosition.direction, position.direction);
         }
-        return instructionSequence(this.lineToInfinityFromPointInDirection(position, shape.currentPosition.direction), this.lineTo(position));
+        return instructionSequence(this.lineFromInfinityFromPointToInfinityFromPoint(this.shape.initialPoint, position, shape.currentPosition.direction), this.lineTo(position));
     }
     public canAddLineTo(position: Position): boolean{
         return !isPointAtInfinity(position) || !position.direction.isInOppositeDirectionAs(this.shape.currentPosition.direction);
