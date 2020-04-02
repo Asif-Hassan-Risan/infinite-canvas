@@ -1,0 +1,72 @@
+<html>
+  <head>
+      <title>The Solar System to Scale</title>
+	  <meta 
+	name='viewport' 
+	content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'/>
+	  <script type="text/javascript" src="infinite-canvas.js"></script>
+	  <link rel="stylesheet" type="text/css" href="solarsystem.css">
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      (function(){
+        var canvasEl = document.getElementById("canvas");
+        var clientRect = canvasEl.getBoundingClientRect();
+        canvasEl.setAttribute("width", clientRect.width);
+        canvasEl.setAttribute("height", clientRect.height);
+        var infCanvas = new InfiniteCanvas(canvasEl);
+        infCanvas.greedyGestureHandling = true;
+        var ctx = infCanvas.getContext("2d");
+        
+        function fillCircle(x, y, radius){
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        var Planet = function(radius, distance, name){
+            this.radius = radius;
+            this.distance = distance;
+            this.name = name;
+        };
+        Planet.prototype.draw = function(){
+            ctx.fillStyle = "rgba(255,255,255,0.05)";
+            fillCircle(this.distance, 0, this.radius * 1000);
+            ctx.fillStyle = "#ff0";
+            fillCircle(this.distance, 0, this.radius);
+            ctx.fillText(this.name, this.distance, this.radius * 2 + 5)
+        };
+        var planets = [
+            new Planet(0.35, 8326, "mercury"),
+            new Planet(0.87, 15459, "venus"),
+            new Planet(0.91, 21499, "earth"),
+            new Planet(0.48, 31903, "mars"),
+            new Planet(10.05, 111771, "jupiter"),
+            new Planet(8.37, 206182, "saturn"),
+            new Planet(3.65, 412796, "uranus"),
+            new Planet(3.54, 1095327, "neptune"),
+            ];
+
+        var sunRadius = 100;
+
+        ctx.font = "5px Verdana";
+        ctx.fillRect(-Infinity, -Infinity, Infinity, Infinity);
+        ctx.translate(200, 200);
+        ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
+        ctx.beginPath();
+        ctx.moveToInfinityInDirection(1, 0);
+        ctx.lineTo(0, sunRadius);
+        ctx.lineTo(0, -sunRadius);
+        ctx.lineToInfinityInDirection(1, 0);
+        ctx.fill();
+        ctx.fillStyle = "#ff0";
+        fillCircle(0, 0, sunRadius);
+        ctx.fillText("sun", 0, 110)
+
+        for(var i=0; i < planets.length; i++){
+            planets[i].draw();
+        }
+      })();
+    </script>
+  </body>
+</html>
