@@ -60,7 +60,8 @@ export class InstructionsWithPath extends StateChangingInstructionSequence<Instr
         this.drawPath(instruction, state);
     }
     public strokePath(instruction: Instruction, state: InfiniteCanvasState): void{
-        this.pathInfinityProvider.addDrawnLineWidth(state.current.lineWidth * state.current.transformation.getMaximumLineWidthScale());
+        this.pathInfinityProvider.addDrawnLineWidth(state.current.getMaximumLineWidth());
+        this.pathInfinityProvider.addLineDashPeriod(state.current.getLineDashPeriod());
         this.drawPath(instruction, state);
     }
     private drawPath(instruction: Instruction, state: InfiniteCanvasState): void{ 

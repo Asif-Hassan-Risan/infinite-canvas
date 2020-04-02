@@ -13,4 +13,6 @@ export class FakePathInfinityProvider implements PathInfinityProvider{
     }
     addDrawnLineWidth(lineWidth: number): void {
     }
+    addLineDashPeriod(lineDashPeriod: number): void {
+    }
 }

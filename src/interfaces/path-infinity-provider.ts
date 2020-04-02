@@ -5,5 +5,6 @@ import { Instruction } from "../instructions/instruction";
 export interface PathInfinityProvider{
     getInfinity(state: InfiniteCanvasState): ViewboxInfinity;
     getPathInstructionToGoAroundViewbox(): Instruction;
-    addDrawnLineWidth(lineWidth: number): void
+    addDrawnLineWidth(lineWidth: number): void;
+    addLineDashPeriod(lineDashPeriod: number): void;
 }

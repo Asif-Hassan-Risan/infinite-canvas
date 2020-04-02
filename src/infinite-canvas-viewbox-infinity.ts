@@ -4,11 +4,25 @@ import {Transformation} from "./transformation";
 import {ConvexPolygon} from "./areas/polygons/convex-polygon";
 
 export class InfiniteCanvasViewboxInfinity implements ViewboxInfinity{
-    constructor(private readonly getTransformedViewbox: () => ConvexPolygon, private readonly getViewBoxTransformation: () => Transformation) {
+    constructor(private readonly getTransformedViewbox: () => ConvexPolygon, private readonly getViewBoxTransformation: () => Transformation, private readonly getLineDashPeriod: () => number) {
     }
     public getInfinityFromPointInDirection(fromPoint: Point, direction: Point): Point{
-        const pointInFront: Point = this.getTransformedViewbox().getPointInFrontInDirection(fromPoint, direction);
+        let pointInFront: Point = this.getTransformedViewbox().getPointInFrontInDirection(fromPoint, direction);
+        pointInFront = this.getEndOfLineDashPeriod(fromPoint, pointInFront, this.getLineDashPeriod());
         return this.getViewBoxTransformation().apply(pointInFront);
+    }
+    private getEndOfLineDashPeriod(fromPoint: Point, toPoint: Point, period: number){
+        if(period === 0){
+            return toPoint;
+        }
+        const length: number = toPoint.minus(fromPoint).mod();
+        const nrOfPeriods: number = (length / period) | 0;
+        const distanceLeft: number = length - period * nrOfPeriods === 0 ? 0 : (nrOfPeriods + 1) * period - length;
+        if(distanceLeft === 0){
+            return toPoint;
+        }
+        const direction: Point = toPoint.minus(fromPoint);
+        return toPoint.plus(direction.scale(distanceLeft / direction.mod()));
     }
     public getInfinitiesFromDirectionFromPointToDirection(point: Point, direction1: Point, direction2: Point): Point[]{
         const viewBoxTransformation: Transformation = this.getViewBoxTransformation();
