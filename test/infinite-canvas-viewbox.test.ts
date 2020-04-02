@@ -2800,6 +2800,19 @@ describe("an infinite canvas context", () => {
 				infiniteContext.lineTo(50, 100);
 			});
 
+			describe("and then strokes the line using a line dash", () => {
+
+				beforeEach(() => {
+					infiniteContext.setLineDash([3, 2]);
+					contextMock.clear();
+					infiniteContext.stroke();
+				});
+
+				it("should draw a line whose length is a multiple of the line dash period", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+
 			describe("and then adds a line to the opposite point at infinity", () => {
 
 				beforeEach(() => {
@@ -2823,6 +2836,19 @@ describe("an infinite canvas context", () => {
 
 				beforeEach(() => {
 					infiniteContext.lineToInfinityInDirection(0, 1);
+				});
+
+				describe("and then strokes the path using a line dash", () => {
+
+					beforeEach(() => {
+						infiniteContext.setLineDash([3, 2]);
+						contextMock.clear();
+						infiniteContext.stroke();
+					});
+
+					it("should draw a path whose length is a multiple of the line dash period", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
 				});
 
 				describe("and then adds a line to yet a different point at infinity", () => {

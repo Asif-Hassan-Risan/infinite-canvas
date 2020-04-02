@@ -817,6 +817,26 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to a different point at infinity and then strokes the path using a line dash should draw a path whose length is a multiple of the line dash period 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(50,205)",
+  "context.lineTo(201.4142135623731,201.4142135623731)",
+  "context.lineTo(205,100)",
+  "context.lineTo(206.03287328844996,100)",
+  "context.lineTo(205,100)",
+  "context.lineTo(205,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,205)",
+  "context.setLineDash([3,2])",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to the opposite point at infinity and then strokes should have added a moveTo 1`] = `
 Array [
   "context.restore()",
@@ -860,6 +880,20 @@ Array [
   "context.beginPath()",
   "context.moveTo(201.4142135623731,100)",
   "context.lineTo(50,100)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then strokes the line using a line dash should draw a line whose length is a multiple of the line dash period 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(205,100)",
+  "context.lineTo(50,100)",
+  "context.setLineDash([3,2])",
   "context.lineWidth = 1",
   "context.stroke()",
 ]
