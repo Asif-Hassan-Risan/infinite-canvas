@@ -30,13 +30,32 @@
             this.name = name;
         };
         Planet.prototype.draw = function(){
-            ctx.fillStyle = "rgba(255,255,255,0.05)";
-            fillCircle(this.distance, 0, this.radius * 1000);
+            //ctx.fillStyle = "rgba(255,255,255,0.05)";
+            //fillCircle(this.distance, 0, this.radius * 1000);
             ctx.fillStyle = "#ff0";
             fillCircle(this.distance, 0, this.radius);
-            ctx.fillText(this.name, this.distance, this.radius * 2 + 5)
+            ctx.save();
+            ctx.translate(this.distance, this.radius + 250);
+            ctx.scale(50, 50);
+            ctx.beginPath();
+            ctx.moveTo(-10, 10);
+            ctx.lineTo(0, 0);
+            ctx.lineTo(10, 10);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, 100);
+            ctx.stroke();
+            ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
+            ctx.font = "30px Verdana";
+            ctx.fillText(this.name, -5, 130);
+            ctx.restore();
+            //ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
+            //ctx.font = "100px Verdana";
+            //ctx.fillText(this.name, this.distance, 200)
         };
+        var sunRadius = 100;
+
         var planets = [
+            new Planet(sunRadius, 0, "sun"),
             new Planet(0.35, 8326, "mercury"),
             new Planet(0.87, 15459, "venus"),
             new Planet(0.91, 21499, "earth"),
@@ -47,25 +66,50 @@
             new Planet(3.54, 1095327, "neptune"),
             ];
 
-        var sunRadius = 100;
-
-        ctx.font = "5px Verdana";
-        ctx.fillRect(-Infinity, -Infinity, Infinity, Infinity);
+        var lightMillisecond = 0.0431;
+        var lightBeamLength = lightMillisecond * 1000 * 60;
+        var scale = 6955;
+        
+        var gradient = ctx.createLinearGradient(-lightBeamLength, 0, 0, 0);
+        gradient.addColorStop(0, "#000");
+        gradient.addColorStop(1, "#ff0");
+        ctx.font = "6px Verdana";
         ctx.translate(200, 200);
-        ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
-        ctx.beginPath();
-        ctx.moveToInfinityInDirection(1, 0);
-        ctx.lineTo(0, sunRadius);
-        ctx.lineTo(0, -sunRadius);
-        ctx.lineToInfinityInDirection(1, 0);
-        ctx.fill();
-        ctx.fillStyle = "#ff0";
-        fillCircle(0, 0, sunRadius);
-        ctx.fillText("sun", 0, 110)
+        ctx.strokeStyle = "rgba(255, 255, 0, 0.2)";
+        var startDate = new Date();
+        function draw(){
+            ctx.clearRect(-Infinity, -Infinity, Infinity, Infinity);
+            ctx.fillStyle = "#000";
+            ctx.fillRect(-Infinity, -Infinity, Infinity, Infinity);
 
-        for(var i=0; i < planets.length; i++){
-            planets[i].draw();
+            ctx.fillStyle = gradient;
+            var timeDiff = new Date() - startDate;
+            var lightDistance = lightMillisecond * timeDiff;
+            var inKm = lightDistance * scale;
+            ctx.save();
+            ctx.translate(sunRadius + lightDistance, 0);
+            var length = Math.min(lightDistance + 20, lightBeamLength);
+            ctx.fillRect(-length, -3, length, 6);
+            var totalSeconds = Math.floor(timeDiff / 1000);
+            var seconds = totalSeconds % 60;
+            var minutes = Math.floor(totalSeconds / 60) % 60;
+            var hours = Math.floor(totalSeconds / 3600);
+            ctx.fillText("" + (hours > 0 ? hours + " h, " : "") + (minutes > 0 ? minutes + " m, " : "") + seconds + " s", 0, 20)
+            ctx.fillText("" + Math.floor(inKm).toString().replace(/.(?=(?:.{3})+$)/g, "$&."), 0, 30)
+            ctx.fillText(" km", 50, 30)
+            ctx.restore();
+            for(var i=0; i < planets.length; i++){
+                planets[i].draw();
+            }
+            setTimeout(draw, 20);
         }
+        
+        draw();
+        
+        
+        
+
+        
       })();
     </script>
   </body>
