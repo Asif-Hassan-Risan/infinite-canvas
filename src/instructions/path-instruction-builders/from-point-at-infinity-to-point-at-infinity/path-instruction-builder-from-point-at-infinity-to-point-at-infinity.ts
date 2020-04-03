@@ -25,7 +25,9 @@ export class PathInstructionBuilderFromPointAtInfinityToPointAtInfinity extends 
         if(isPointAtInfinity(position)){
             return this.lineToInfinityFromInfinityFromPoint(shape.lastFinitePoint, shape.currentPosition.direction, position.direction);
         }
-        return instructionSequence(this.lineFromInfinityFromPointToInfinityFromPoint(this.shape.lastFinitePoint, position, shape.currentPosition.direction), this.lineTo(position));
+        return instructionSequence(
+            this.lineFromInfinityFromPointToInfinityFromPoint(this.shape.lastFinitePoint, position, shape.currentPosition.direction),
+            this.lineFromInfinityFromPointToPoint(position, shape.currentPosition.direction));
     }
     public containsFinitePoint(): boolean{
         return true;

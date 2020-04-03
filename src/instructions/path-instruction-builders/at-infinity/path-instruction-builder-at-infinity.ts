@@ -24,7 +24,7 @@ export class PathInstructionBuilderAtInfinity extends InfiniteCanvasPathInstruct
             return undefined;
         }
         if(shape.positionsSoFar.length === 1){
-            return this.lineTo(position);
+            return this.lineFromInfinityFromPointToPoint(position, shape.positionsSoFar[0].direction);
         }
         const pointsAtInfinityToLineTo: PointAtInfinity[] = shape.positionsSoFar.slice(1);
         let positionToLineFrom: PointAtInfinity = shape.initialPosition;
@@ -33,7 +33,7 @@ export class PathInstructionBuilderAtInfinity extends InfiniteCanvasPathInstruct
             instructionsToCombine.push(this.lineToInfinityFromInfinityFromPoint(position, positionToLineFrom.direction, pointAtInfinityToLineTo.direction));
             positionToLineFrom = pointAtInfinityToLineTo;
         }
-        return instructionSequence(combineInstructions(instructionsToCombine), this.lineTo(position))
+        return instructionSequence(combineInstructions(instructionsToCombine), this.lineFromInfinityFromPointToPoint(position, positionToLineFrom.direction))
     }
     public canAddLineTo(position: Position): boolean{
         return !isPointAtInfinity(position) || !position.direction.isInOppositeDirectionAs(this.shape.currentPosition.direction);

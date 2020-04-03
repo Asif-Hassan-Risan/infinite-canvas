@@ -20,32 +20,31 @@ export abstract class InfiniteCanvasPathInstructionBuilder<TPathShape extends Pa
 
     protected moveToInfinityFromPointInDirection(point: Point, direction: Point): InstructionUsingInfinity{
         return (context: CanvasRenderingContext2D, transformation: Transformation, infinity: ViewboxInfinity) => {
-            const {x, y} = infinity.getInfinityFromPointInDirection(point, direction);
-            context.moveTo(x, y);
+           infinity.moveToInfinityFromPointInDirection(context, point, direction);
         };
     }
 
     protected lineFromInfinityFromPointToInfinityFromPoint(point1: Point, point2: Point, direction: Point): InstructionUsingInfinity{
         return (context: CanvasRenderingContext2D, transformation: Transformation, infinity: ViewboxInfinity) => {
-            const {x, y} = infinity.getInfinityFromPointInDirection(point2, direction);
-            context.lineTo(x, y);
+            infinity.drawLineFromInfinityFromPointToInfinityFromPoint(context, point1, point2, direction);
+        };
+    }
+
+    protected lineFromInfinityFromPointToPoint(point: Point, direction: Point): InstructionUsingInfinity{
+        return (context: CanvasRenderingContext2D, transformation: Transformation, infinity: ViewboxInfinity) => {
+            infinity.drawLineFromInfinityFromPointToPoint(context, point, direction);
         };
     }
 
     protected lineToInfinityFromPointInDirection(point: Point, direction: Point): InstructionUsingInfinity{
         return (context: CanvasRenderingContext2D, transformation: Transformation, infinity: ViewboxInfinity) => {
-            const {x, y} = infinity.getInfinityFromPointInDirection(point, direction);
-            context.lineTo(x, y);
+            infinity.drawLineToInfinityFromPointInDirection(context, point, direction);
         };
     }
 
     protected lineToInfinityFromInfinityFromPoint(point: Point, fromDirection: Point, toDirection: Point): InstructionUsingInfinity{
         return (context: CanvasRenderingContext2D, transformation: Transformation, infinity: ViewboxInfinity) => {
-            const infinities: Point[] = infinity.getInfinitiesFromDirectionFromPointToDirection(point, fromDirection, toDirection);
-            for(let _infinity of infinities){
-                let {x, y} = _infinity;
-                context.lineTo(x, y)
-            }
+            infinity.drawLineToInfinityFromInfinityFromPoint(context, point, fromDirection, toDirection);
         };
     }
 
