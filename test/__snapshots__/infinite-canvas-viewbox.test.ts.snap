@@ -2793,6 +2793,33 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that makes a path extending to infinity and fills it and then strokes it should take the line width into account for the stroked path 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(0,100)",
+  "context.lineTo(0,0)",
+  "context.lineTo(100,0)",
+  "context.lineTo(100,0)",
+  "context.lineTo(100,100)",
+  "context.lineTo(0,100)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(-1.4142135623730923,100)",
+  "context.lineTo(-1.4142135623730951,-1.4142135623730951)",
+  "context.lineTo(100,-1.4142135623730923)",
+  "context.lineTo(100,-1.4142135623730923)",
+  "context.lineTo(100,100)",
+  "context.lineTo(-1.4142135623730923,100)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that makes a path with zero area and strokes it and then clears an area overlapping but not covering the path should have added a clearRect 1`] = `
 Array [
   "context.restore()",

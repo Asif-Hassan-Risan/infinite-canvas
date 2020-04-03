@@ -3189,4 +3189,27 @@ describe("an infinite canvas context", () => {
 			console.log(contextMock.getLog());
 		});
 	});
+
+	describe("that makes a path extending to infinity and fills it", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.moveToInfinityInDirection(0, -1);
+			infiniteContext.lineTo(100, 100);
+			infiniteContext.lineToInfinityInDirection(-1, 0);
+			infiniteContext.fill();
+		});
+
+		describe("and then strokes it", () => {
+
+			beforeEach(() => {
+				contextMock.clear();
+				infiniteContext.stroke();
+			});
+
+			it("should take the line width into account for the stroked path", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
 })
