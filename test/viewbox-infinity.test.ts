@@ -6,13 +6,34 @@ import { InfiniteCanvasState } from "../src/state/infinite-canvas-state";
 import { defaultState } from "../src/state/default-state";
 import { transformation } from "../src/state/dimensions/transformation";
 import { PathInfinityProvider } from "../src/interfaces/path-infinity-provider";
+import {CanvasContextMock} from "./canvas-context-mock";
 
+function recordPoints(instruction: (context: CanvasRenderingContext2D) => void): Point[]{
+    const contextMock: any = new CanvasContextMock();
+    const result: Point[] = [];
+    contextMock.lineTo = function(x: number, y: number){
+        result.push(new Point(x, y));
+    }
+    instruction(contextMock);
+    return result;
+}
 function getStateWithTransformation(_transformation: Transformation): InfiniteCanvasState{
     let result: InfiniteCanvasState = defaultState;
     result = result.withCurrentState(transformation.changeInstanceValue(result.current, _transformation));
     return result;
 }
-
+function getInfinityFromPointInDirection(infinity: ViewboxInfinity, fromPoint: Point, inDirection: Point): Point{
+    const recordedPoints: Point[] = recordPoints((context: CanvasRenderingContext2D) => {
+        infinity.drawLineToInfinityFromPointInDirection(context, fromPoint, inDirection);
+    });
+    expect(recordedPoints.length).toBe(1);
+    return recordedPoints[0];
+}
+function getInfinitiesFromDirectionFromPointToDirection(infinity: ViewboxInfinity, point: Point, direction1: Point, direction2: Point): Point[]{
+    return recordPoints((context: CanvasRenderingContext2D) => {
+        infinity.drawLineToInfinityFromInfinityFromPoint(context, point, direction1, direction2);
+    });
+}
 describe("a viewbox infinity for an untransformed context", () => {
     let infinity: ViewboxInfinity;
     let infinityProvider: InfiniteCanvasViewboxInfinityProvider;
@@ -33,7 +54,7 @@ describe("a viewbox infinity for an untransformed context", () => {
         [new Point(0, 0), new Point(0, 1), Transformation.rotation(0, 0, -Math.PI / 4), new Point(10, 10)]
     ])("should return the right infinities along the x and y axes", (fromPoint: Point, inDirection: Point, viewboxTransformation: Transformation, expected: Point) => {
         infinityProvider.viewBoxTransformation = viewboxTransformation;
-        const calculated: Point = infinity.getInfinityFromPointInDirection(fromPoint, inDirection);
+        const calculated: Point = getInfinityFromPointInDirection(infinity, fromPoint, inDirection);
         expect(calculated.x).toBeCloseTo(expected.x);
         expect(calculated.y).toBeCloseTo(expected.y);
     });
@@ -56,7 +77,7 @@ describe("a viewbox infinity for an untransformed context", () => {
         [new Point(-25, 5), new Point(1, 1), new Point(1, -1), Transformation.identity, [new Point(10, 10), new Point(10, 0), new Point(-5, -15)]]
     ])("should get the right infinities from direction from point to direction", (point: Point, direction1: Point, direction2: Point, viewboxTransformation: Transformation, expectedPoints: Point[]) => {
         infinityProvider.viewBoxTransformation = viewboxTransformation;
-        const result: Point[] = infinity.getInfinitiesFromDirectionFromPointToDirection(point, direction1, direction2);
+        const result: Point[] = getInfinitiesFromDirectionFromPointToDirection(infinity, point, direction1, direction2);
         expect(result.length).toBe(expectedPoints.length);
         for(let i: number = 0; i < expectedPoints.length; i++){
             expect(result[i].x).toBeCloseTo(expectedPoints[i].x);
@@ -78,7 +99,7 @@ describe("a viewbox infinity for a translated context", () => {
 
     it("should return the right infinity", () => {
         infinityProvider.viewBoxTransformation = Transformation.identity;
-        const result: Point = infinity.getInfinityFromPointInDirection(new Point(0, 0), new Point(1, 0));
+        const result: Point = getInfinityFromPointInDirection(infinity, new Point(0, 0), new Point(1, 0));
         const expectedResult: Point = new Point(5, 0);
         expect(result.x).toBeCloseTo(expectedResult.x);
         expect(result.y).toBeCloseTo(expectedResult.y);
@@ -100,7 +121,7 @@ describe("a viewbox infinity for skewed context", () => {
         [new Point(0, 0), new Point(0, 1), Transformation.identity, new Point(0, 10)],
     ])("should return the right infinities along the x and y axes", (fromPoint: Point, inDirection: Point, viewboxTransformation: Transformation, expected: Point) => {
         infinityProvider.viewBoxTransformation = viewboxTransformation;
-        const calculated: Point = infinity.getInfinityFromPointInDirection(fromPoint, inDirection);
+        const calculated: Point = getInfinityFromPointInDirection(infinity, fromPoint, inDirection);
         expect(calculated.x).toBeCloseTo(expected.x);
         expect(calculated.y).toBeCloseTo(expected.y);
     });
@@ -126,7 +147,7 @@ describe("a viewbox infinity for a scaled context", () => {
         [new Point(0, 0), new Point(0, 1), Transformation.rotation(0, 0, -Math.PI / 4), new Point(5, 5)]
     ])("should return the right infinities along the x and y axes", (fromPoint: Point, inDirection: Point, viewboxTransformation: Transformation, expected: Point) => {
         infinityProvider.viewBoxTransformation = viewboxTransformation;
-        const calculated: Point = infinity.getInfinityFromPointInDirection(fromPoint, inDirection);
+        const calculated: Point = getInfinityFromPointInDirection(infinity, fromPoint, inDirection);
         expect(calculated.x).toBeCloseTo(expected.x);
         expect(calculated.y).toBeCloseTo(expected.y);
     });

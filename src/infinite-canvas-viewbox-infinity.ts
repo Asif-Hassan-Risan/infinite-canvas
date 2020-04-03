@@ -89,15 +89,6 @@ export class InfiniteCanvasViewboxInfinity implements ViewboxInfinity{
         let pointInFront: Point = transformedViewbox.getPointInFrontInDirection(fromPoint, direction);
         return this.getEndOfLineDashPeriod(fromPoint, pointInFront, lineDashPeriod);
     }
-    private getDistanceCovered(fromPoint: Point, toPoints: Point[]): number{
-        let result: number = 0;
-        let mostRecentPoint: Point = fromPoint;
-        for(let toPoint of toPoints){
-            result += toPoint.minus(mostRecentPoint).mod();
-            mostRecentPoint = toPoint;
-        }
-        return result;
-    }
     private getDistanceLeft(distanceSoFar: number, period: number): number{
         if(period === 0){
             return 0;
@@ -115,31 +106,5 @@ export class InfiniteCanvasViewboxInfinity implements ViewboxInfinity{
             return toPoint;
         }
         return this.getPointInDirectionAtDistance(toPoint, difference, distanceLeft);
-    }
-    public getInfinitiesFromDirectionFromPointToDirection(point: Point, direction1: Point, direction2: Point): Point[]{
-        const viewBoxTransformation: Transformation = this.getViewBoxTransformation();
-        const transformedViewbox: ConvexPolygon = this.getTransformedViewbox();
-        const lineDashPeriod: number = this.getLineDashPeriod();
-        const startingPoint: Point = this.getUntransformedInfinityFromPointInDirection(point, direction1, transformedViewbox, lineDashPeriod);
-        const destinationPoint: Point = this.getUntransformedInfinityFromPointInDirection(point, direction2, transformedViewbox, lineDashPeriod);
-        let polygonToCircumscribe: ConvexPolygon = transformedViewbox
-            .expandToIncludePoint(point)
-            .expandToIncludePoint(startingPoint)
-            .expandToIncludePoint(destinationPoint);
-        const verticesInBetween: Point[] = polygonToCircumscribe.vertices.map(v => v.point).filter(p => !p.equals(startingPoint) && !p.equals(destinationPoint) && !p.equals(point) && p.minus(point).isInSmallerAngleBetweenPoints(direction1, direction2));
-        verticesInBetween.sort((p1, p2) => {
-            if(p1.minus(point).isInSmallerAngleBetweenPoints(p2.minus(point), direction1)){
-                return -1;
-            }
-            return 1;
-        });
-        const result: Point[] = verticesInBetween.concat([destinationPoint]);
-        if(lineDashPeriod !== 0){
-            const distanceCovered: number = this.getDistanceCovered(startingPoint, result);
-            const distanceLeft: number = this.getDistanceLeft(distanceCovered, lineDashPeriod);
-            const extraPoint: Point = this.getPointInDirectionAtDistance(destinationPoint, direction2, distanceLeft/2);
-            result.push(extraPoint, destinationPoint);
-        }
-        return result.map(p => viewBoxTransformation.apply(p));
     }
 }

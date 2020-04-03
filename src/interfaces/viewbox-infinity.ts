@@ -7,5 +7,4 @@ export interface ViewboxInfinity{
     drawLineFromInfinityFromPointToInfinityFromPoint(context: CanvasRenderingContext2D, point1: Point, point2: Point, direction: Point): void;
     drawLineToInfinityFromInfinityFromPoint(context: CanvasRenderingContext2D, point: Point, fromDirection: Point, toDirection: Point): void;
     getInfinityFromPointInDirection(fromPoint: Point, direction: Point): Point;
-    getInfinitiesFromDirectionFromPointToDirection(point: Point, direction1: Point, direction2: Point): Point[];
 }
