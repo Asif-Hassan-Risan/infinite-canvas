@@ -35,6 +35,7 @@
             this.imageWidth = imageWidth * scale;
             this.imageHeight = imageHeight * scale; 
             this.imageUrl = imageUrl;
+            this.loadImage();
         };
         Planet.prototype.loadImage = function(){
           var self = this;
@@ -135,11 +136,7 @@
             setTimeout(draw, 20);
         }
         
-        Promise.all(planets.map(function(planet){return planet.loadImage();})).then(function(){
-          console.log("all planets done loading image");
-          draw();
-        });
-        //draw();
+        draw();
         
         
         
