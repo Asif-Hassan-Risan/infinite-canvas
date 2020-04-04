@@ -35,13 +35,15 @@
 					<canvas width="400" height="400" ref="infiniteCanvas"></canvas>
 				</div>
 				<div class="column">
+					<div v-if="example.finiteCode && !showFiniteCode" class="cursor-pointer code-toggle" v-on:click="toggleCode()">show regular canvas code</div>
+					<div v-if="example.finiteCode && showFiniteCode" class="cursor-pointer code-toggle" v-on:click="toggleCode()">show infinite canvas code</div>
 					<div ref="code" class="code"></div>
 					<input type="checkbox" v-model="rotationEnabled"/>
 					<label>rotation enabled</label>
 					<input type="checkbox" v-model="greedyGestureHandling"/>
 					<label>greedy gesture handling</label> 
 				</div>
-				<span v-on:click="onViewDiff" class="view-diff-link" v-if="difference">view diff</span>
+				<span v-on:click="onViewDiff" class="cursor-pointer" v-if="difference">view diff</span>
 			</div>
 		</div>
 		
@@ -1338,10 +1340,24 @@
 								editor: undefined,
 								imagesAreEqual: false,
 								ignoredMessage: undefined,
-								difference: undefined
+								difference: undefined,
+								showFiniteCode: false,
+								code: undefined,
+								finiteCode: undefined
 							};
 						},
 						methods: {
+							toggleCode(){
+								if(this.showFiniteCode){
+									this.editor.setValue(this.code);
+									this.editor.clearSelection();
+									this.showFiniteCode = false;
+								}else{
+									this.editor.setValue(this.finiteCode);
+									this.editor.clearSelection();
+									this.showFiniteCode = true;
+								}
+							},
 							onViewDiff: function(){
 								this.$emit("viewdiff", this.difference);
 							},
@@ -1384,10 +1400,13 @@
 							this.rotationEnabled = this.infiniteCanvas.rotationEnabled;
 							this.greedyGestureHandling = this.infiniteCanvas.greedyGestureHandling;
 							var infiniteContext = this.infiniteCanvas.getContext();
-							var code = getLinesFromFunction(this.example.code).join("\r\n");
+							this.code = getLinesFromFunction(this.example.code).join("\r\n");
+							if(this.example.finiteCode){
+								this.finiteCode = getLinesFromFunction(this.example.finiteCode).join("\r\n");
+							}
 							this.editor = ace.edit(this.$refs.code);
 							this.editor.session.setMode("ace/mode/javascript");
-							this.editor.setValue(code);
+							this.editor.setValue(this.code);
 							this.editor.clearSelection();
 							(this.example.finiteCode || this.example.code)(regularContext);
 							try{
