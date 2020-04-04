@@ -11,6 +11,7 @@ export class CanvasContextMock{
             "setLineDash",
             "arc",
             "ellipse",
+            "rect",
             "clearRect",
             "fillRect",
             "setTransform",

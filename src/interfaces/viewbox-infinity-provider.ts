@@ -1,6 +1,5 @@
-import {ViewboxInfinity} from "./viewbox-infinity";
-import { InfiniteCanvasState } from "../state/infinite-canvas-state";
+import { PathInfinityProvider } from "./path-infinity-provider";
 
 export interface ViewboxInfinityProvider {
-    getInfinity(state: InfiniteCanvasState): ViewboxInfinity;
+    getForPath(): PathInfinityProvider;
 }

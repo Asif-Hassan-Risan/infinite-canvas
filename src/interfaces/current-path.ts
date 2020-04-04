@@ -8,7 +8,9 @@ import { Position } from "../geometry/position"
 export interface CurrentPath{
     allSubpathsAreClosable(): boolean;
     currentSubpathIsClosable(): boolean;
-    drawPath(instruction: Instruction, state: InfiniteCanvasState): void;
+    containsFinitePoint(): boolean;
+    fillPath(instruction: Instruction, state: InfiniteCanvasState): void;
+    strokePath(instruction: Instruction, state: InfiniteCanvasState): void;
     clipPath(instruction: Instruction, state: InfiniteCanvasState): void;
     addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void;
     closePath(): void;

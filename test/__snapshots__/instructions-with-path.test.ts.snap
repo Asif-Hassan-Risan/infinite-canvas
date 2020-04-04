@@ -22,20 +22,6 @@ Array [
   "context.lineTo(10,10)",
   "context.lineTo(0,10)",
   "context.fillStyle = \\"#00f\\"",
-  "context.fill()",
-  "context.lineTo(5,5)",
-  "context.fill()",
-]
-`;
-
-exports[`a set of instructions that is also about a path that describes a path that is drawn, altered and then recreated should not contain the intermediate drawing instruction 1`] = `
-Array [
-  "context.beginPath()",
-  "context.moveTo(0,0)",
-  "context.lineTo(10,0)",
-  "context.lineTo(10,10)",
-  "context.lineTo(0,10)",
-  "context.fillStyle = \\"#00f\\"",
   "context.lineTo(5,5)",
   "context.fill()",
 ]

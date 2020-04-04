@@ -2581,7 +2581,7 @@ describe("an infinite canvas context", () => {
 			infiniteContext.fillRect(100, -Infinity, -Infinity, Infinity);
 		});
 
-		xit("should fill a rect that fills the left half of the viewbox", () => {
+		it("should fill a rect that fills the left half of the viewbox", () => {
 			expect(contextMock.getLog()).toMatchSnapshot();
 		});
 	});
@@ -2642,6 +2642,18 @@ describe("an infinite canvas context", () => {
 		});
 
 		it("should fill a rect that extends to outside of the viewbox", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that fills the entire plane", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(-Infinity, -Infinity, Infinity, Infinity);
+		});
+
+		it("should fill the entire viewbox", () => {
 			expect(contextMock.getLog()).toMatchSnapshot();
 		});
 	});
@@ -2725,10 +2737,80 @@ describe("an infinite canvas context", () => {
 			infiniteContext.moveToInfinityInDirection(1, 0);
 		});
 
+		describe("and then adds a line to another point at infinity", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineToInfinityInDirection(0, 1);
+			});
+
+			describe("and then adds a line to a third point at infinity that is not in the same half plane", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineToInfinityInDirection(-1, -1);
+				});
+
+				describe("and then fills", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.fill();
+					});
+
+					it("should draw a path around the viewbox", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+			});
+
+			describe("and then adds a line to a finite point", () => {
+
+				beforeEach(() => {
+					infiniteContext.lineTo(100, 100);
+				});
+
+				describe("and then fills", () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						infiniteContext.fill();
+					});
+
+					it("should have drawn the right path", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+			});
+
+			describe("and then fills", () => {
+
+				beforeEach(() => {
+					contextMock.clear();
+					infiniteContext.fill();
+				});
+
+				it("should do nothing", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			});
+		});
+
 		describe("and then adds a line to a finite point", () => {
 
 			beforeEach(() => {
 				infiniteContext.lineTo(50, 100);
+			});
+
+			describe("and then strokes the line using a line dash", () => {
+
+				beforeEach(() => {
+					infiniteContext.setLineDash([3, 2]);
+					contextMock.clear();
+					infiniteContext.stroke();
+				});
+
+				it("should draw a line whose length is a multiple of the line dash period", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
 			});
 
 			describe("and then adds a line to the opposite point at infinity", () => {
@@ -2754,6 +2836,19 @@ describe("an infinite canvas context", () => {
 
 				beforeEach(() => {
 					infiniteContext.lineToInfinityInDirection(0, 1);
+				});
+
+				describe("and then strokes the path using a line dash", () => {
+
+					beforeEach(() => {
+						infiniteContext.setLineDash([3, 2]);
+						contextMock.clear();
+						infiniteContext.stroke();
+					});
+
+					it("should draw a path whose length is a multiple of the line dash period", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
 				});
 
 				describe("and then adds a line to yet a different point at infinity", () => {
@@ -2872,6 +2967,26 @@ describe("an infinite canvas context", () => {
 							expect(contextMock.getLog()).toMatchSnapshot();
 						});
 					});
+          
+          describe("and then transforms and adds a line back to the original point at infinity", () => {
+            
+            beforeEach(() => {
+              infiniteContext.transform(0, 1, 1, 0, 0, 0);
+              infiniteContext.lineToInfinityInDirection(0, 1);
+            });
+            
+            describe("and then fills", () => {
+              
+              beforeEach(() => {
+                contextMock.clear();
+                infiniteContext.fill();
+              });
+              
+              it("should do nothing", () => {
+                expect(contextMock.getLog()).toMatchSnapshot();
+              })
+            })
+          })
 
 					describe("and then adds a line back to the original point at infinity", () => {
 
@@ -2967,6 +3082,94 @@ describe("an infinite canvas context", () => {
 					expect(contextMock.getLog()).toMatchSnapshot();
 				});
 			});
+		});
+	});
+
+	describe("that creates a rect that extends to infinity and strokes it", () => {
+
+		beforeEach(() => {
+			infiniteContext.beginPath();
+			infiniteContext.rect(50, 50, Infinity, 50);
+			contextMock.clear();
+			infiniteContext.stroke();
+		});
+
+		it("should have taken the current line width into account", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+
+		describe("and then changes the line width and strokes the rectangle again", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineWidth = 4;
+				contextMock.clear();
+				infiniteContext.stroke();
+			});
+
+			it("should have taken a different line width into account this time", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
+
+	describe("that strokes a rect that extends to infinity", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.strokeRect(50, 50, Infinity, 50);
+		});
+
+		it("should have taken the current line width into account", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+
+		describe("and then changes the line width and strokes another rect that extends to infinity", () => {
+
+			beforeEach(() => {
+				infiniteContext.lineWidth = 4;
+				contextMock.clear();
+				infiniteContext.strokeRect(50, 50, Infinity, 50);
+			});
+
+			it("should have taken a different line width into account for the second rectangle", () => {
+				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
+
+	describe("that fills a rect without area", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.fillRect(-Infinity, 50, 50, 50);
+		});
+
+		it("should do nothing", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that strokes a rect without area", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.strokeRect(-Infinity, 50, 50, 50);
+		});
+
+		it("should do nothing", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
+		});
+	});
+
+	describe("that strokes the entire plane", () => {
+
+		beforeEach(() => {
+			contextMock.clear();
+			infiniteContext.strokeRect(-Infinity, -Infinity, Infinity, Infinity);
+		});
+
+		it("should do nothing", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
 		});
 	});
 })

@@ -9,10 +9,11 @@ import { Position } from "../geometry/position"
 
 export interface ViewBox extends TransformableBox, CurrentState{
     measureText(text: string): TextMetrics;
-    drawPath(instruction: Instruction): void;
-    allSubpathsAreClosable(): boolean;
-    currentSubpathIsClosable(): boolean;
-    drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void;
+    fillPath(instruction: Instruction): void;
+    strokePath(): void;
+    currentPathCanBeFilled(): boolean;
+    fillRect(x: number, y: number, w: number, h: number, instruction: Instruction): void;
+    strokeRect(x: number, y: number, w: number, h: number): void;
     addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void;
     createPatternFromImageData(imageData: ImageData): Promise<CanvasPattern>;
     createPattern(image: CanvasImageSource, repetition: string): CanvasPattern;

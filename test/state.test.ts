@@ -3,12 +3,12 @@ import { logInstruction } from "./log-instruction";
 import { Instruction } from "../src/instructions/instruction";
 import { Transformation } from "../src/transformation";
 import { InfiniteCanvasState } from "../src/state/infinite-canvas-state";
-import { PathInstructions } from "../src/instructions/path-instructions";
 import { defaultState } from "../src/state/default-state";
 import { fillStyle, strokeStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InstructionsWithPath } from "../src/instructions/instructions-with-path";
 import { Point } from "../src/geometry/point";
-import { PathInstruction } from "../src/interfaces/path-instruction";
+import { FakeViewboxInfinityProvider } from "./fake-viewbox-infinity-provider";
+import { FakePathInfinityProvider } from "./fake-path-infinity-provider";
 
 function applyChangeToCurrentState(state: InfiniteCanvasState, change: (instance: InfiniteCanvasStateInstance) => InfiniteCanvasStateInstance): InfiniteCanvasState{
     const newInstance: InfiniteCanvasStateInstance = change(state.current);
@@ -22,7 +22,7 @@ describe("a state with a clipped path", () => {
 
     beforeEach(() => {
         currentState = defaultState;
-        currentPath = InstructionsWithPath.create(defaultState, {getInfinity: () => undefined});
+        currentPath = InstructionsWithPath.create(defaultState, new FakeViewboxInfinityProvider(), new FakePathInfinityProvider());
         currentState = applyChangeToCurrentState(currentState, s => fillStyle.changeInstanceValue(s, "#f00"));
         currentPath.rect(0, 0, 3, 3, currentState);
         currentPath.clipPath((context: CanvasRenderingContext2D) => context.clip(), currentState);
@@ -117,7 +117,7 @@ describe("a state with a clipped path", () => {
 
         beforeEach(()=> {
             currentState = currentState.saved();
-            addedClippedPath = InstructionsWithPath.create(currentState, {getInfinity: () => undefined});
+            addedClippedPath = InstructionsWithPath.create(currentState, new FakeViewboxInfinityProvider(), new FakePathInfinityProvider());
             addedClippedPath.moveTo(new Point(1, 1), currentState);
             addedClippedPath.clipPath((context, transformation) => {context.clip();}, currentState);
             currentState = addedClippedPath.state;
@@ -130,7 +130,7 @@ describe("a state with a clipped path", () => {
             beforeEach(() => {
                 currentState = currentState.restored();
                 currentState = currentState.saved();
-                const differentAddedClippedPath: InstructionsWithPath = InstructionsWithPath.create(currentState, {getInfinity: () => undefined});
+                const differentAddedClippedPath: InstructionsWithPath = InstructionsWithPath.create(currentState, new FakeViewboxInfinityProvider(), new FakePathInfinityProvider());
                 differentAddedClippedPath.moveTo(new Point(2, 2), currentState);
                 differentAddedClippedPath.clipPath((context, transformation) => {context.clip();}, currentState);
                 stateWithCurrentlyADifferentAdditionalClippedPath = differentAddedClippedPath.state;
@@ -147,7 +147,7 @@ describe("a state with a clipped path", () => {
 
             beforeEach(() => {
                 currentState = currentState.restored();
-                const differentAddedClippedPath: InstructionsWithPath = InstructionsWithPath.create(currentState, {getInfinity: () => undefined});
+                const differentAddedClippedPath: InstructionsWithPath = InstructionsWithPath.create(currentState, new FakeViewboxInfinityProvider(), new FakePathInfinityProvider());
                 differentAddedClippedPath.moveTo(new Point(2, 2), currentState);
                 differentAddedClippedPath.clipPath((context, transformation) => {context.clip();}, currentState);
                 stateWithCurrentlyADifferentAdditionalClippedPath = differentAddedClippedPath.state;

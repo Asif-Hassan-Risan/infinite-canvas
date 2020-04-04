@@ -1,0 +1,148 @@
+<html>
+  <head>
+      <title>The Solar System to Scale</title>
+	  <meta 
+	name='viewport' 
+	content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'/>
+	  <script type="text/javascript" src="infinite-canvas.js"></script>
+	  <link rel="stylesheet" type="text/css" href="solarsystem.css">
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script>
+      (function(){
+        var canvasEl = document.getElementById("canvas");
+        var clientRect = canvasEl.getBoundingClientRect();
+        canvasEl.setAttribute("width", clientRect.width);
+        canvasEl.setAttribute("height", clientRect.height);
+        var infCanvas = new InfiniteCanvas(canvasEl);
+        infCanvas.greedyGestureHandling = true;
+        var ctx = infCanvas.getContext("2d");
+        
+        function fillCircle(x, y, radius){
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        var Planet = function(radius, distance, name, imageUrl, imageWidth, imageHeight, xInImage, yInImage, widthInImage){
+            this.radius = radius;
+            this.distance = distance;
+            this.name = name;
+            this.image = undefined;
+            var scale = 2 * this.radius / widthInImage;
+            this.imageOffsetX = (-xInImage - widthInImage / 2) * scale;
+            this.imageOffsetY = (-yInImage - widthInImage / 2) * scale;
+            this.imageWidth = imageWidth * scale;
+            this.imageHeight = imageHeight * scale; 
+            this.imageUrl = imageUrl;
+            this.loadImage();
+        };
+        Planet.prototype.loadImage = function(){
+          var self = this;
+          var resolve;
+          var promise = new Promise(function(res){resolve = res;});
+          if(!this.imageUrl){
+            resolve();
+            return;
+          }
+          var image = new Image();
+          image.addEventListener("load", function(){
+            self.image = image;
+            resolve();
+          });
+          image.addEventListener("error", function(){
+            resolve();
+          });
+          image.src = this.imageUrl;
+          return promise;
+        };
+        Planet.prototype.draw = function(){
+            //ctx.fillStyle = "rgba(255,255,255,0.05)";
+            //fillCircle(this.distance, 0, this.radius * 1000);
+            ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
+            if(this.image){
+              ctx.drawImage(this.image, this.distance + this.imageOffsetX, this.imageOffsetY, this.imageWidth, this.imageHeight);
+            }else{
+              fillCircle(this.distance, 0, this.radius);
+            }
+            
+            ctx.save();
+            ctx.translate(this.distance, this.radius + 250);
+            ctx.scale(50, 50);
+            ctx.beginPath();
+            ctx.moveTo(-10, 10);
+            ctx.lineTo(0, 0);
+            ctx.lineTo(10, 10);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, 100);
+            ctx.stroke();
+            ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
+            ctx.font = "30px Verdana";
+            ctx.fillText(this.name, -5, 130);
+            ctx.restore();
+            //ctx.fillStyle = "rgba(255, 255, 0, 0.2)";
+            //ctx.font = "100px Verdana";
+            //ctx.fillText(this.name, this.distance, 200)
+        };
+        var sunRadius = 100;
+
+        var planets = [
+            new Planet(sunRadius, 0, "sun", "https://www.astronomy.cafe/media/posts/16/solsticeflare.jpg", 2048, 2048, 225, 225, 1599),
+            new Planet(0.35, 8326, "mercury", "https://space-facts.com/wp-content/uploads/mercury.png", 700, 700, 50, 50, 600),
+            new Planet(0.87, 15459, "venus", "https://skyandtelescope.org/wp-content/uploads/Venus_UV_Credit_PLANET-C-Project_Team_600px.jpg", 600, 600, 0, 0, 600),
+            new Planet(0.91, 21499, "earth", "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/The_Earth_seen_from_Apollo_17.jpg/1200px-The_Earth_seen_from_Apollo_17.jpg", 1200, 1200, 65, 61, 1075),
+            new Planet(0.48, 31903, "mars"),
+            new Planet(10.05, 111771, "jupiter"),
+            new Planet(8.37, 206182, "saturn"),
+            new Planet(3.65, 412796, "uranus"),
+            new Planet(3.54, 1095327, "neptune"),
+            ];
+
+        var lightMillisecond = 0.0431;
+        var lightBeamLength = lightMillisecond * 1000 * 60;
+        var scale = 6955;
+        
+        var gradient = ctx.createLinearGradient(-lightBeamLength, 0, 0, 0);
+        gradient.addColorStop(0, "rgba(255, 255, 0, 0)");
+        gradient.addColorStop(1, "rgba(255, 255, 0, 1)");
+        ctx.font = "6px Verdana";
+        ctx.translate(200, 200);
+        ctx.strokeStyle = "rgba(255, 255, 0, 0.2)";
+        var startDate = new Date();
+        function draw(){
+            ctx.clearRect(-Infinity, -Infinity, Infinity, Infinity);
+            ctx.fillStyle = "#000";
+            ctx.fillRect(-Infinity, -Infinity, Infinity, Infinity);
+            for(var i=0; i < planets.length; i++){
+                planets[i].draw();
+            }
+            ctx.fillStyle = gradient;
+            var timeDiff = new Date() - startDate;
+            var lightDistance = lightMillisecond * timeDiff;
+            var inKm = lightDistance * scale;
+            ctx.save();
+            ctx.translate(sunRadius + lightDistance, 0);
+            var length = Math.min(lightDistance, lightBeamLength);
+            ctx.fillRect(-length, -3, length, 6);
+            var totalSeconds = Math.floor(timeDiff / 1000);
+            var seconds = totalSeconds % 60;
+            var minutes = Math.floor(totalSeconds / 60) % 60;
+            var hours = Math.floor(totalSeconds / 3600);
+            ctx.fillText("" + (hours > 0 ? hours + " h, " : "") + (minutes > 0 ? minutes + " m, " : "") + seconds + " s", 0, 20)
+            ctx.fillText("" + Math.floor(inKm).toString().replace(/.(?=(?:.{3})+$)/g, "$&."), 0, 30)
+            ctx.fillText(" km", 50, 30)
+            ctx.restore();
+            
+            setTimeout(draw, 20);
+        }
+        
+        draw();
+        
+        
+        
+
+        
+      })();
+    </script>
+  </body>
+</html>

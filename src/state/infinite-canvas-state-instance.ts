@@ -88,6 +88,12 @@ export class InfiniteCanvasStateInstance implements StateInstanceProperties{
 
         return (!this.clippedPaths && !other.clippedPaths || this.clippedPaths && this.clippedPaths === other.clippedPaths) && this.fillAndStrokeStylesTransformed === other.fillAndStrokeStylesTransformed;
     }
+    public getMaximumLineWidth(): number{
+        return this.lineWidth * this.transformation.getMaximumLineWidthScale();
+    }
+    public getLineDashPeriod(): number{
+        return this.lineDash.reduce((total, s2) => total + s2, 0);
+    }
     public isTransformable(): boolean{
         for(let dimension of allDimensions){
             if(!dimension.valueIsTransformableForInstance(this)){
