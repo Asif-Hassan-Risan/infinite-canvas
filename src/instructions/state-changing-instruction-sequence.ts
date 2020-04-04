@@ -1,5 +1,4 @@
 import { StateChangingInstructionSet } from "../interfaces/state-changing-instruction-set";
-import { InstructionAndState } from "../interfaces/instruction-and-state";
 import { InfiniteCanvasState } from "../state/infinite-canvas-state";
 import { Transformation } from "../transformation";
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../interfaces/state-changing-instruction-set-with-area-and-current-path";
@@ -18,15 +17,11 @@ export class StateChangingInstructionSequence<TInstructionSet extends StateChang
     protected reconstructState(fromState: InfiniteCanvasState, toInstructionSet: TInstructionSet): void{
         toInstructionSet.setInitialState(fromState);
     }
+    public get stateOfFirstInstruction(): InfiniteCanvasState{
+        return this.initiallyWithState.stateOfFirstInstruction;
+    }
     public get state(): InfiniteCanvasState{return this.currentlyWithState.state;}
     public get initialState(): InfiniteCanvasState{return this.initiallyWithState.initialState;}
-    public getAllInstructionsAndStates(): InstructionAndState[]{
-        let result: InstructionAndState[] = this.initiallyWithState.getAllInstructionsAndStates();
-        for(const added of this.added){
-            result = result.concat(added.getAllInstructionsAndStates());
-        }
-        return result;
-    }
     public addClippedPath(clippedPath: StateChangingInstructionSetWithAreaAndCurrentPath): void{
         this.currentlyWithState.addClippedPath(clippedPath);
     }

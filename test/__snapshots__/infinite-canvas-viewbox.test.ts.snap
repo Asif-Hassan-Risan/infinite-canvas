@@ -22,10 +22,10 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(60,201.4142135623731)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(60,200)",
   "context.lineTo(60,60)",
   "context.lineWidth = 1",
   "context.fill()",
@@ -47,16 +47,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,-1.4142135623730951,50,202.8284271247462)",
+  "context.clearRect(50,0,50,200)",
   "context.restore()",
 ]
 `;
@@ -70,16 +70,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(-1.4142135623730951,50,202.8284271247462,151.4142135623731)",
+  "context.clearRect(0,50,200,150)",
   "context.restore()",
 ]
 `;
@@ -91,16 +91,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,-1.4142135623730951,151.4142135623731,202.8284271247462)",
+  "context.clearRect(50,0,150,200)",
   "context.restore()",
 ]
 `;
@@ -112,16 +112,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,201.4142135623731,151.4142135623731,-202.8284271247462)",
+  "context.clearRect(50,200,150,-200)",
   "context.restore()",
 ]
 `;
@@ -133,16 +133,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,50,-51.41421356237309)",
+  "context.clearRect(50,50,50,-50)",
   "context.restore()",
 ]
 `;
@@ -154,16 +154,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,-51.41421356237309,50)",
+  "context.clearRect(50,50,-50,50)",
   "context.restore()",
 ]
 `;
@@ -175,16 +175,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(201.4142135623731,50,-202.8284271247462,151.4142135623731)",
+  "context.clearRect(200,50,-200,150)",
   "context.restore()",
 ]
 `;
@@ -196,16 +196,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,50,151.4142135623731)",
+  "context.clearRect(50,50,50,150)",
   "context.restore()",
 ]
 `;
@@ -217,16 +217,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,151.4142135623731,151.4142135623731)",
+  "context.clearRect(50,50,150,150)",
   "context.restore()",
 ]
 `;
@@ -238,16 +238,16 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(50,50,151.4142135623731,50)",
+  "context.clearRect(50,50,150,50)",
   "context.restore()",
 ]
 `;
@@ -275,11 +275,11 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730958,-1.4142135623730958)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,0)",
   "context.lineWidth = 1",
   "context.fill()",
 ]
@@ -292,9 +292,9 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
   "context.lineWidth = 1",
   "context.fill()",
 ]
@@ -309,9 +309,9 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
   "context.moveTo(30,30)",
-  "context.lineTo(201.4142135623731,30)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(30,201.4142135623731)",
+  "context.lineTo(200,30)",
+  "context.lineTo(200,200)",
+  "context.lineTo(30,200)",
   "context.lineWidth = 1",
   "context.fill()",
   "context.save()",
@@ -403,7 +403,7 @@ Array [
   "context.stroke()",
   "context.save()",
   "context.transform(2,0,0,2,0,0)",
-  "context.clearRect(40,20,61.41421356237309,20)",
+  "context.clearRect(40,20,60,20)",
   "context.restore()",
 ]
 `;
@@ -420,7 +420,7 @@ Array [
   "context.stroke()",
   "context.save()",
   "context.transform(1,0,0,1,-10,0)",
-  "context.clearRect(40,20,171.4142135623731,20)",
+  "context.clearRect(40,20,170,20)",
   "context.restore()",
 ]
 `;
@@ -437,7 +437,7 @@ Array [
   "context.stroke()",
   "context.save()",
   "context.transform(1,0,0,1,0,0)",
-  "context.clearRect(40,20,161.4142135623731,20)",
+  "context.clearRect(40,20,160,20)",
   "context.restore()",
 ]
 `;
@@ -817,6 +817,26 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to a different point at infinity and then strokes the path using a line dash should draw a path whose length is a multiple of the line dash period 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(50,205)",
+  "context.lineTo(201.4142135623731,201.4142135623731)",
+  "context.lineTo(205,100)",
+  "context.lineTo(206.03287328844996,100)",
+  "context.lineTo(205,100)",
+  "context.lineTo(205,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,205)",
+  "context.setLineDash([3,2])",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then adds a line to the opposite point at infinity and then strokes should have added a moveTo 1`] = `
 Array [
   "context.restore()",
@@ -865,15 +885,29 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to a finite point and then strokes the line using a line dash should draw a line whose length is a multiple of the line dash period 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(205,100)",
+  "context.lineTo(50,100)",
+  "context.setLineDash([3,2])",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that begins a path and moves to infinity and then adds a line to another point at infinity and then adds a line to a finite point and then fills should have drawn the right path 1`] = `
 Array [
   "context.restore()",
   "context.save()",
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
-  "context.moveTo(201.4142135623731,100)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(100,201.4142135623731)",
+  "context.moveTo(200,100)",
+  "context.lineTo(200,200)",
+  "context.lineTo(100,200)",
   "context.lineTo(100,100)",
   "context.lineWidth = 1",
   "context.fill()",
@@ -2011,6 +2045,47 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that creates a rect that extends to infinity and strokes it and then changes the line width and strokes the rectangle again should have taken a different line width into account this time 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(205.65685424949237,50)",
+  "context.lineTo(205.65685424949237,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.lineWidth = 4",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that creates a rect that extends to infinity and strokes it should have taken the current line width into account 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that creates a rectangular path, fills another rectangle and then fills the created path should have filled both rectangles 1`] = `
 Array [
   "context.restore()",
@@ -2160,8 +2235,8 @@ Array [
   "context.beginPath()",
   "context.moveTo(10,10)",
   "context.lineTo(10,20)",
-  "context.lineTo(201.4142135623731,20)",
-  "context.lineTo(201.4142135623731,10)",
+  "context.lineTo(200,20)",
+  "context.lineTo(200,10)",
   "context.lineWidth = 1",
   "context.fill()",
 ]
@@ -2175,7 +2250,7 @@ Array [
   "context.beginPath()",
   "context.moveTo(10,10)",
   "context.lineTo(10,20)",
-  "context.lineTo(10,-1.4142135623730958)",
+  "context.lineTo(10,0)",
   "context.lineWidth = 1",
   "context.fill()",
 ]
@@ -2189,7 +2264,7 @@ Array [
   "context.beginPath()",
   "context.moveTo(10,10)",
   "context.lineTo(10,20)",
-  "context.lineTo(10,201.4142135623731)",
+  "context.lineTo(10,200)",
   "context.lineWidth = 1",
   "context.fill()",
 ]
@@ -2306,6 +2381,7 @@ Array [
   "context.save()",
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
+  "context.moveTo(60,30)",
   "context.arc(30,30,30,0,6.283185307179586,)",
   "context.lineWidth = 1",
   "context.fill()",
@@ -2318,6 +2394,7 @@ Array [
   "context.save()",
   "context.clearRect(0,0,200,200)",
   "context.beginPath()",
+  "context.moveTo(150,50)",
   "context.ellipse(50,50,100,40,0,0,3.141592653589793,)",
   "context.lineWidth = 1",
   "context.fill()",
@@ -2353,9 +2430,9 @@ Array [
   "context.beginPath()",
   "context.moveTo(20,20)",
   "context.lineTo(50,20)",
-  "context.lineTo(50,-1.4142135623730958)",
-  "context.lineTo(20,-1.4142135623730958)",
-  "context.lineTo(20,-1.4142135623730958)",
+  "context.lineTo(50,0)",
+  "context.lineTo(20,0)",
+  "context.lineTo(20,0)",
   "context.lineTo(20,20)",
   "context.fill()",
 ]
@@ -2370,9 +2447,9 @@ Array [
   "context.beginPath()",
   "context.moveTo(20,20)",
   "context.lineTo(50,20)",
-  "context.lineTo(50,201.4142135623731)",
-  "context.lineTo(20,201.4142135623731)",
-  "context.lineTo(20,201.4142135623731)",
+  "context.lineTo(50,200)",
+  "context.lineTo(20,200)",
+  "context.lineTo(20,200)",
   "context.lineTo(20,20)",
   "context.fill()",
 ]
@@ -2386,8 +2463,8 @@ Array [
   "context.lineWidth = 1",
   "context.beginPath()",
   "context.moveTo(20,20)",
-  "context.lineTo(-1.4142135623730958,20)",
-  "context.lineTo(-1.4142135623730958,50)",
+  "context.lineTo(0,20)",
+  "context.lineTo(0,50)",
   "context.lineTo(20,50)",
   "context.lineTo(20,20)",
   "context.fill()",
@@ -2401,13 +2478,12 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.lineWidth = 1",
   "context.beginPath()",
-  "context.moveTo(100,-1.4142135623730951)",
-  "context.lineTo(-1.4142135623730951,-1.4142135623730951)",
-  "context.lineTo(-1.4142135623730923,0)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(100,201.4142135623731)",
+  "context.moveTo(100,0)",
+  "context.lineTo(0,0)",
+  "context.lineTo(0,200)",
+  "context.lineTo(100,200)",
   "context.lineTo(100,0)",
-  "context.lineTo(100,-1.4142135623730951)",
+  "context.lineTo(100,0)",
   "context.fill()",
 ]
 `;
@@ -2419,13 +2495,12 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.lineWidth = 1",
   "context.beginPath()",
-  "context.moveTo(-1.4142135623730951,100)",
+  "context.moveTo(0,100)",
   "context.lineTo(0,100)",
-  "context.lineTo(201.4142135623731,100)",
-  "context.lineTo(201.4142135623731,201.4142135623731)",
-  "context.lineTo(0,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,201.4142135623731)",
-  "context.lineTo(-1.4142135623730951,100)",
+  "context.lineTo(200,100)",
+  "context.lineTo(200,200)",
+  "context.lineTo(0,200)",
+  "context.lineTo(0,100)",
   "context.fill()",
 ]
 `;
@@ -2438,13 +2513,15 @@ Array [
   "context.lineWidth = 1",
   "context.beginPath()",
   "context.moveTo(20,20)",
-  "context.lineTo(201.4142135623731,20)",
-  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(200,20)",
+  "context.lineTo(200,50)",
   "context.lineTo(20,50)",
   "context.lineTo(20,20)",
   "context.fill()",
 ]
 `;
+
+exports[`an infinite canvas context that fills a rect without area should do nothing 1`] = `Array []`;
 
 exports[`an infinite canvas context that fills a rect without bottom edge with negative infinite height and a finite width should fill a rect that extends to the top and bottom of the viewbox 1`] = `
 Array [
@@ -2453,12 +2530,12 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.lineWidth = 1",
   "context.beginPath()",
-  "context.moveTo(50,201.4142135623731)",
+  "context.moveTo(50,200)",
   "context.lineTo(50,0)",
-  "context.lineTo(50,-1.4142135623730951)",
-  "context.lineTo(20,-1.4142135623730951)",
+  "context.lineTo(50,0)",
   "context.lineTo(20,0)",
-  "context.lineTo(20,201.4142135623731)",
+  "context.lineTo(20,0)",
+  "context.lineTo(20,200)",
   "context.fill()",
 ]
 `;
@@ -2470,12 +2547,12 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.lineWidth = 1",
   "context.beginPath()",
-  "context.moveTo(-1.4142135623730951,20)",
+  "context.moveTo(0,20)",
   "context.lineTo(0,20)",
-  "context.lineTo(201.4142135623731,20)",
-  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(200,20)",
+  "context.lineTo(200,50)",
   "context.lineTo(0,50)",
-  "context.lineTo(-1.4142135623730951,50)",
+  "context.lineTo(0,50)",
   "context.fill()",
 ]
 `;
@@ -2487,12 +2564,12 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.lineWidth = 1",
   "context.beginPath()",
-  "context.moveTo(201.4142135623731,20)",
+  "context.moveTo(200,20)",
   "context.lineTo(0,20)",
-  "context.lineTo(-1.4142135623730951,20)",
-  "context.lineTo(-1.4142135623730951,50)",
+  "context.lineTo(0,20)",
   "context.lineTo(0,50)",
-  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(0,50)",
+  "context.lineTo(200,50)",
   "context.fill()",
 ]
 `;
@@ -2504,12 +2581,12 @@ Array [
   "context.clearRect(0,0,200,200)",
   "context.lineWidth = 1",
   "context.beginPath()",
-  "context.moveTo(50,-1.4142135623730951)",
+  "context.moveTo(50,0)",
   "context.lineTo(50,0)",
-  "context.lineTo(50,201.4142135623731)",
-  "context.lineTo(20,201.4142135623731)",
+  "context.lineTo(50,200)",
+  "context.lineTo(20,200)",
   "context.lineTo(20,0)",
-  "context.lineTo(20,-1.4142135623730951)",
+  "context.lineTo(20,0)",
   "context.fill()",
 ]
 `;
@@ -2613,7 +2690,7 @@ Array [
   "context.beginPath()",
   "context.save()",
   "context.setTransform(1,0,0,1,0,0)",
-  "context.rect(-1.4142135623730951,-1.4142135623730951,202.82842712474618,202.82842712474618)",
+  "context.rect(0,0,200,200)",
   "context.restore()",
   "context.fill()",
 ]
@@ -2713,6 +2790,33 @@ Array [
   "context.lineTo(30,30)",
   "context.lineWidth = 1",
   "context.fill(\\"evenodd\\")",
+]
+`;
+
+exports[`an infinite canvas context that makes a path extending to infinity and fills it and then strokes it should take the line width into account for the stroked path 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.beginPath()",
+  "context.moveTo(0,100)",
+  "context.lineTo(0,0)",
+  "context.lineTo(100,0)",
+  "context.lineTo(100,0)",
+  "context.lineTo(100,100)",
+  "context.lineTo(0,100)",
+  "context.lineWidth = 1",
+  "context.fill()",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(-1.4142135623730923,100)",
+  "context.lineTo(-1.4142135623730951,-1.4142135623730951)",
+  "context.lineTo(100,-1.4142135623730923)",
+  "context.lineTo(100,-1.4142135623730923)",
+  "context.lineTo(100,100)",
+  "context.lineTo(-1.4142135623730923,100)",
+  "context.lineWidth = 1",
+  "context.stroke()",
 ]
 `;
 
@@ -3549,6 +3653,50 @@ Array [
   "context.fill()",
 ]
 `;
+
+exports[`an infinite canvas context that strokes a rect that extends to infinity and then changes the line width and strokes another rect that extends to infinity should have taken a different line width into account for the second rectangle 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.stroke()",
+  "context.lineWidth = 4",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(205.65685424949237,50)",
+  "context.lineTo(205.65685424949237,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that strokes a rect that extends to infinity should have taken the current line width into account 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(50,50)",
+  "context.lineTo(201.4142135623731,50)",
+  "context.lineTo(201.4142135623731,100)",
+  "context.lineTo(50,100)",
+  "context.lineTo(50,50)",
+  "context.stroke()",
+]
+`;
+
+exports[`an infinite canvas context that strokes a rect without area should do nothing 1`] = `Array []`;
+
+exports[`an infinite canvas context that strokes the entire plane should do nothing 1`] = `Array []`;
 
 exports[`an infinite canvas context that takes text and fills it and clears it should forget the instructions 1`] = `
 Array [

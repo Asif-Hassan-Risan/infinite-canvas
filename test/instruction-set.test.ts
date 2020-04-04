@@ -2,9 +2,8 @@ import { Transformation } from "../src/transformation";
 import { logInstruction } from "./log-instruction";
 import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InfiniteCanvasInstructionSet } from "../src/infinite-canvas-instruction-set";
-import { transformInstructionRelatively } from "../src/instruction-utils";
 import { Point } from "../src/geometry/point";
-import {ConvexPolygon} from "../src/areas/polygons/convex-polygon";
+import { InfiniteCanvasViewboxInfinityProvider } from "../src/infinite-canvas-viewbox-infinity-provider";
 
 describe("an instruction set", () => {
     let instructionSet: InfiniteCanvasInstructionSet;
@@ -12,7 +11,7 @@ describe("an instruction set", () => {
 
     beforeEach(() => {
         onChangeSpy = jest.fn();
-        instructionSet = new InfiniteCanvasInstructionSet(onChangeSpy, {getInfinity: () => undefined, getPathInstructionToGoAroundViewbox: () => undefined});
+        instructionSet = new InfiniteCanvasInstructionSet(onChangeSpy, new InfiniteCanvasViewboxInfinityProvider(200, 200));
     });
 
     describe("that begins drawing a path", () => {
@@ -31,7 +30,7 @@ describe("an instruction set", () => {
         describe("and then fills it", () => {
 
             beforeEach(() => {
-                instructionSet.drawPath((context: CanvasRenderingContext2D) => {context.fill();});
+                instructionSet.fillPath((context: CanvasRenderingContext2D) => {context.fill();});
             });
 
             it("should have called onchange", () => {
@@ -42,9 +41,7 @@ describe("an instruction set", () => {
 
                 beforeEach(() => {
                     onChangeSpy.mockClear();
-                    instructionSet.clearArea(ConvexPolygon.createRectangle(0, 0, 1, 1), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
-                        context.clearRect(0, 0, 1, 1);
-                    }));
+                    instructionSet.clearArea(0, 0, 1, 1);
                 });
 
                 it("should have called onchange", () => {
@@ -64,7 +61,7 @@ describe("an instruction set", () => {
 
         beforeEach(() => {
             instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#f00"));
-            instructionSet.drawRect(0, 0, 1, 1, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            instructionSet.fillRect(0, 0, 1, 1, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                 context.fill();
             });
         });
@@ -77,9 +74,7 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 onChangeSpy.mockClear();
-                instructionSet.clearArea(ConvexPolygon.createRectangle(0.5, 0, 2, 2), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
-                    context.clearRect(0.5, 0, 2, 2);
-                }));
+                instructionSet.clearArea(0.5, 0, 2, 2);
             });
 
             it("should end up with a rectangle followed by a clearRect", () => {
@@ -97,9 +92,7 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 onChangeSpy.mockClear();
-                instructionSet.clearArea(ConvexPolygon.createRectangle(-1, -1, 3, 3), transformInstructionRelatively((context: CanvasRenderingContext2D) => {
-                    context.clearRect(-1, -1, 3, 3);
-                }));
+                instructionSet.clearArea(-1, -1, 3, 3);
             });
 
             it("should no longer have recorded the first rectangle", () => {
@@ -117,7 +110,7 @@ describe("an instruction set", () => {
 
             beforeEach(() => {
                 instructionSet.changeState(s => fillStyle.changeInstanceValue(s, "#00f"));
-                instructionSet.drawRect(2, 0, 1, 1, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+                instructionSet.fillRect(2, 0, 1, 1, (context: CanvasRenderingContext2D, transformation: Transformation) => {
                     context.fill();
                 });
             });

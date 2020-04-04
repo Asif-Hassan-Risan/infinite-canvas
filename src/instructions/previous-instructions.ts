@@ -5,12 +5,13 @@ import { InfiniteCanvasState } from "../state/infinite-canvas-state";
 import { StateChangingInstructionSetWithArea } from "../interfaces/state-changing-instruction-set-with-area";
 import { StateAndInstruction } from "./state-and-instruction";
 import { ClearRectWithState } from "./clear-rect-with-state";
-import { Instruction } from "./instruction";
 import { Area } from "../areas/area";
 import { PartOfDrawing } from "../interfaces/part-of-drawing";
+import { ViewboxInfinityProvider } from "../interfaces/viewbox-infinity-provider";
+import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
 
 export class PreviousInstructions extends StateChangingInstructionSequence<StateChangingInstructionSetWithArea> implements PartOfDrawing{
-    constructor(initiallyWithState: StateAndInstruction){
+    constructor(initiallyWithState: StateAndInstruction, private readonly viewboxInfinityProvider: ViewboxInfinityProvider){
         super(initiallyWithState);
     }
     protected reconstructState(fromState: InfiniteCanvasState, toInstructionSet: StateChangingInstructionSetWithArea): void{
@@ -22,8 +23,9 @@ export class PreviousInstructions extends StateChangingInstructionSequence<State
     public intersects(area: Area): boolean{
         return this.contains(i => i.intersects(area));
     }
-    public addClearRect(area: Area, state: InfiniteCanvasState, instructionToClear: Instruction): void{
-        const clearRect: ClearRectWithState = ClearRectWithState.createClearRect(state, area, instructionToClear);
+    public addClearRect(area: Area, state: InfiniteCanvasState, x: number, y: number, width: number, height: number): void{
+        const infinity: ViewboxInfinity = this.viewboxInfinityProvider.getForPath().getInfinity(state);
+        const clearRect: ClearRectWithState = ClearRectWithState.createClearRect(state, area, infinity, x, y, width, height);
         clearRect.setInitialState(this.state);
         this.add(clearRect);
     }
@@ -33,7 +35,7 @@ export class PreviousInstructions extends StateChangingInstructionSequence<State
     public isContainedBy(area: Area): boolean {
         return !this.contains(i => !i.isContainedBy(area));
     }
-    public static create(): PreviousInstructions{
-        return new PreviousInstructions(StateAndInstruction.create(defaultState, InfiniteCanvasStateInstance.setDefault));
+    public static create(viewboxInfinityProvider: ViewboxInfinityProvider): PreviousInstructions{
+        return new PreviousInstructions(StateAndInstruction.create(defaultState, InfiniteCanvasStateInstance.setDefault), viewboxInfinityProvider);
     }
 }

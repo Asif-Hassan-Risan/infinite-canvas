@@ -13,6 +13,10 @@ import { transformInstructionRelatively, transformInstructionAbsolutely } from "
 import { Area } from "./areas/area";
 import { Position } from "./geometry/position"
 import { ViewboxInfinityProvider } from "./interfaces/viewbox-infinity-provider";
+import { rectangleHasArea } from "./geometry/rectangle-has-area";
+import { rectangleIsPlane } from "./geometry/rectangle-is-plane";
+import { plane } from "./areas/plane";
+import { ConvexPolygon } from "./areas/polygons/convex-polygon";
 
 export class InfiniteCanvasInstructionSet{
     private currentInstructionsWithPath: StateChangingInstructionSetWithAreaAndCurrentPath;
@@ -20,11 +24,11 @@ export class InfiniteCanvasInstructionSet{
     public state: InfiniteCanvasState;
     private instructionToRestoreState: Instruction;
     constructor(private readonly onChange: () => void, private readonly infinityProvider: ViewboxInfinityProvider){
-        this.previousInstructionsWithPath = PreviousInstructions.create();
+        this.previousInstructionsWithPath = PreviousInstructions.create(infinityProvider);
         this.state = this.previousInstructionsWithPath.state;
     }
     public beginPath(): void{
-        this.replaceCurrentInstructionsWithPath(InstructionsWithPath.create(this.state, this.infinityProvider));
+        this.replaceCurrentInstructionsWithPath(InstructionsWithPath.create(this.state, this.infinityProvider, this.infinityProvider.getForPath()));
     }
     public changeState(change: (state: InfiniteCanvasStateInstance) => InfiniteCanvasStateInstance): void{
         this.state = this.state.withCurrentState(change(this.state.current));
@@ -46,7 +50,28 @@ export class InfiniteCanvasInstructionSet{
     public currentSubpathIsClosable(): boolean{
         return !this.currentInstructionsWithPath || this.currentInstructionsWithPath.currentSubpathIsClosable();
     }
-    public drawPath(instruction: Instruction): void{
+    public fillPath(instruction: Instruction): void{
+        this.drawPath(instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.fillPath(_instruction, state);
+        });
+    }
+    public strokePath(): void{
+        this.drawPath((context: CanvasRenderingContext2D) => {context.stroke();}, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.strokePath(_instruction, state);
+        });
+    }
+    public fillRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+        this.drawRect(x, y, w, h, instruction, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.fillPath(_instruction, state);
+        });
+    }
+
+    public strokeRect(x: number, y: number, w: number, h: number): void{
+        this.drawRect(x, y, w, h, (context: CanvasRenderingContext2D) => {context.stroke();}, (path: StateChangingInstructionSetWithAreaAndCurrentPath, _instruction: Instruction, state: InfiniteCanvasState) => {
+            path.strokePath(_instruction, state);
+        });
+    }
+    private drawPath(instruction: Instruction, drawPath: (path: StateChangingInstructionSetWithAreaAndCurrentPath, instruction: Instruction, state: InfiniteCanvasState) => void): void{
         if(!this.currentInstructionsWithPath){
             return;
         }
@@ -56,7 +81,7 @@ export class InfiniteCanvasInstructionSet{
         }
         this.state = this.state.currentlyTransformed(stateIsTransformable);
         const recreatedPath: StateChangingInstructionSetWithAreaAndCurrentPath = this.currentInstructionsWithPath.recreatePath();
-        this.currentInstructionsWithPath.drawPath(instruction, this.state);
+        drawPath(this.currentInstructionsWithPath, instruction, this.state);
         this.previousInstructionsWithPath.add(this.currentInstructionsWithPath);
         recreatedPath.setInitialStateWithClippedPaths(this.previousInstructionsWithPath.state);
         this.currentInstructionsWithPath = recreatedPath;
@@ -64,15 +89,15 @@ export class InfiniteCanvasInstructionSet{
         this.onChange();
     }
 
-    public drawRect(x: number, y: number, w: number, h: number, instruction: Instruction): void{
+    private drawRect(x: number, y: number, w: number, h: number, instruction: Instruction, drawPath: (path: StateChangingInstructionSetWithAreaAndCurrentPath, instruction: Instruction, state: InfiniteCanvasState) => void): void{
         const stateIsTransformable: boolean = this.state.current.isTransformable();
         if(!stateIsTransformable){
             instruction = transformInstructionRelatively(instruction);
         }
         const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
-        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityProvider);
+        const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.infinityProvider, this.infinityProvider.getForPath());
         pathToDraw.rect(x, y, w, h, stateToDrawWith);
-        pathToDraw.drawPath(instruction, stateToDrawWith);
+        drawPath(pathToDraw, instruction, stateToDrawWith);
         this.drawBeforeCurrentPath(pathToDraw);
         this.onChange();
 	}
@@ -172,14 +197,18 @@ export class InfiniteCanvasInstructionSet{
         }
     }
 
-    public clearArea(rectangle: Area, instructionToClear: Instruction): void{
+    public clearArea(x: number, y: number, width: number, height: number): void{
+        if(!rectangleHasArea(x, y, width, height)){
+			return;
+		}
+		const rectangle: Area = rectangleIsPlane(x, y, width, height) ? plane : ConvexPolygon.createRectangle(x, y, width, height);
         const transformedRectangle: Area = rectangle.transform(this.state.current.transformation)
         if(!this.intersects(transformedRectangle)){
             return;
         }
         this.clearContentsInsideArea(transformedRectangle);
         if(this.previousInstructionsWithPath.hasDrawingAcrossBorderOf(transformedRectangle)){
-            this.previousInstructionsWithPath.addClearRect(rectangle, this.state, instructionToClear);
+            this.previousInstructionsWithPath.addClearRect(rectangle, this.state, x, y, width, height);
             if(this.currentInstructionsWithPath){
                 this.currentInstructionsWithPath.setInitialStateWithClippedPaths(this.state);
             }

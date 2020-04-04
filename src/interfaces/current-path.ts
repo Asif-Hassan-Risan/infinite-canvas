@@ -9,7 +9,8 @@ export interface CurrentPath{
     allSubpathsAreClosable(): boolean;
     currentSubpathIsClosable(): boolean;
     containsFinitePoint(): boolean;
-    drawPath(instruction: Instruction, state: InfiniteCanvasState): void;
+    fillPath(instruction: Instruction, state: InfiniteCanvasState): void;
+    strokePath(instruction: Instruction, state: InfiniteCanvasState): void;
     clipPath(instruction: Instruction, state: InfiniteCanvasState): void;
     addPathInstruction(pathInstruction: PathInstruction, state: InfiniteCanvasState): void;
     closePath(): void;
