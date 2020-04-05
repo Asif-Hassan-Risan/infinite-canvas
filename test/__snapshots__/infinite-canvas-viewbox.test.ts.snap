@@ -3660,6 +3660,27 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context that strokes a path using a line dash should draw a path whose length is a multiple of the line dash period 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,200,200)",
+  "context.setLineDash([3,2])",
+  "context.beginPath()",
+  "context.moveTo(100,-50)",
+  "context.lineTo(100,-50)",
+  "context.lineTo(50,-1.4142135623730923)",
+  "context.lineTo(50,-1.5552884363645063)",
+  "context.lineTo(50,-1.4142135623730923)",
+  "context.lineTo(50,-3.207106781186546)",
+  "context.lineTo(50,-1.4142135623730923)",
+  "context.lineTo(50,100)",
+  "context.setLineDash([3,2])",
+  "context.lineWidth = 1",
+  "context.stroke()",
+]
+`;
+
 exports[`an infinite canvas context that strokes a rect that extends to infinity and then changes the line width and strokes another rect that extends to infinity should have taken a different line width into account for the second rectangle 1`] = `
 Array [
   "context.restore()",

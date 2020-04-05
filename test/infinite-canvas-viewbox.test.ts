@@ -3185,8 +3185,8 @@ describe("an infinite canvas context", () => {
 			infiniteContext.stroke();
 		});
 
-		xit("should draw a path whose length is a multiple of the line dash period", () => {
-			console.log(contextMock.getLog());
+		it("should draw a path whose length is a multiple of the line dash period", () => {
+			expect(contextMock.getLog()).toMatchSnapshot();
 		});
 	});
 
