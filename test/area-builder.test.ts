@@ -38,25 +38,10 @@ describe("an area builder", () => {
             areaBuilder.addInfinityInDirection(new Point(1, 0));
         });
 
-        it("should, when an area is added, end up with the correct area", () => {
-            areaBuilder.addArea(areaToAdd);
-            expectAreasToBeEqual(areaBuilder.area, p(p => p
-                .with(hp => hp.base(0, 1).normal(0, -1))
-                .with(hp => hp.base(0, 1).normal(1, 0))
-                .with(hp => hp.base(1, 0).normal(0, 1))))
-        });
-
         describe("and then adds another point at infinity", () => {
 
             beforeEach(() => {
                 areaBuilder.addInfinityInDirection(new Point(0, -1));
-            });
-
-            it("should, when an area is added, end up with the correct area", () => {
-                areaBuilder.addArea(areaToAdd);
-                expectAreasToBeEqual(areaBuilder.area, p(p => p
-                    .with(hp => hp.base(0, 1).normal(0, -1))
-                    .with(hp => hp.base(0, 1).normal(1, 0))))
             });
 
             it("should, when a point is added, end up with a polygon with one vertex", () => {
@@ -112,13 +97,6 @@ describe("an area builder", () => {
                 areaBuilder.addInfinityInDirection(new Point(-1, 0));
             });
 
-            it("should, when an area is added, end up with the correct area", () => {
-                areaBuilder.addArea(areaToAdd);
-                expectAreasToBeEqual(areaBuilder.area, p(p => p
-                    .with(hp => hp.base(0, 1).normal(0, -1))
-                    .with(hp => hp.base(1, 0).normal(0, 1))))
-            });
-
             it("should, when a point is added, end up with a line", () => {
                 areaBuilder.addPoint(new Point(0, 1));
                 expectAreasToBeEqual(areaBuilder.area, l(l => l.base(0, 1).direction(1, 0)));
@@ -128,12 +106,6 @@ describe("an area builder", () => {
 
                 beforeEach(() => {
                     areaBuilder.addInfinityInDirection(new Point(-1, -1));
-                });
-
-                it("should, when an area is added, end up with the correct area", () => {
-                    areaBuilder.addArea(areaToAdd);
-                    expectAreasToBeEqual(areaBuilder.area, p(p => p
-                        .with(hp => hp.base(0, 1).normal(0, -1))))
                 });
 
                 it("should, when a point is added, end up with a half plane", () => {

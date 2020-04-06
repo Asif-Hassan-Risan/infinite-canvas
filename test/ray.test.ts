@@ -78,15 +78,4 @@ describe("a ray", () => {
     ])("should result in the correct expansions with a point at infinity", (direction: Point, expectedExpansion: Area) => {
         expectAreasToBeEqual(ray.expandToIncludeInfinityInDirection(direction), expectedExpansion)
     });
-
-    it.each([
-        [ConvexPolygon.createRectangle(-1, 1, 1, 1), p(p => p
-            .with(hp => hp.base(0, 0).normal(1, 1))
-            .with(hp => hp.base(0, 0).normal(0, 1))
-            .with(hp => hp.base(-1, 1).normal(1, 0))
-            .with(hp => hp.base(-1, 2).normal(0, -1)))]
-    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
-        const result: Area = ray.expandToIncludePolygon(expandWith);
-        expectAreasToBeEqual(result, expectedExpansion);
-    });
 });

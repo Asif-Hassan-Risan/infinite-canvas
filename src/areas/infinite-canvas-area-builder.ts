@@ -54,17 +54,7 @@ export class InfiniteCanvasAreaBuilder {
             }
         }
     }
-    public addArea(area: Area): void{
-        if(this._area){
-            this._area = this._area.expandToInclude(area);
-        }else{
-            if(this.subsetOfLineAtInfinity){
-                this._area = this.subsetOfLineAtInfinity.addArea(area);
-            }else{
-                this._area = area;
-            }
-        }
-    }
+
     public transformedWith(transformation: Transformation): AreaBuilder{
         return new TransformedAreaBuilder(this, transformation);
     }

@@ -96,9 +96,6 @@ export class ConvexPolygon implements Area{
         }
         return point;
     }
-    public expandToIncludePolygon(other: ConvexPolygon): Area{
-        return ConvexPolygon.combinePolygons(this, other);
-    }
     public expandToIncludePoint(point: Point): ConvexPolygon{
         if(this.containsPoint(point)){
             return this;
@@ -163,9 +160,6 @@ export class ConvexPolygon implements Area{
     }
     public expandByDistance(distance: number): ConvexPolygon{
         return new ConvexPolygon(this.halfPlanes.map(hp => hp.expandByDistance(distance)));
-    }
-    public expandToInclude(area: Area): Area{
-        return area.expandToIncludePolygon(this);
     }
     public transform(transformation: Transformation): ConvexPolygon{
         return new ConvexPolygon(this.halfPlanes.map(hp => hp.transform(transformation)));
@@ -258,31 +252,7 @@ export class ConvexPolygon implements Area{
         }
         return result;
     }
-    private getTangentPlanesThroughPoint(point: Point): HalfPlane[]{
-        const result: HalfPlane[] = [];
-        if(this.containsPoint(point)){
-            for(let halfPlane of this.halfPlanes){
-                if(halfPlane.containsPoint(point)){
-                    result.push(halfPlane);
-                }
-            }
-            return result;
-        }
-        for(let vertex of this.vertices){
-            const throughVertex: HalfPlane[] = HalfPlane.withBorderPoints(vertex.point, point);
-            for(let planeThroughVertex of throughVertex){
-                if(vertex.isContainedByHalfPlaneWithNormal(planeThroughVertex.normalTowardInterior)){
-                    result.push(planeThroughVertex);
-                }
-            }
-        }
-        for(let halfPlane of this.halfPlanes){
-            if(this.hasAtMostOneVertex(halfPlane) && !halfPlane.containsPoint(point)){
-                result.push(halfPlane.expandToIncludePoint(point));
-            }
-        }
-        return result;
-    }
+
     public isContainedByRay(ray: Ray): boolean{
         return false;
     }
@@ -313,36 +283,6 @@ export class ConvexPolygon implements Area{
         return result;
     }
 
-    private static combinePolygons(one: ConvexPolygon, other: ConvexPolygon): Area{
-        if(one.isContainedByConvexPolygon(other)){
-            return other;
-        }
-        if(other.isContainedByConvexPolygon(one)){
-            return one;
-        }
-        let halfPlanes: HalfPlane[] = one.halfPlanes.concat(other.halfPlanes).filter(hp => one.isContainedByHalfPlane(hp) && other.isContainedByHalfPlane(hp));
-        for(let vertex1 of one.vertices){
-            const tangentPlanes: HalfPlane[] = other.getTangentPlanesThroughPoint(vertex1.point);
-            for(let tangentPlane of tangentPlanes){
-                if(one.isContainedByHalfPlane(tangentPlane)){
-                    halfPlanes.push(tangentPlane);
-                }
-            }
-        }
-        for(let vertex2 of other.vertices){
-            const tangentPlanes: HalfPlane[] = one.getTangentPlanesThroughPoint(vertex2.point);
-            for(let tangentPlane of tangentPlanes){
-                if(other.isContainedByHalfPlane(tangentPlane)){
-                    halfPlanes.push(tangentPlane);
-                }
-            }
-        }
-        halfPlanes = ConvexPolygon.getHalfPlanesNotContainingAnyOther(halfPlanes);
-        if(halfPlanes.length === 0){
-            return plane;
-        }
-        return new ConvexPolygon(halfPlanes);
-    }
     private static getVerticesNotContainingAnyOther(vertices: PolygonVertex[]): PolygonVertex[]{
         const result: PolygonVertex[] = [];
         for(let i: number = 0; i < vertices.length; i++){
@@ -452,13 +392,7 @@ export class ConvexPolygon implements Area{
             HalfPlane.throughPointsAndContainingPoint(point2, point3, point1),
         ])
     }
-    public static createRectangleBetweenPoints(point1: Point, point2: Point): ConvexPolygon{
-        const x: number = Math.min(point1.x, point2.x);
-        const y: number = Math.min(point1.y, point2.y);
-        const width: number = Math.abs(point1.x - point2.x);
-        const height: number = Math.abs(point1.y - point2.y);
-        return ConvexPolygon.createRectangle(x, y, width, height);
-    }
+
     public static createRectangle(x: number, y: number, width: number, height: number): ConvexPolygon{
         const halfPlanes: HalfPlane[] = [];
         if(Number.isFinite(x)){

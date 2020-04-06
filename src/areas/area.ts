@@ -22,8 +22,6 @@ export interface Area{
     intersectsLine(line: Line): boolean;
     intersects(other: Area): boolean;
     expandToIncludePoint(point: Point): Area;
-    expandToIncludePolygon(polygon: ConvexPolygon): Area;
     expandToIncludeInfinityInDirection(direction: Point): Area;
-    expandToInclude(other: Area): Area;
     transform(transformation: Transformation): Area;
 }

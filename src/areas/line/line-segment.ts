@@ -125,12 +125,6 @@ export class LineSegment extends SubsetOfLine implements Area{
         }
         return ConvexPolygon.createTriangleWithInfinityInDirection(this.point1, this.point2, direction);
     }
-    public expandToIncludePolygon(polygon: ConvexPolygon): Area {
-        return this.expandToInclude(polygon);
-    }
-    public expandToInclude(other: Area): Area {
-        return other.expandToIncludePoint(this.point1).expandToIncludePoint(this.point2);
-    }
     public transform(transformation: Transformation): Area {
         return new LineSegment(transformation.apply(this.point1), transformation.apply(this.point2));
     }

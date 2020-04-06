@@ -419,50 +419,6 @@ describe("a convex polygon with three half planes and two vertices", () => {
     });
 
     it.each([
-        [p(p => p
-            .with(hp => hp.base(0, -0.5).normal(-1, -1))
-            .with(hp => hp.base(0, -0.5).normal(1, -1))),
-        p(p => p
-            .with(hp => hp.base(-2, -2).normal(1, -1))
-            .with(hp => hp.base(2, -2).normal(-1, -1))
-            .with(hp => hp.base(0, -0.5).normal(0.5, -1))
-            .with(hp => hp.base(0, -0.5).normal(-0.5, -1)))],
-
-        [p(p => p
-            .with(hp => hp.base(0, 0).normal(-1, -1))
-            .with(hp => hp.base(0, 0).normal(1, -1))),
-        p(p => p
-            .with(hp => hp.base(0, 0).normal(-1, -1))
-            .with(hp => hp.base(0, 0).normal(1, -1)))],
-
-        [p(p => p
-            .with(hp => hp.base(-2, -1).normal(-1, -1))
-            .with(hp => hp.base(-2, -1).normal(1, -1))),
-        p(p => p
-            .with(hp => hp.base(-2, -1).normal(1, -1))
-            .with(hp => hp.base(0, -1).normal(0, -1))
-            .with(hp => hp.base(2, -2).normal(-1, -1)))],
-
-        [p(p => p
-            .with(hp => hp.base(-2, 0).normal(-1, -1))
-            .with(hp => hp.base(-2, 0).normal(1, -1))),
-        p(p => p
-            .with(hp => hp.base(-2, 0).normal(1, -1))
-            .with(hp => hp.base(-2, 0).normal(-1, -3))
-            .with(hp => hp.base(2, -2).normal(-1, -1)))],
-
-        [p(p => p
-            .with(hp => hp.base(-1, -1).normal(0, -1))
-            .with(hp => hp.base(-1, -1).normal(-1, 0))),
-        p(p => p
-            .with(hp => hp.base(2, -2).normal(-1, -1))
-            .with(hp => hp.base(0, -1).normal(0, -1)))]
-    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
-        expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
-        expectAreasToBeEqual(expandWith.expandToIncludePolygon(convexPolygon), expectedExpansion);
-    });
-
-    it.each([
         [new Point(-2, -1), p(p => p
             .with(hp => hp.base(-3, -2).normal(1, -1))
             .with(hp => hp.base(2, -2).normal(-1, -1))
@@ -671,21 +627,6 @@ describe("a convex polygon with three half planes and three vertices", () => {
     });
 
     it.each([
-        [p(p => p
-            .with(hp => hp.base(0, 0).normal(0, -1))
-            .with(hp => hp.base(-1, 0).normal(1, 1))
-            .with(hp => hp.base(1, 0).normal(-1, 1))),
-        p(p => p
-            .with(hp => hp.base(-1, 0).normal(1, -1))
-            .with(hp => hp.base(1, 0).normal(-1, -1))
-            .with(hp => hp.base(-1, 0).normal(1, 1))
-            .with(hp => hp.base(1, 0).normal(-1, 1)))]
-    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
-        expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
-        expectAreasToBeEqual(expandWith.expandToIncludePolygon(convexPolygon), expectedExpansion);
-    });
-
-    it.each([
         [hp(hp => hp.base(0, 2).normal(0, -1)), true],
         [hp(hp => hp.base(0, -2).normal(0, 1)), true]
     ])("should be contained by the right half planes", (halfPlane: HalfPlane, expectedToContain: boolean) => {
@@ -698,35 +639,6 @@ describe("a convex polygon with only one half plane", () => {
 
     beforeEach(() => {
         convexPolygon = p(p => p.with(hp => hp.base(0, 0).normal(0, 1)));
-    });
-
-    it.each([
-        [p(p => p.with(hp => hp.base(0, -1).normal(0, 1))), p(p => p.with(hp => hp.base(0, -1).normal(0, 1)))],
-        [p(p => p.with(hp => hp.base(0, 1).normal(0, 1))), p(p => p.with(hp => hp.base(0, 0).normal(0, 1)))],
-        [p(p => p.with(hp => hp.base(0, 0).normal(1, 1))), plane],
-        [p(p => p
-            .with(hp => hp.base(0, 1).normal(1, 1))
-            .with(hp => hp.base(0, 1).normal(-1, 1))),
-        p(p => p.with(hp => hp.base(0, 0).normal(0, 1)))],
-        [p(p => p
-            .with(hp => hp.base(0, 0).normal(1, 1))
-            .with(hp => hp.base(0, 0).normal(-1, 1))),
-        p(p => p.with(hp => hp.base(0, 0).normal(0, 1)))],
-        [p(p => p
-            .with(hp => hp.base(0, -1).normal(1, 1))
-            .with(hp => hp.base(0, -1).normal(-1, 1))),
-        p(p => p.with(hp => hp.base(0, -1).normal(0, 1)))],
-        [p(p => p
-            .with(hp => hp.base(0, -1).normal(0, 1))
-            .with(hp => hp.base(0, -1).normal(1, 0))),
-        p(p => p.with(hp => hp.base(0, -1).normal(0, 1)))],
-        [p(p => p
-            .with(hp => hp.base(0, -1).normal(1, 10))
-            .with(hp => hp.base(0, -1).normal(1, 0))),
-        plane]
-    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
-        expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
-        expectAreasToBeEqual(expandWith.expandToIncludePolygon(convexPolygon), expectedExpansion);
     });
 
     it.each([
@@ -829,38 +741,6 @@ describe("a convex polygon with two half planes and one vertex", () => {
 
     beforeEach(() => {
         convexPolygon = p(p => p.with(hp => hp.base(0, 0).normal(-1, -1)).with(hp => hp.base(0, 0).normal(1, -1)));
-    });
-
-    it.each([
-        [p(p => p
-            .with(hp => hp.base(0, -1).normal(-1, -1))
-            .with(hp => hp.base(0, -1).normal(1, -1))),
-        p(p => p
-            .with(hp => hp.base(0, 0).normal(-1, -1))
-            .with(hp => hp.base(0, 0).normal(1, -1)))],
-        [p(p => p
-            .with(hp => hp.base(-1, 0).normal(-1, -1))
-            .with(hp => hp.base(-1, 0).normal(1, -1))),
-        p(p => p
-            .with(hp => hp.base(0, 0).normal(0, -1))
-            .with(hp => hp.base(-1, 0).normal(1, -1))
-            .with(hp => hp.base(0, 0).normal(-1, -1)))],
-        [p(p => p
-            .with(hp => hp.base(-1, 0).normal(-1, -1))
-            .with(hp => hp.base(-1, 0).normal(1, 0))),
-        p(p => p
-            .with(hp => hp.base(0, 0).normal(0, -1))
-            .with(hp => hp.base(-1, 0).normal(1, -1))
-            .with(hp => hp.base(0, 0).normal(-1, -1)))],
-        [p(p => p
-            .with(hp => hp.base(0, 1).normal(-2, -1))
-            .with(hp => hp.base(0, 1).normal(2, -1))),
-        p(p => p
-            .with(hp => hp.base(0, 1).normal(1, -1))
-            .with(hp => hp.base(0, 1).normal(-1, -1)))]
-    ])("should result in the correct expansions with a polygon", (expandWith: ConvexPolygon, expectedExpansion: ConvexPolygon) => {
-        expectAreasToBeEqual(convexPolygon.expandToIncludePolygon(expandWith), expectedExpansion);
-        expectAreasToBeEqual(expandWith.expandToIncludePolygon(convexPolygon), expectedExpansion);
     });
 
     it.each([

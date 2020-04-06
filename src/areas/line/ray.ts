@@ -121,12 +121,6 @@ export class Ray extends SubsetOfLine implements Area{
         }
         return ConvexPolygon.createTriangleWithInfinityInTwoDirections(this.base, this.direction, direction);
     }
-    public expandToIncludePolygon(polygon: ConvexPolygon): Area {
-        return this.expandToInclude(polygon);
-    }
-    public expandToInclude(other: Area): Area {
-        return other.expandToIncludePoint(this.base).expandToIncludeInfinityInDirection(this.direction);
-    }
     public transform(transformation: Transformation): Area {
         const baseTransformed: Point = transformation.apply(this.base);
         return new Ray(baseTransformed, transformation.apply(this.base.plus(this.direction)).minus(baseTransformed));
