@@ -2668,6 +2668,73 @@ describe("an infinite canvas context", () => {
 		it("should fill a rect that extends to outside of the viewbox", () => {
 			expect(contextMock.getLog()).toMatchSnapshot();
 		});
+
+		describe.each([
+			[10, 10, 40, 40],
+			[10, 10, -40, 40],
+			[10, 10, Infinity, 40],
+			[10, 10, -Infinity, 40],
+			[10, 10, 40, Infinity],
+			[10, 10, -40, Infinity],
+			[10, 10, Infinity, Infinity],
+			[10, 10, -Infinity, Infinity],
+
+			[10, 60, 40, -40],
+			[10, 60, -40, -40],
+			[10, 60, Infinity, -40],
+			[10, 60, -Infinity, -40],
+			[10, 60, 40, -Infinity],
+			[10, 60, -40, -Infinity],
+			[10, 60, Infinity, -Infinity],
+			[10, 60, -Infinity, -Infinity],
+		])("and then clears a rect that intersects the rectangle",(x: number, y: number, w: number, h: number) => {
+
+			beforeEach(() => {
+				contextMock.clear();
+				infiniteContext.clearRect(x, y, w, h);
+			});
+
+			it("should add a clear rect", () => {
+				const log: string = contextMock.getLog().join(";");
+				expect(log.match(/context\.transform\([^)]+\);context\.clearRect\([^)]+\);context\.restore()/)).toBeTruthy();
+			});
+		});
+
+		describe.each([
+			[30, 10, 40, 40],
+			[30, 10, 40, Infinity],
+			[30, 10, 40, -Infinity],
+			[30, 10, 40, -40],
+			[30, 10, Infinity, Infinity],
+			[30, 10, Infinity, -Infinity],
+			[30, 10, Infinity, 40],
+			[30, 10, Infinity, -40],
+			[30, 10, -Infinity, -Infinity],
+			[30, 10, -Infinity, -10],
+
+			[10, 10, 40, -40],
+			[10, 10, 40, -Infinity],
+			[10, 10, Infinity, -Infinity],
+			[10, 10, Infinity, -40],
+			[10, 10, -Infinity, -Infinity],
+			[10, 10, -Infinity, -40],
+
+			[10, 60, 40, Infinity],
+			[10, 60, Infinity, Infinity],
+			[10, 60, -Infinity, Infinity],
+			[10, 60, Infinity, 10],
+			[10, 60, -Infinity, 10],
+		])("and then clears a rect that does not intersect the rectangle",(x: number, y: number, w: number, h: number) => {
+
+			beforeEach(() => {
+				contextMock.clear();
+				infiniteContext.clearRect(x, y, w, h);
+			});
+
+			it("should do nothing", () => {
+				expect(contextMock.getLog()).toEqual([]);
+			});
+		});
 	});
 
 	describe("that transforms, begins a path, draws line from a point to infinity, rotates, draws a line to infinity and strokes", () => {
