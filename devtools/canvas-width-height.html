@@ -1,0 +1,30 @@
+<html>
+	<head>
+		<title>With different width and height</title>
+		<script type="text/javascript" src="infinite-canvas.js"></script>
+		<style type="text/css">
+			body{
+				padding: 0px;
+				margin: 0px;
+			}
+			canvas{
+				width:100%;
+				height: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<script>
+			(function(){
+				var canvas = document.getElementById("canvas");
+				var infCanvas = new InfiniteCanvas(canvas);
+				var ctx = infCanvas.getContext();
+
+				ctx.fillStyle = '#aaa';
+				ctx.fillRect(50, 50, Infinity, 100);
+				ctx.strokeRect(50, 50, Infinity, 100);
+			})();
+		</script>
+	</body>
+</html>
