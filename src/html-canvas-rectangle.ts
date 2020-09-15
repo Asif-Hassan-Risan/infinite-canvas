@@ -1,6 +1,10 @@
 import {CanvasRectangle} from "./interfaces/canvas-rectangle";
 
 export class HTMLCanvasRectangle implements CanvasRectangle{
-    constructor(public width: number, public height: number) {
+    public pixelWidth: number;
+    public pixelHeight: number;
+    constructor(private readonly canvasElement: HTMLCanvasElement) {
+        this.pixelWidth = canvasElement.width;
+        this.pixelHeight = canvasElement.height;
     }
 }

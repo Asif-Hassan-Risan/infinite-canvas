@@ -1,4 +1,4 @@
 export interface CanvasRectangle {
-    width: number;
-    height: number;
+    pixelWidth: number;
+    pixelHeight: number;
 }

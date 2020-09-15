@@ -4,6 +4,7 @@ import { fillStyle } from "../src/state/dimensions/fill-stroke-style";
 import { InfiniteCanvasInstructionSet } from "../src/infinite-canvas-instruction-set";
 import { Point } from "../src/geometry/point";
 import { InfiniteCanvasViewboxInfinityProvider } from "../src/infinite-canvas-viewbox-infinity-provider";
+import {MockCanvasRectangle} from "./mock-canvas-rectangle";
 
 describe("an instruction set", () => {
     let instructionSet: InfiniteCanvasInstructionSet;
@@ -11,7 +12,7 @@ describe("an instruction set", () => {
 
     beforeEach(() => {
         onChangeSpy = jest.fn();
-        instructionSet = new InfiniteCanvasInstructionSet(onChangeSpy, new InfiniteCanvasViewboxInfinityProvider(200, 200));
+        instructionSet = new InfiniteCanvasInstructionSet(onChangeSpy, new InfiniteCanvasViewboxInfinityProvider(new MockCanvasRectangle(200, 200)));
     });
 
     describe("that begins drawing a path", () => {

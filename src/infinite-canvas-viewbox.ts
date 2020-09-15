@@ -16,21 +16,23 @@ import { Position } from "./geometry/position"
 import {InfiniteCanvasViewboxInfinityProvider} from "./infinite-canvas-viewbox-infinity-provider";
 import {rectangleHasArea} from "./geometry/rectangle-has-area";
 import {rectangleIsPlane} from "./geometry/rectangle-is-plane";
+import {CanvasRectangle} from "./interfaces/canvas-rectangle";
 
 export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
 	private infinityProvider: InfiniteCanvasViewboxInfinityProvider;
 	private _transformation: Transformation;
 	constructor(
-		public width: number,
-		public height: number,
+		private readonly canvasRectangle: CanvasRectangle,
 		private context: CanvasRenderingContext2D,
 		private readonly drawingIterationProvider: DrawingIterationProvider,
 		private readonly drawLockProvider: () => DrawingLock){
-		this.infinityProvider = new InfiniteCanvasViewboxInfinityProvider(width, height);
+		this.infinityProvider = new InfiniteCanvasViewboxInfinityProvider(canvasRectangle);
 		this.instructionSet = new InfiniteCanvasInstructionSet(() => drawingIterationProvider.provideDrawingIteration(() => this.draw()), this.infinityProvider);
 		this._transformation = Transformation.identity;
 	}
+	public get width(): number{return this.canvasRectangle.pixelWidth;}
+	public get height(): number{return this.canvasRectangle.pixelHeight;}
 	public get state(): InfiniteCanvasState{return this.instructionSet.state;}
 	public get transformation(): Transformation{return this._transformation};
 	public set transformation(value: Transformation){

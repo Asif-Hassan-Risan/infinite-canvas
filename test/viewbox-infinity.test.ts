@@ -7,6 +7,7 @@ import { defaultState } from "../src/state/default-state";
 import { transformation } from "../src/state/dimensions/transformation";
 import { PathInfinityProvider } from "../src/interfaces/path-infinity-provider";
 import {CanvasContextMock} from "./canvas-context-mock";
+import {MockCanvasRectangle} from "./mock-canvas-rectangle";
 
 function recordPoints(instruction: (context: CanvasRenderingContext2D) => void): Point[]{
     const contextMock: any = new CanvasContextMock();
@@ -40,7 +41,7 @@ describe("a viewbox infinity for an untransformed context", () => {
     let pathInfinityProvider: PathInfinityProvider;
 
     beforeEach(() => {
-        infinityProvider = new InfiniteCanvasViewboxInfinityProvider(10, 10);
+        infinityProvider = new InfiniteCanvasViewboxInfinityProvider(new MockCanvasRectangle(10, 10));
         pathInfinityProvider = infinityProvider.getForPath();
         infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(Transformation.identity));
     });
@@ -92,7 +93,7 @@ describe("a viewbox infinity for a translated context", () => {
     let pathInfinityProvider: PathInfinityProvider;
 
     beforeEach(() => {
-        infinityProvider = new InfiniteCanvasViewboxInfinityProvider(10, 10);
+        infinityProvider = new InfiniteCanvasViewboxInfinityProvider(new MockCanvasRectangle(10, 10));
         pathInfinityProvider = infinityProvider.getForPath();
         infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(new Transformation(1, 0, 0, 1, 5, 5)));
     });
@@ -112,7 +113,7 @@ describe("a viewbox infinity for skewed context", () => {
     let pathInfinityProvider: PathInfinityProvider;
 
     beforeEach(() => {
-        infinityProvider = new InfiniteCanvasViewboxInfinityProvider(10, 10);
+        infinityProvider = new InfiniteCanvasViewboxInfinityProvider(new MockCanvasRectangle(10, 10));
         pathInfinityProvider = infinityProvider.getForPath();
         infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(new Transformation(1, 0.2, 0, 1, 0, 0)));
     });
@@ -133,7 +134,7 @@ describe("a viewbox infinity for a scaled context", () => {
     let pathInfinityProvider: PathInfinityProvider;
 
     beforeEach(() => {
-        infinityProvider = new InfiniteCanvasViewboxInfinityProvider(10, 10);
+        infinityProvider = new InfiniteCanvasViewboxInfinityProvider(new MockCanvasRectangle(10, 10));
         pathInfinityProvider = infinityProvider.getForPath();
         infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(Transformation.scale(2)));
     });
