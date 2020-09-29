@@ -7,6 +7,7 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         this.measure();
     }
     public measure(): void{
+        console.log(`measuring viewbox`);
         this.viewboxWidth = this.canvasElement.width;
         this.viewboxHeight = this.canvasElement.height;
     }
