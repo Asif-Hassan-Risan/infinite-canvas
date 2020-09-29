@@ -30,9 +30,20 @@ export class InfiniteCanvasTransformer implements Transformer{
     }
     public zoom(x: number, y: number, scale: number): void{
         if(this._zoom){
-            this._zoom.cancel();
+            if(this._zoom.centerX === x && this._zoom.centerY === y){
+                this._zoom.multiplyScale(scale);
+            }else{
+                this._zoom.cancel();
+                this._zoom = undefined;
+            } 
         }
-        this._zoom = new Zoom(this.viewBox, x, y, scale, () => this._zoom = undefined);
+        if(!this._zoom){
+            console.log(`creating new zoom`)
+            this._zoom = new Zoom(this.viewBox, x, y, scale, 1000, () => {
+                console.log(`zoom ends`)
+                this._zoom = undefined;
+            });
+        }
     }
     public getAnchor(x: number, y: number): Anchor{
         const movable: InfiniteCanvasMovable = new InfiniteCanvasMovable(new Point(x, y));

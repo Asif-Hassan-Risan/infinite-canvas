@@ -40,7 +40,7 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 			lockableDrawingIterationProvider,
 			() => lockableDrawingIterationProvider.getLock());
 		this.transformer = new InfiniteCanvasTransformer(this.viewBox, this.config);
-		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.viewBox, this.transformer, this.config);
+		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.transformer, this.config);
 	}
 	public getContext(): InfiniteCanvasRenderingContext2D{
 		if(!this.context){

@@ -9,7 +9,7 @@ import { InfiniteCanvasConfig } from "../config/infinite-canvas-config";
 
 export class InfiniteCanvasEvents{
     private anchorSet: AnchorSet;
-    constructor(canvasElement: HTMLCanvasElement, viewbox: ViewBox, transformer: Transformer, config: InfiniteCanvasConfig){
+    constructor(canvasElement: HTMLCanvasElement, transformer: Transformer, config: InfiniteCanvasConfig){
         this.anchorSet = new AnchorSet();
         function getRelativePosition(clientX: number, clientY: number): Point{
             const rect: ClientRect = canvasElement.getBoundingClientRect();
