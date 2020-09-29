@@ -8,8 +8,8 @@ import {CanvasRectangle} from "./interfaces/canvas-rectangle";
 export class InfiniteCanvasViewboxInfinityProvider implements ViewboxInfinityProvider{
     public viewBoxRectangle: ConvexPolygon;
     public viewBoxTransformation: Transformation = Transformation.identity;
-    public get viewBoxWidth(): number{return this.canvasRectangle.pixelWidth}
-    public get viewBoxHeight(): number{return this.canvasRectangle.pixelHeight}
+    public get viewBoxWidth(): number{return this.canvasRectangle.viewboxWidth}
+    public get viewBoxHeight(): number{return this.canvasRectangle.viewboxHeight}
     constructor(private readonly canvasRectangle: CanvasRectangle) {
         this.viewBoxRectangle = ConvexPolygon.createRectangle(0, 0, this.viewBoxWidth, this.viewBoxHeight);
     }

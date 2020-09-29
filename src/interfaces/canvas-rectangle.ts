@@ -1,4 +1,5 @@
 export interface CanvasRectangle {
-    pixelWidth: number;
-    pixelHeight: number;
+    viewboxWidth: number;
+    viewboxHeight: number;
+    measure(): void;
 }

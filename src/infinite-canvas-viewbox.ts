@@ -28,17 +28,17 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		private readonly drawingIterationProvider: DrawingIterationProvider,
 		private readonly drawLockProvider: () => DrawingLock){
 		this.infinityProvider = new InfiniteCanvasViewboxInfinityProvider(canvasRectangle);
-		this.instructionSet = new InfiniteCanvasInstructionSet(() => drawingIterationProvider.provideDrawingIteration(() => this.draw()), this.infinityProvider);
+		this.instructionSet = new InfiniteCanvasInstructionSet(() => this.draw(), this.infinityProvider);
 		this._transformation = Transformation.identity;
 	}
-	public get width(): number{return this.canvasRectangle.pixelWidth;}
-	public get height(): number{return this.canvasRectangle.pixelHeight;}
+	public get width(): number{return this.canvasRectangle.viewboxWidth;}
+	public get height(): number{return this.canvasRectangle.viewboxHeight;}
 	public get state(): InfiniteCanvasState{return this.instructionSet.state;}
 	public get transformation(): Transformation{return this._transformation};
 	public set transformation(value: Transformation){
 		this._transformation = value;
 		this.infinityProvider.viewBoxTransformation = value;
-		this.drawingIterationProvider.provideDrawingIteration(() => this.draw());
+		this.draw();
 	}
 	public getDrawingLock(): DrawingLock{
 		return this.drawLockProvider();
@@ -133,9 +133,11 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		return result;
 	}
 	private draw(): void{
-		this.context.restore();
-		this.context.save();
-		this.context.clearRect(0, 0, this.width, this.height);
-		this.instructionSet.execute(this.context, this._transformation);
+		this.drawingIterationProvider.provideDrawingIteration(() => {
+			this.context.restore();
+			this.context.save();
+			this.context.clearRect(0, 0, this.width, this.height);
+			this.instructionSet.execute(this.context, this._transformation);
+		});
 	}
 }
