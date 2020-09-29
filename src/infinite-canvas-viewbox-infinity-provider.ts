@@ -6,12 +6,12 @@ import { InfiniteCanvasPathInfinityProvider } from "./infinite-canvas-path-infin
 import {CanvasRectangle} from "./interfaces/canvas-rectangle";
 
 export class InfiniteCanvasViewboxInfinityProvider implements ViewboxInfinityProvider{
-    public viewBoxRectangle: ConvexPolygon;
+    public get viewBoxRectangle(): ConvexPolygon{return this.canvasRectangle.polygon;}
     public viewBoxTransformation: Transformation = Transformation.identity;
     public get viewBoxWidth(): number{return this.canvasRectangle.viewboxWidth}
     public get viewBoxHeight(): number{return this.canvasRectangle.viewboxHeight}
     constructor(private readonly canvasRectangle: CanvasRectangle) {
-        this.viewBoxRectangle = ConvexPolygon.createRectangle(0, 0, this.viewBoxWidth, this.viewBoxHeight);
+        
     }
     public getForPath(): PathInfinityProvider{
         return new InfiniteCanvasPathInfinityProvider(this);
