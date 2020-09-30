@@ -20,6 +20,16 @@
 				var canvas = document.getElementById("canvas");
 				var infCanvas = new InfiniteCanvas(canvas);
 				infCanvas.greedyGestureHandling = true;
+				// infCanvas.addEventListener("transformationChange", (ev) => {
+				// 	const {a, b, c, d, e, f} = ev.transformation;
+				// 	console.log(`transformation changed to ${a}, ${b}, ${c}, ${d}, ${e}, ${f}`);
+				// })
+				// infCanvas.addEventListener("transformationStart", (ev) => {
+				// 	console.log(`transformation started`);
+				// })
+				// infCanvas.addEventListener("transformationEnd", (ev) => {
+				// 	console.log(`transformation ended`);
+				// })
 				var ctx = infCanvas.getContext();
 
 				ctx.fillStyle = '#aaa';

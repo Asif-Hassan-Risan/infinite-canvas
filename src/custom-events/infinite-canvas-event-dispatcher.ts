@@ -1,16 +1,13 @@
 import { InfiniteCanvasEventMap } from "./infinite-canvas-event-map";
-import { EventListener } from "./event-listener";
+import { InfiniteCanvasEventListener } from "./infinite-canvas-event-listener";
 import { InfiniteCanvasAddEventListenerOptions } from "./infinite-canvas-add-event-listener-options";
-import { InfiniteCanvas } from "../infinite-canvas";
+import { InfiniteCanvasEvent } from "./infinite-canvas-event";
 
-export class InfiniteCanvasEventDispatcher<K extends keyof InfiniteCanvasEventMap>{
-    private listeners: EventListener<K>[] = [];
-    private onceListeners: EventListener<K>[] = [];
-    constructor(private readonly infiniteCanvas: InfiniteCanvas){
-
-    }
+export class InfiniteCanvasEventDispatcher<K extends keyof InfiniteCanvasEventMap> implements InfiniteCanvasEvent<K>{
+    private listeners: InfiniteCanvasEventListener<K>[] = [];
+    private onceListeners: InfiniteCanvasEventListener<K>[] = [];
     public dispatchEvent(event: InfiniteCanvasEventMap[K]): void{
-        const onceListeners: EventListener<K>[] = this.onceListeners;
+        const onceListeners: InfiniteCanvasEventListener<K>[] = this.onceListeners;
         this.onceListeners = [];
         for(const onceListener of onceListeners){
             this.notifyListener(onceListener, event);
@@ -19,16 +16,16 @@ export class InfiniteCanvasEventDispatcher<K extends keyof InfiniteCanvasEventMa
             this.notifyListener(listener, event);
         }
     }
-    public addListener(listener: EventListener<K>, options?: InfiniteCanvasAddEventListenerOptions){
+    public addListener(listener: InfiniteCanvasEventListener<K>, options?: InfiniteCanvasAddEventListenerOptions){
         if(options && options.once){
             this.onceListeners.push(listener);
         }else{
             this.listeners.push(listener);
         }
     }
-    private notifyListener(listener: EventListener<K>, event: InfiniteCanvasEventMap[K]): void{
+    private notifyListener(listener: InfiniteCanvasEventListener<K>, event: InfiniteCanvasEventMap[K]): void{
         try {
-            listener.call(this.infiniteCanvas, event);
+            listener(event);
         } catch (error) {
             console.error(error);
         }

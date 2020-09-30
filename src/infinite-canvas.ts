@@ -9,7 +9,7 @@ import { InfiniteCanvasConfig } from "./config/infinite-canvas-config";
 import {AnimationFrameDrawingIterationProvider} from "./animation-frame-drawing-iteration-provider";
 import { InfiniteCanvasEventMap } from "./custom-events/infinite-canvas-event-map";
 import { InfiniteCanvasAddEventListenerOptions } from "./custom-events/infinite-canvas-add-event-listener-options";
-import { EventListener } from "./custom-events/event-listener";
+import { InfiniteCanvasEventListener } from "./custom-events/infinite-canvas-event-listener";
 import { EventDispatchers } from "./custom-events/event-dispatchers";
 import { InfiniteCanvasEventDispatcher } from "./custom-events/infinite-canvas-event-dispatcher";
 import { DrawingIterationProviderWithCallback } from "./drawing-iteration-provider-with-callback";
@@ -23,11 +23,9 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private transformer: Transformer;
 	private config: InfiniteCanvasConfig;
 	private eventDispatchers: EventDispatchers;
+	private drawEventDispatcher: InfiniteCanvasEventDispatcher<"draw">;
 	constructor(private readonly canvas: HTMLCanvasElement, config?: InfiniteCanvasConfig){
 		this.config = config || {rotationEnabled: true, greedyGestureHandling: false};
-		this.eventDispatchers = {
-			draw: new InfiniteCanvasEventDispatcher(this)
-		};
 		const drawingIterationProvider: DrawingIterationProviderWithCallback = new DrawingIterationProviderWithCallback(new AnimationFrameDrawingIterationProvider());
 		drawingIterationProvider.onDraw(() => this.dispatchDrawEvent());
 		const lockableDrawingIterationProvider: LockableDrawingIterationProvider = new LockableDrawingIterationProvider(drawingIterationProvider);
@@ -40,6 +38,14 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 			() => this.transformer.isTransforming);
 		this.transformer = new InfiniteCanvasTransformer(this.viewBox, this.config);
 		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.transformer, this.config);
+		this.drawEventDispatcher = new InfiniteCanvasEventDispatcher();
+		this.eventDispatchers = {
+			draw: this.drawEventDispatcher,
+			transformationStart: this.transformer.transformationStart,
+			transformationChange: this.transformer.transformationChange,
+			transformationEnd: this.transformer.transformationEnd
+		};
+		this.transformer.transformationStart.addListener(() => canvasRectangle.measure())
 	}
 	public getContext(): InfiniteCanvasRenderingContext2D{
 		if(!this.context){
@@ -59,10 +65,13 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 	public set greedyGestureHandling(value: boolean){
 		this.config.greedyGestureHandling = value;
 	}
-	public addEventListener<K extends keyof InfiniteCanvasEventMap>(type: K, listener: EventListener<K>, options?: InfiniteCanvasAddEventListenerOptions): void{
-		this.eventDispatchers[type].addListener(listener, options);
+	public addEventListener<K extends keyof InfiniteCanvasEventMap>(type: K, listener: InfiniteCanvasEventListener<K>, options?: InfiniteCanvasAddEventListenerOptions): void{
+		const eventDispatcher = this.eventDispatchers[type];
+		eventDispatcher.addListener((ev: InfiniteCanvasEventMap[K]) => {
+			listener(ev);
+		}, options);
 	}
 	private dispatchDrawEvent(): void{
-		this.eventDispatchers.draw.dispatchEvent({});
+		this.drawEventDispatcher.dispatchEvent({});
 	}
 }
