@@ -5,6 +5,7 @@ export interface Transformer extends TransformerContext{
 	readonly transformationStart: InfiniteCanvasEvent<"transformationStart">;
 	readonly transformationChange: InfiniteCanvasEvent<"transformationChange">;
 	readonly transformationEnd: InfiniteCanvasEvent<"transformationEnd">;
+	startTransformation(): void;
 	zoom(x: number, y: number, scale: number): void;
 	createAnchorByExternalIdentifier(externalIdentifier: any, x: number, y: number): void;
 	createAnchor(x: number, y: number): number;

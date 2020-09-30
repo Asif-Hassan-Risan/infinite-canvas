@@ -4,7 +4,7 @@ declare type AnchorRecord = {identifier: number, anchor: Anchor, externalIdentif
 export class AnchorSet {
     private records: AnchorRecord[];
     private latestIdentifier: number;
-    constructor(private readonly onCreateFirstAnchor: () => void){
+    constructor(){
         this.latestIdentifier = 0;
         this.records = [];
     }
@@ -12,12 +12,8 @@ export class AnchorSet {
         return this.records.length === 0;
     }
     public addAnchor(anchor: Anchor, externalIdentifier?: any): number{
-        const wasEmpty: boolean = this.isEmpty;
         const newIdentifier: number = ++this.latestIdentifier;
         this.records.push({identifier: newIdentifier, anchor: anchor, externalIdentifier: externalIdentifier});
-        if(wasEmpty){
-            this.onCreateFirstAnchor();
-        }
         return newIdentifier;
     }
     public getAnchorByIdentifier(identifier: number): Anchor{

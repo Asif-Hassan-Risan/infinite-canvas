@@ -11,6 +11,7 @@ export function mapWheelEvents(
         if(!config.greedyGestureHandling && !ev.ctrlKey){
             return true;
         }
+        transformer.startTransformation();
         const {x, y} = rectangle.getViewboxPosition(ev.clientX, ev.clientY);
         let delta: number = ev.deltaY;
         const scale: number = Math.pow(2, -delta / 300);
