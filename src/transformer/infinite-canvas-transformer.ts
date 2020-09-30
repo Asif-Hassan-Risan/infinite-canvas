@@ -2,23 +2,40 @@ import { Transformer } from "./transformer"
 import { Anchor } from "./anchor";
 import { InfiniteCanvasMovable } from "./infinite-canvas-movable";
 import { Gesture } from "./gesture";
-import { InfiniteCanvasTransformerContext } from "./infinite-canvas-transformer-context";
 import { Rotate } from "./rotate";
 import { Zoom } from "./zoom";
 import { InfiniteCanvasConfig } from "../config/infinite-canvas-config";
 import { TransformableBox } from "../interfaces/transformable-box";
 import { Point } from "../geometry/point";
 import { AnchorSet } from "../events/anchor-set";
+import { Transformation } from "../transformation";
+import { Translate } from "./translate";
+import { TranslateZoom } from "./translate-zoom";
+import { TranslateRotateZoom } from "./translate-rotate-zoom";
+import { Movable } from "./movable";
 
 
 export class InfiniteCanvasTransformer implements Transformer{
     private gesture: Gesture;
-    private context: InfiniteCanvasTransformerContext;
     private anchorSet: AnchorSet;
     private _zoom: Zoom;
-    constructor(private readonly viewBox: TransformableBox, config: InfiniteCanvasConfig){
-        this.context = new InfiniteCanvasTransformerContext(viewBox, config);
+    constructor(private readonly viewBox: TransformableBox, private readonly config: InfiniteCanvasConfig){
         this.anchorSet = new AnchorSet();
+    }
+    public get transformation(): Transformation{
+        return this.viewBox.transformation;
+    }
+    public set transformation(value: Transformation){
+        this.viewBox.transformation = value;
+    }
+    public getGestureForOneMovable(movable: Movable): Gesture{
+        return new Translate(movable, this);
+    }
+    public getGestureForTwoMovables(movable1: Movable, movable2: Movable): Gesture{
+        if(this.config.rotationEnabled){
+            return new TranslateRotateZoom(movable1, movable2, this);
+        }
+        return new TranslateZoom(movable1, movable2, this);
     }
     private createAnchorForMovable(movable: InfiniteCanvasMovable): Anchor{
         const self: InfiniteCanvasTransformer = this;
@@ -97,7 +114,7 @@ export class InfiniteCanvasTransformer implements Transformer{
     private getAnchor(x: number, y: number): Anchor{
         const movable: InfiniteCanvasMovable = new InfiniteCanvasMovable(new Point(x, y));
         if(!this.gesture){
-            this.gesture = this.context.getGestureForOneMovable(movable);
+            this.gesture = this.getGestureForOneMovable(movable);
             return this.createAnchorForMovable(movable);
         }
         const newGesture: Gesture = this.gesture.withMovable(movable);

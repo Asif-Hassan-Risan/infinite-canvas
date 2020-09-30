@@ -1,4 +1,6 @@
-export interface Transformer{
+import { TransformerContext } from "./transformer-context";
+
+export interface Transformer extends TransformerContext{
 	zoom(x: number, y: number, scale: number): void;
 	createAnchorByExternalIdentifier(externalIdentifier: any, x: number, y: number): void;
 	createAnchor(x: number, y: number): number;
