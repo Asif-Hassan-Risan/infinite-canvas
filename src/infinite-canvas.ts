@@ -6,7 +6,6 @@ import { Transformer } from "./transformer/transformer"
 import { InfiniteCanvasTransformer } from "./transformer/infinite-canvas-transformer";
 import { InfiniteCanvasEvents } from "./events/infinite-canvas-events";
 import { InfiniteCanvasConfig } from "./config/infinite-canvas-config";
-import {DrawingIterationProvider} from "./interfaces/drawing-iteration-provider";
 import {AnimationFrameDrawingIterationProvider} from "./animation-frame-drawing-iteration-provider";
 import { InfiniteCanvasEventMap } from "./custom-events/infinite-canvas-event-map";
 import { InfiniteCanvasAddEventListenerOptions } from "./custom-events/infinite-canvas-add-event-listener-options";
@@ -14,7 +13,6 @@ import { EventListener } from "./custom-events/event-listener";
 import { EventDispatchers } from "./custom-events/event-dispatchers";
 import { InfiniteCanvasEventDispatcher } from "./custom-events/infinite-canvas-event-dispatcher";
 import { DrawingIterationProviderWithCallback } from "./drawing-iteration-provider-with-callback";
-import { DrawingLock } from "./drawing-lock";
 import { LockableDrawingIterationProvider } from "./lockable-drawing-iteration-provider";
 import {CanvasRectangle} from "./interfaces/canvas-rectangle";
 import {HTMLCanvasRectangle} from "./html-canvas-rectangle";
@@ -38,7 +36,8 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 			canvasRectangle,
 			canvas.getContext("2d"),
 			lockableDrawingIterationProvider,
-			() => lockableDrawingIterationProvider.getLock());
+			() => lockableDrawingIterationProvider.getLock(),
+			() => this.transformer.isTransforming);
 		this.transformer = new InfiniteCanvasTransformer(this.viewBox, this.config);
 		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.transformer, this.config);
 	}

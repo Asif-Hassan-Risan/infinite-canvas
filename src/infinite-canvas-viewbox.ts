@@ -22,20 +22,15 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	private instructionSet: InfiniteCanvasInstructionSet;
 	private infinityProvider: InfiniteCanvasViewboxInfinityProvider;
 	private _transformation: Transformation;
-	private drawingUnderway: boolean = false;
 	constructor(
 		private readonly canvasRectangle: CanvasRectangle,
 		private context: CanvasRenderingContext2D,
 		private readonly drawingIterationProvider: DrawingIterationProvider,
-		private readonly drawLockProvider: () => DrawingLock){
-		this.infinityProvider = new InfiniteCanvasViewboxInfinityProvider(canvasRectangle);
-		this.instructionSet = new InfiniteCanvasInstructionSet(() => {
-			if(!this.drawingUnderway){
-				this.canvasRectangle.measure();
-			}
-			this.draw();
-		}, this.infinityProvider);
-		this._transformation = Transformation.identity;
+		private readonly drawLockProvider: () => DrawingLock,
+		private readonly isTransforming: () => boolean){
+			this.infinityProvider = new InfiniteCanvasViewboxInfinityProvider(canvasRectangle);
+			this.instructionSet = new InfiniteCanvasInstructionSet(() => this.draw(), this.infinityProvider);
+			this._transformation = Transformation.identity;
 	}
 	public get width(): number{return this.canvasRectangle.viewboxWidth;}
 	public get height(): number{return this.canvasRectangle.viewboxHeight;}
@@ -139,16 +134,14 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		return result;
 	}
 	private draw(): void{
-		if(this.drawingUnderway){
-			return;
-		}
-		this.drawingUnderway = true;
 		this.drawingIterationProvider.provideDrawingIteration(() => {
+			if(!this.isTransforming()){
+				this.canvasRectangle.measure();
+			}
 			this.context.restore();
 			this.context.save();
 			this.context.clearRect(0, 0, this.width, this.height);
 			this.instructionSet.execute(this.context, this._transformation);
-			this.drawingUnderway = false;
 		});
 	}
 }

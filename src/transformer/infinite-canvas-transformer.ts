@@ -22,6 +22,9 @@ export class InfiniteCanvasTransformer implements Transformer{
     constructor(private readonly viewBox: TransformableBox, private readonly config: InfiniteCanvasConfig){
         this.anchorSet = new AnchorSet();
     }
+    public get isTransforming(): boolean{
+        return !!this._zoom || !this.anchorSet.isEmpty;
+    }
     public get transformation(): Transformation{
         return this.viewBox.transformation;
     }

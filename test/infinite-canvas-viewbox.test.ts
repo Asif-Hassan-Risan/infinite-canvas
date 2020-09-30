@@ -28,7 +28,16 @@ describe("an infinite canvas context", () => {
 		height = 200;
 		contextMock = new CanvasContextMock();
 		const context: any = contextMock.mock;
-		viewbox = new InfiniteCanvasViewBox(new MockCanvasRectangle(width, height), context, {provideDrawingIteration(draw: () => void): void {latestDrawingInstruction = draw; executeLatestDrawingInstruction();}}, getDrawingLockSpy);
+		viewbox = new InfiniteCanvasViewBox(
+			new MockCanvasRectangle(width, height),
+			context,
+			{
+				provideDrawingIteration(draw: () => void): void {
+					latestDrawingInstruction = draw; executeLatestDrawingInstruction();
+				}
+			},
+			getDrawingLockSpy,
+			() => false);
 		infiniteContext = new InfiniteContext(undefined, viewbox);
 	});
 

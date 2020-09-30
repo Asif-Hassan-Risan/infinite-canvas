@@ -8,6 +8,9 @@ export class AnchorSet {
         this.latestIdentifier = 0;
         this.records = [];
     }
+    public get isEmpty(): boolean{
+        return this.records.length === 0;
+    }
     public addAnchor(anchor: Anchor, externalIdentifier?: any): number{
         const newIdentifier: number = ++this.latestIdentifier;
         this.records.push({identifier: newIdentifier, anchor: anchor, externalIdentifier: externalIdentifier});
