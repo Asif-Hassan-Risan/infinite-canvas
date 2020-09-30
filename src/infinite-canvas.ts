@@ -37,7 +37,7 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 			() => lockableDrawingIterationProvider.getLock(),
 			() => this.transformer.isTransforming);
 		this.transformer = new InfiniteCanvasTransformer(this.viewBox, this.config);
-		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.transformer, this.config);
+		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.transformer, this.config, canvasRectangle);
 		this.drawEventDispatcher = new InfiniteCanvasEventDispatcher();
 		this.eventDispatchers = {
 			draw: this.drawEventDispatcher,

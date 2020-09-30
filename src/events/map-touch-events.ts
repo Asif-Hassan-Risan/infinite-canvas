@@ -1,11 +1,11 @@
 import { Transformer } from "../transformer/transformer"
-import { Point } from "../geometry/point";
 import { InfiniteCanvasConfig } from "../config/infinite-canvas-config";
+import { CanvasRectangle } from "../interfaces/canvas-rectangle";
 
 export function mapTouchEvents(
     canvasElement: HTMLCanvasElement,
     transformer: Transformer,
-    getRelativePosition: (clientX: number, clientY: number) => Point,
+    rectangle: CanvasRectangle,
     config: InfiniteCanvasConfig){
         canvasElement.addEventListener("touchstart", (ev: TouchEvent) => {
             const touches: TouchList = ev.touches;
@@ -19,7 +19,7 @@ export function mapTouchEvents(
             for(let i = 0; i <  touches.length; i++){
                 const touch: Touch = touches[i];
                 const identifier: number = touch.identifier;
-                const {x,y} = getRelativePosition(touch.clientX, touch.clientY);
+                const {x,y} = rectangle.getViewboxPosition(touch.clientX, touch.clientY);
                 transformer.createAnchorByExternalIdentifier(identifier, x, y);
             }
             ev.preventDefault();
@@ -29,7 +29,7 @@ export function mapTouchEvents(
             const changedTouches: TouchList = ev.changedTouches;
             for(let i = 0; i <  changedTouches.length; i++){
                 const changedTouch: Touch = changedTouches[i];
-                const {x,y} = getRelativePosition(changedTouch.clientX, changedTouch.clientY);
+                const {x,y} = rectangle.getViewboxPosition(changedTouch.clientX, changedTouch.clientY);
                 transformer.moveAnchorByExternalIdentifier(changedTouch.identifier, x, y);
             }
         });

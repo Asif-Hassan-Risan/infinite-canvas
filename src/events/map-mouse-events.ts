@@ -1,11 +1,11 @@
 import { Transformer } from "../transformer/transformer"
-import { Point } from "../geometry/point";
 import { InfiniteCanvasConfig } from "../config/infinite-canvas-config";
+import { CanvasRectangle } from "../interfaces/canvas-rectangle";
 
 export function mapMouseEvents(
         canvasElement: HTMLCanvasElement,
         transformer: Transformer,
-        getRelativePosition: (clientX: number, clientY: number) => Point,
+        rectangle: CanvasRectangle,
         config: InfiniteCanvasConfig): void{
             let mouseAnchorIdentifier: number;
             function releaseAnchor(): void{
@@ -18,7 +18,7 @@ export function mapMouseEvents(
                 if(mouseAnchorIdentifier !== undefined){
                     return;
                 }
-                const {x, y} = getRelativePosition(ev.clientX, ev.clientY);
+                const {x, y} = rectangle.getViewboxPosition(ev.clientX, ev.clientY);
                 if(ev.button === 1){
                     if(!config.rotationEnabled){
                         return true;
@@ -32,7 +32,7 @@ export function mapMouseEvents(
             });
             canvasElement.addEventListener("mousemove", (ev: MouseEvent) => {
                 if(mouseAnchorIdentifier !== undefined){
-                    const {x, y} = getRelativePosition(ev.clientX, ev.clientY);
+                    const {x, y} = rectangle.getViewboxPosition(ev.clientX, ev.clientY);
                     transformer.moveAnchorByIdentifier(mouseAnchorIdentifier, x, y);
                 }
             });
