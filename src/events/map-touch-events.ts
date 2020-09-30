@@ -1,13 +1,10 @@
-import { AnchorSet } from "./anchor-set";
 import { Transformer } from "../transformer/transformer"
-import { Anchor } from "../transformer/anchor";
 import { Point } from "../geometry/point";
 import { InfiniteCanvasConfig } from "../config/infinite-canvas-config";
 
 export function mapTouchEvents(
     canvasElement: HTMLCanvasElement,
     transformer: Transformer,
-    anchorSet: AnchorSet,
     getRelativePosition: (clientX: number, clientY: number) => Point,
     config: InfiniteCanvasConfig){
         canvasElement.addEventListener("touchstart", (ev: TouchEvent) => {
@@ -22,12 +19,8 @@ export function mapTouchEvents(
             for(let i = 0; i <  touches.length; i++){
                 const touch: Touch = touches[i];
                 const identifier: number = touch.identifier;
-                if(anchorSet.getAnchorByExternalIdentifier(identifier)){
-                    continue;
-                }
                 const {x,y} = getRelativePosition(touch.clientX, touch.clientY);
-                const anchor: Anchor = transformer.getAnchor(x,y);
-                anchorSet.addAnchor(anchor, identifier);
+                transformer.createAnchorByExternalIdentifier(identifier, x, y);
             }
             ev.preventDefault();
             return false;
@@ -36,24 +29,15 @@ export function mapTouchEvents(
             const changedTouches: TouchList = ev.changedTouches;
             for(let i = 0; i <  changedTouches.length; i++){
                 const changedTouch: Touch = changedTouches[i];
-                const anchor: Anchor = anchorSet.getAnchorByExternalIdentifier(changedTouch.identifier);
-                if(!anchor){
-                    continue;
-                }
                 const {x,y} = getRelativePosition(changedTouch.clientX, changedTouch.clientY);
-                anchor.moveTo(x, y);
+                transformer.moveAnchorByExternalIdentifier(changedTouch.identifier, x, y);
             }
         });
         canvasElement.addEventListener("touchend", (ev: TouchEvent) => {
             const changedTouches: TouchList = ev.changedTouches;
             for(let i = 0; i <  changedTouches.length; i++){
                 const changedTouch: Touch = changedTouches[i];
-                const anchor: Anchor = anchorSet.getAnchorByExternalIdentifier(changedTouch.identifier);
-                if(!anchor){
-                    continue;
-                }
-                anchor.release();
-                anchorSet.removeAnchorByExternalIdentifier(changedTouch.identifier);
+                transformer.releaseAnchorByExternalIdentifier(changedTouch.identifier);
             }
         });
 }

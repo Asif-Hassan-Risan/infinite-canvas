@@ -8,16 +8,19 @@ import { Zoom } from "./zoom";
 import { InfiniteCanvasConfig } from "../config/infinite-canvas-config";
 import { TransformableBox } from "../interfaces/transformable-box";
 import { Point } from "../geometry/point";
+import { AnchorSet } from "../events/anchor-set";
 
 
 export class InfiniteCanvasTransformer implements Transformer{
     private gesture: Gesture;
     private context: InfiniteCanvasTransformerContext;
+    private anchorSet: AnchorSet;
     private _zoom: Zoom;
     constructor(private readonly viewBox: TransformableBox, config: InfiniteCanvasConfig){
         this.context = new InfiniteCanvasTransformerContext(viewBox, config);
+        this.anchorSet = new AnchorSet();
     }
-    private createAnchor(movable: InfiniteCanvasMovable): Anchor{
+    private createAnchorForMovable(movable: InfiniteCanvasMovable): Anchor{
         const self: InfiniteCanvasTransformer = this;
         return {
             moveTo(x: number, y: number){
@@ -27,6 +30,52 @@ export class InfiniteCanvasTransformer implements Transformer{
                 self.gesture = self.gesture.withoutMovable(movable);
             }
         };
+    }
+    public createAnchorByExternalIdentifier(externalIdentifier: any, x: number, y: number): void{
+        const existing: Anchor = this.anchorSet.getAnchorByExternalIdentifier(externalIdentifier);
+        if(existing){
+            return;
+        }
+        const anchor: Anchor = this.getAnchor(x, y);
+        this.anchorSet.addAnchor(anchor, externalIdentifier);
+    }
+    public createAnchor(x: number, y: number): number{
+        const anchor: Anchor = this.getAnchor(x, y);
+        return this.anchorSet.addAnchor(anchor);
+    }
+    public createRotationAnchor(x: number, y: number): number{
+        const anchor: Anchor = this.getRotationAnchor(x, y);
+        return this.anchorSet.addAnchor(anchor);
+    }
+    public moveAnchorByExternalIdentifier(externalIdentifier: any, x: number, y: number): void{
+        const existing: Anchor = this.anchorSet.getAnchorByExternalIdentifier(externalIdentifier);
+        if(!existing){
+            return;
+        }
+        existing.moveTo(x, y);
+    }
+    public moveAnchorByIdentifier(identifier: number, x: number, y: number): void{
+        const existing: Anchor = this.anchorSet.getAnchorByIdentifier(identifier);
+        if(!existing){
+            return;
+        }
+        existing.moveTo(x, y);
+    }
+    public releaseAnchorByExternalIdentifier(externalIdentifier: any): void{
+        const existing: Anchor = this.anchorSet.getAnchorByExternalIdentifier(externalIdentifier);
+        if(!existing){
+            return;
+        }
+        existing.release();
+        this.anchorSet.removeAnchorByExternalIdentifier(externalIdentifier);
+    }
+    public releaseAnchorByIdentifier(identifier: number): void{
+        const existing: Anchor = this.anchorSet.getAnchorByIdentifier(identifier);
+        if(!existing){
+            return;
+        }
+        existing.release();
+        this.anchorSet.removeAnchorByIdentifier(identifier);
     }
     public zoom(x: number, y: number, scale: number): void{
         if(this._zoom){
@@ -45,20 +94,20 @@ export class InfiniteCanvasTransformer implements Transformer{
             });
         }
     }
-    public getAnchor(x: number, y: number): Anchor{
+    private getAnchor(x: number, y: number): Anchor{
         const movable: InfiniteCanvasMovable = new InfiniteCanvasMovable(new Point(x, y));
         if(!this.gesture){
             this.gesture = this.context.getGestureForOneMovable(movable);
-            return this.createAnchor(movable);
+            return this.createAnchorForMovable(movable);
         }
         const newGesture: Gesture = this.gesture.withMovable(movable);
         if(!newGesture){
             return undefined;
         }
         this.gesture = newGesture;
-        return this.createAnchor(movable);
+        return this.createAnchorForMovable(movable);
     }
-    public getRotationAnchor(x: number, y:number): Anchor{
+    private getRotationAnchor(x: number, y:number): Anchor{
         const movable: InfiniteCanvasMovable = new InfiniteCanvasMovable(new Point(x, y));
         const rotate: Rotate = new Rotate(movable, this.viewBox);
         return {
