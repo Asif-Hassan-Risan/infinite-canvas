@@ -4,6 +4,7 @@ import { InfiniteCanvasState } from "../state/infinite-canvas-state";
 import { Instruction } from "./instruction";
 import { Area } from "../areas/area";
 import { ViewboxInfinity } from "../interfaces/viewbox-infinity";
+import { Transformation } from "../transformation";
 
 export class ClearRectWithState extends StateAndInstruction implements StateChangingInstructionSetWithArea{
     constructor(initialState: InfiniteCanvasState, state: InfiniteCanvasState, instruction: Instruction, stateConversion: Instruction, public area: Area){
@@ -19,8 +20,8 @@ export class ClearRectWithState extends StateAndInstruction implements StateChan
         return area.contains(this.area);
     }
     public static createClearRect(initialState: InfiniteCanvasState, area: Area, infinity: ViewboxInfinity, x: number, y: number, width: number, height: number): ClearRectWithState{
-        return new ClearRectWithState(initialState, initialState, (context: CanvasRenderingContext2D) => {
-            infinity.clearRect(context, x, y, width, height);
+        return new ClearRectWithState(initialState, initialState, (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            infinity.clearRect(context, transformation, x, y, width, height);
         }, () => {}, area);
     }
 }

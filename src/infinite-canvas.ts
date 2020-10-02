@@ -14,8 +14,9 @@ import { EventDispatchers } from "./custom-events/event-dispatchers";
 import { InfiniteCanvasEventDispatcher } from "./custom-events/infinite-canvas-event-dispatcher";
 import { DrawingIterationProviderWithCallback } from "./drawing-iteration-provider-with-callback";
 import { LockableDrawingIterationProvider } from "./lockable-drawing-iteration-provider";
-import {CanvasRectangle} from "./interfaces/canvas-rectangle";
-import {HTMLCanvasRectangle} from "./html-canvas-rectangle";
+import {CanvasRectangle} from "./rectangle/canvas-rectangle";
+import {HTMLCanvasRectangle} from "./rectangle/html-canvas-rectangle";
+import { HtmlCanvasMeasurementProvider } from "./rectangle/html-canvas-measurement-provider";
 
 export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private context: InfiniteCanvasRenderingContext2D;
@@ -29,7 +30,7 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 		const drawingIterationProvider: DrawingIterationProviderWithCallback = new DrawingIterationProviderWithCallback(new AnimationFrameDrawingIterationProvider());
 		drawingIterationProvider.onDraw(() => this.dispatchDrawEvent());
 		const lockableDrawingIterationProvider: LockableDrawingIterationProvider = new LockableDrawingIterationProvider(drawingIterationProvider);
-		const canvasRectangle: CanvasRectangle = new HTMLCanvasRectangle(canvas);
+		const canvasRectangle: CanvasRectangle = new HTMLCanvasRectangle(new HtmlCanvasMeasurementProvider(canvas));
 		this.viewBox = new InfiniteCanvasViewBox(
 			canvasRectangle,
 			canvas.getContext("2d"),

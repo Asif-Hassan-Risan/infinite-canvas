@@ -1,6 +1,6 @@
 import { Transformer } from "../transformer/transformer"
 import { InfiniteCanvasConfig } from "../config/infinite-canvas-config";
-import { CanvasRectangle } from "../interfaces/canvas-rectangle";
+import { CanvasRectangle } from "../rectangle/canvas-rectangle";
 
 export function mapMouseEvents(
         canvasElement: HTMLCanvasElement,

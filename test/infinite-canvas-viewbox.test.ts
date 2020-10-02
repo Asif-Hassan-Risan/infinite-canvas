@@ -5,7 +5,8 @@ import { CanvasContextMock } from "./canvas-context-mock";
 import { Transformation } from "../src/transformation";
 import { DrawingLock } from "../src/drawing-lock";
 import { InfiniteCanvasRenderingContext2D } from "../src/infinite-context/infinite-canvas-rendering-context-2d";
-import {MockCanvasRectangle} from "./mock-canvas-rectangle";
+import { HTMLCanvasRectangle } from "../src/rectangle/html-canvas-rectangle";
+import { MockCanvasMeasurementProvider } from "./mock-canvas-measurement-provider";
 
 describe("an infinite canvas context", () => {
 	let width: number;
@@ -29,7 +30,7 @@ describe("an infinite canvas context", () => {
 		contextMock = new CanvasContextMock();
 		const context: any = contextMock.mock;
 		viewbox = new InfiniteCanvasViewBox(
-			new MockCanvasRectangle(width, height),
+			new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(width, height)),
 			context,
 			{
 				provideDrawingIteration(draw: () => void): void {
