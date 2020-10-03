@@ -16,7 +16,6 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
     public polygon: ConvexPolygon;
     private screenWidth: number;
     private screenHeight: number;
-    private measuredOnce: boolean = false;
     private _transformation: Transformation;
     private screenTransformation: Transformation;
     private cumulativeScreenTransformation: Transformation;
@@ -43,11 +42,15 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         this.viewboxHeight = viewboxHeight;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
-        this.screenTransformation = new Transformation(this.screenWidth / this.viewboxWidth, 0, 0, this.screenHeight / this.viewboxHeight, 0, 0);
-        this.cumulativeScreenTransformation = this.screenTransformation;
+        const newScreenTransformation: Transformation = new Transformation(this.screenWidth / this.viewboxWidth, 0, 0, this.screenHeight / this.viewboxHeight, 0, 0);
+        if(this.screenTransformation){
+            this.cumulativeScreenTransformation = this.cumulativeScreenTransformation.before(this.transformation).before(this.inverseScreenTransformation).before(newScreenTransformation).before(this.transformation.inverse());
+        }else{
+            this.cumulativeScreenTransformation = newScreenTransformation;
+        }
+        this.screenTransformation = newScreenTransformation;
         this.inverseScreenTransformation = this.screenTransformation.inverse();
         this.polygon = ConvexPolygon.createRectangle(0, 0, this.viewboxWidth, this.viewboxHeight);
-        this.measuredOnce = true;
     }
     public getTransformationInstruction(toTransformation: Transformation): Instruction{
         return (context: CanvasRenderingContext2D) => {
@@ -58,7 +61,6 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
     public getViewboxPosition(clientX: number, clientY: number): Point{
         const {left, top} = this.measurementProvider.measure();
         return new Point(clientX - left, clientY - top);
-        //return this.inverseScreenTransformation.apply(new Point(clientX - left, clientY - top));
     }
     public getForPath(): PathInfinityProvider{
         return new InfiniteCanvasPathInfinityProvider(this);
