@@ -73,11 +73,11 @@ export class InstructionsWithSubpath extends StateChangingInstructionSequence<Co
         this.add(pathInstructionWithState);
     }
     public static create(initialState: InfiniteCanvasState, initialPosition: Position, infinityProvider: PathInfinityProvider): InstructionsWithSubpath{
-        const transformedInitialPosition: Position = transformPosition(initialPosition, initialState.current.transformation);
-        const instructionToGoAroundViewbox: InstructionUsingInfinity = infinityProvider.getPathInstructionToGoAroundViewbox();
-        const pathInstructionBuilder: PathInstructionBuilder = new InfiniteCanvasPathInstructionBuilderProvider(instructionToGoAroundViewbox).getBuilderFromPosition(transformedInitialPosition);
-        const instructionToMoveTo: InstructionUsingInfinity = pathInstructionBuilder.getInstructionToMoveToBeginning(initialState);
         const infinityAtInitialState: ViewboxInfinity = infinityProvider.getInfinity(initialState);
+        const transformedInitialPosition: Position = transformPosition(initialPosition, initialState.current.transformation);
+        const pathInstructionBuilder: PathInstructionBuilder = new InfiniteCanvasPathInstructionBuilderProvider().getBuilderFromPosition(transformedInitialPosition);
+        const instructionToMoveTo: InstructionUsingInfinity = pathInstructionBuilder.getInstructionToMoveToBeginning(initialState);
+        
         let initialInstruction: PathInstructionWithState = PathInstructionWithState.create(initialState, infinityAtInitialState, instructionToMoveTo);        
         return new InstructionsWithSubpath(initialInstruction, infinityProvider, pathInstructionBuilder);
     }

@@ -11,6 +11,9 @@ export class InfiniteCanvasViewboxInfinity implements ViewboxInfinity{
         private readonly getLineDashPeriod: () => number,
         private readonly getDrawnLineWidth: () => number) {
     }
+    public addPathAroundViewbox(context: CanvasRenderingContext2D): void{
+        this.viewboxTransformer.addPathAroundViewbox(context, this.getDrawnLineWidth());
+    }
     public clearRect(context: CanvasRenderingContext2D, transformation: Transformation, x: number, y: number, width: number, height: number): void{
         const transformedViewbox: ConvexPolygon = this.viewboxTransformer.getTransformedViewbox(this.getDrawnLineWidth());
         const {a, b, c, d, e, f} = transformation;

@@ -22,4 +22,5 @@ export class FakeViewboxInfinity implements ViewboxInfinity{
     moveToInfinityFromPointInDirection(context: CanvasRenderingContext2D, transformation: Transformation, fromPoint: Point, direction: Point): void {
     }
 
+    addPathAroundViewbox(context: CanvasRenderingContext2D): void{}
 }
