@@ -17,12 +17,19 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
     private screenWidth: number;
     private screenHeight: number;
     private measuredOnce: boolean = false;
+    private _transformation: Transformation;
     private screenTransformation: Transformation;
+    private cumulativeScreenTransformation: Transformation;
     private inverseScreenTransformation: Transformation;
-    public transformation: Transformation;
+    public initialTransformation: Transformation;
+    public get transformation(): Transformation{return this._transformation;}
+    public set transformation(value: Transformation){
+        this._transformation = value;
+        this.initialTransformation = this.cumulativeScreenTransformation.before(value).before(this.inverseScreenTransformation).before(value.inverse())
+    }
     constructor(private readonly measurementProvider: CanvasMeasurementProvider) {
-        this.transformation = Transformation.identity;
         this.measure();
+        this.transformation = Transformation.identity;
     }
     public measure(): void{
         const {viewboxWidth, viewboxHeight, screenWidth, screenHeight} = this.measurementProvider.measure();
@@ -37,24 +44,30 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         this.screenTransformation = new Transformation(this.screenWidth / this.viewboxWidth, 0, 0, this.screenHeight / this.viewboxHeight, 0, 0);
+        this.cumulativeScreenTransformation = this.screenTransformation;
         this.inverseScreenTransformation = this.screenTransformation.inverse();
         this.polygon = ConvexPolygon.createRectangle(0, 0, this.viewboxWidth, this.viewboxHeight);
         this.measuredOnce = true;
     }
     public getTransformationInstruction(toTransformation: Transformation): Instruction{
-        return (context: CanvasRenderingContext2D, transformation: Transformation) => {
-            const {a, b, c, d, e, f} = transformation.inverse().before(toTransformation).before(transformation);
+        return (context: CanvasRenderingContext2D) => {
+            const {a, b, c, d, e, f} = this.transformation.inverse().before(toTransformation).before(this.initialTransformation).before(this.transformation);
             context.setTransform(a, b, c, d, e, f);
         }
     }
     public getViewboxPosition(clientX: number, clientY: number): Point{
         const {left, top} = this.measurementProvider.measure();
-        return this.inverseScreenTransformation.apply(new Point(clientX - left, clientY - top));
+        return new Point(clientX - left, clientY - top);
+        //return this.inverseScreenTransformation.apply(new Point(clientX - left, clientY - top));
     }
     public getForPath(): PathInfinityProvider{
         return new InfiniteCanvasPathInfinityProvider(this);
     }
     public getViewboxTransformer(state: InfiniteCanvasState): ViewboxTransformer{
         return new CanvasViewboxTransformer(state, this);
+    }
+    public applyInitialTransformation(context: CanvasRenderingContext2D): void{
+        const {a, b, c, d, e, f} = this.transformation.inverse().before(this.initialTransformation).before(this.transformation);
+        context.setTransform(a, b, c, d, e, f);
     }
 }

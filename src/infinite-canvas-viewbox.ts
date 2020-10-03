@@ -135,6 +135,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 			this.context.restore();
 			this.context.save();
 			this.context.clearRect(0, 0, this.width, this.height);
+			this.canvasRectangle.applyInitialTransformation(this.context);
 			this.instructionSet.execute(this.context, this.transformation);
 		});
 	}
