@@ -8,6 +8,7 @@ import { PathInfinityProvider } from "../interfaces/path-infinity-provider";
 import { InfiniteCanvasPathInfinityProvider } from "../infinite-canvas-path-infinity-provider";
 import { CanvasViewboxTransformer } from "./canvas-viewbox-transformer";
 import { ViewboxTransformer } from "./viewbox-transformer";
+import { Instruction } from "../instructions/instruction";
 
 export class HTMLCanvasRectangle implements CanvasRectangle{
     public viewboxWidth: number;
@@ -39,6 +40,12 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         this.inverseScreenTransformation = this.screenTransformation.inverse();
         this.polygon = ConvexPolygon.createRectangle(0, 0, this.viewboxWidth, this.viewboxHeight);
         this.measuredOnce = true;
+    }
+    public getTransformationInstruction(toTransformation: Transformation): Instruction{
+        return (context: CanvasRenderingContext2D, transformation: Transformation) => {
+            const {a, b, c, d, e, f} = transformation.inverse().before(toTransformation).before(transformation);
+            context.setTransform(a, b, c, d, e, f);
+        }
     }
     public getViewboxPosition(clientX: number, clientY: number): Point{
         const {left, top} = this.measurementProvider.measure();

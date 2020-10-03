@@ -112,7 +112,7 @@ export class InfiniteCanvasInstructionSet{
         if(this.state.current.clippingRegion && takeClippingRegionIntoAccount){
             areaToDraw = area.intersectWith(this.state.current.clippingRegion);
         }
-        const drawing: RectangularDrawing = RectangularDrawing.createDrawing(this.state.currentlyTransformed(false), instruction, areaToDraw);
+        const drawing: RectangularDrawing = RectangularDrawing.createDrawing(this.state.currentlyTransformed(false), instruction, areaToDraw, this.rectangle);
         this.drawBeforeCurrentPath(drawing);
         this.onChange();
     }
