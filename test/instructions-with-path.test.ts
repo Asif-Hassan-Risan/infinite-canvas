@@ -6,7 +6,6 @@ import { InstructionsWithPath } from "../src/instructions/instructions-with-path
 import { StateChangingInstructionSetWithAreaAndCurrentPath } from "../src/interfaces/state-changing-instruction-set-with-area-and-current-path";
 import { Point } from "../src/geometry/point";
 import { FakePathInfinityProvider } from "./fake-path-infinity-provider";
-import { FakeViewboxInfinityProvider } from "./fake-viewbox-infinity-provider";
 import { CanvasRectangle } from "../src/rectangle/canvas-rectangle";
 import { HTMLCanvasRectangle } from "../src/rectangle/html-canvas-rectangle";
 import { MockCanvasMeasurementProvider } from "./mock-canvas-measurement-provider";
