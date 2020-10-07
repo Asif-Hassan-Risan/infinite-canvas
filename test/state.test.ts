@@ -24,7 +24,7 @@ describe("a state with a clipped path", () => {
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200))
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200), {})
         currentState = defaultState;
         currentPath = InstructionsWithPath.create(defaultState, rectangle, new FakePathInfinityProvider());
         currentState = applyChangeToCurrentState(currentState, s => fillStyle.changeInstanceValue(s, "#f00"));
@@ -191,7 +191,7 @@ describe("a default state", () => {
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200));
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200), {});
         state = defaultState;
     });
 

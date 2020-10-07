@@ -9,6 +9,7 @@ import { InfiniteCanvasPathInfinityProvider } from "../infinite-canvas-path-infi
 import { CanvasViewboxTransformer } from "./canvas-viewbox-transformer";
 import { ViewboxTransformer } from "./viewbox-transformer";
 import { Instruction } from "../instructions/instruction";
+import {InfiniteCanvasConfig} from "../config/infinite-canvas-config";
 
 export class HTMLCanvasRectangle implements CanvasRectangle{
     public viewboxWidth: number;
@@ -26,7 +27,7 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         this._transformation = value;
         this.initialTransformation = this.cumulativeScreenTransformation.before(value).before(this.inverseScreenTransformation).before(value.inverse())
     }
-    constructor(private readonly measurementProvider: CanvasMeasurementProvider) {
+    constructor(private readonly measurementProvider: CanvasMeasurementProvider, private readonly config: InfiniteCanvasConfig) {
         this.measure();
         this.transformation = Transformation.identity;
     }

@@ -17,7 +17,7 @@ describe("a clipped paths", () => {
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200));
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200), {});
     });
 
     describe("and another one", () => {

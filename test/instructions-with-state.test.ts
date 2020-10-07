@@ -14,7 +14,7 @@ describe("a set of intructions that is only about state", () => {
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200));
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200), {});
         state = defaultState;
         initialState = state;
         instructionsWithState = StateAndInstruction.create(state, () => {}, rectangle);

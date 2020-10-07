@@ -21,7 +21,7 @@ describe("a set of instructions that is also about a path", () => {
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200))
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200), {})
         currentState = defaultState;
         instructionsWithPath = InstructionsWithPath.create(currentState, rectangle, new FakePathInfinityProvider());
     });
@@ -105,7 +105,7 @@ describe("a set of instructions that describe a rectangle path that is drawn", (
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200))
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(200, 200), {})
         currentState = defaultState;
         instructionsWithPath = InstructionsWithPath.create(currentState, rectangle, new FakePathInfinityProvider());
         instructionsWithPath.rect(0, 0, 1, 1, currentState);

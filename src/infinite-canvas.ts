@@ -1,22 +1,23 @@
-import { InfiniteCanvasRenderingContext2D } from "./infinite-context/infinite-canvas-rendering-context-2d"
-import { InfiniteContext } from "./infinite-context/infinite-context"
-import { ViewBox } from "./interfaces/viewbox";
-import { InfiniteCanvasViewBox } from "./infinite-canvas-viewbox";
-import { Transformer } from "./transformer/transformer"
-import { InfiniteCanvasTransformer } from "./transformer/infinite-canvas-transformer";
-import { InfiniteCanvasEvents } from "./events/infinite-canvas-events";
-import { InfiniteCanvasConfig } from "./config/infinite-canvas-config";
+import {InfiniteCanvasRenderingContext2D} from "./infinite-context/infinite-canvas-rendering-context-2d"
+import {InfiniteContext} from "./infinite-context/infinite-context"
+import {ViewBox} from "./interfaces/viewbox";
+import {InfiniteCanvasViewBox} from "./infinite-canvas-viewbox";
+import {Transformer} from "./transformer/transformer"
+import {InfiniteCanvasTransformer} from "./transformer/infinite-canvas-transformer";
+import {InfiniteCanvasEvents} from "./events/infinite-canvas-events";
+import {InfiniteCanvasConfig} from "./config/infinite-canvas-config";
 import {AnimationFrameDrawingIterationProvider} from "./animation-frame-drawing-iteration-provider";
-import { InfiniteCanvasEventMap } from "./custom-events/infinite-canvas-event-map";
-import { InfiniteCanvasAddEventListenerOptions } from "./custom-events/infinite-canvas-add-event-listener-options";
-import { InfiniteCanvasEventListener } from "./custom-events/infinite-canvas-event-listener";
-import { EventDispatchers } from "./custom-events/event-dispatchers";
-import { InfiniteCanvasEventDispatcher } from "./custom-events/infinite-canvas-event-dispatcher";
-import { DrawingIterationProviderWithCallback } from "./drawing-iteration-provider-with-callback";
-import { LockableDrawingIterationProvider } from "./lockable-drawing-iteration-provider";
+import {InfiniteCanvasEventMap} from "./custom-events/infinite-canvas-event-map";
+import {InfiniteCanvasAddEventListenerOptions} from "./custom-events/infinite-canvas-add-event-listener-options";
+import {InfiniteCanvasEventListener} from "./custom-events/infinite-canvas-event-listener";
+import {EventDispatchers} from "./custom-events/event-dispatchers";
+import {InfiniteCanvasEventDispatcher} from "./custom-events/infinite-canvas-event-dispatcher";
+import {DrawingIterationProviderWithCallback} from "./drawing-iteration-provider-with-callback";
+import {LockableDrawingIterationProvider} from "./lockable-drawing-iteration-provider";
 import {CanvasRectangle} from "./rectangle/canvas-rectangle";
 import {HTMLCanvasRectangle} from "./rectangle/html-canvas-rectangle";
-import { HtmlCanvasMeasurementProvider } from "./rectangle/html-canvas-measurement-provider";
+import {HtmlCanvasMeasurementProvider} from "./rectangle/html-canvas-measurement-provider";
+import {InfiniteCanvasUnits} from "./infinite-canvas-units";
 
 export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private context: InfiniteCanvasRenderingContext2D;
@@ -26,11 +27,14 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private eventDispatchers: EventDispatchers;
 	private drawEventDispatcher: InfiniteCanvasEventDispatcher<"draw">;
 	constructor(private readonly canvas: HTMLCanvasElement, config?: InfiniteCanvasConfig){
-		this.config = config || {rotationEnabled: true, greedyGestureHandling: false};
+		this.config = {rotationEnabled: true, greedyGestureHandling: false, units: InfiniteCanvasUnits.CANVAS};
+		if(config){
+			Object.assign(this.config, config)
+		}
 		const drawingIterationProvider: DrawingIterationProviderWithCallback = new DrawingIterationProviderWithCallback(new AnimationFrameDrawingIterationProvider());
 		drawingIterationProvider.onDraw(() => this.dispatchDrawEvent());
 		const lockableDrawingIterationProvider: LockableDrawingIterationProvider = new LockableDrawingIterationProvider(drawingIterationProvider);
-		const canvasRectangle: CanvasRectangle = new HTMLCanvasRectangle(new HtmlCanvasMeasurementProvider(canvas));
+		const canvasRectangle: CanvasRectangle = new HTMLCanvasRectangle(new HtmlCanvasMeasurementProvider(canvas), this.config);
 		this.viewBox = new InfiniteCanvasViewBox(
 			canvasRectangle,
 			canvas.getContext("2d"),
@@ -60,6 +64,12 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 	public set rotationEnabled(value: boolean){
 		this.config.rotationEnabled = value;
 	}
+	public get units(): InfiniteCanvasUnits{
+		return this.config.units;
+	}
+	public set units(value: InfiniteCanvasUnits){
+		this.config.units = value;
+	}
 	public get greedyGestureHandling(): boolean{
 		return this.config.greedyGestureHandling;
 	}
@@ -75,4 +85,6 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private dispatchDrawEvent(): void{
 		this.drawEventDispatcher.dispatchEvent({});
 	}
+	public static CANVAS_UNITS: InfiniteCanvasUnits = InfiniteCanvasUnits.CANVAS;
+	public static SCREEN_UNITS: InfiniteCanvasUnits = InfiniteCanvasUnits.SCREEN;
 }

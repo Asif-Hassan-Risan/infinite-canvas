@@ -30,7 +30,7 @@ describe("an infinite canvas context", () => {
 		contextMock = new CanvasContextMock();
 		const context: any = contextMock.mock;
 		viewbox = new InfiniteCanvasViewBox(
-			new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(width, height)),
+			new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(width, height), {}),
 			context,
 			{
 				provideDrawingIteration(draw: () => void): void {

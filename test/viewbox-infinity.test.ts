@@ -44,7 +44,7 @@ describe("a viewbox infinity for an untransformed context", () => {
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(10, 10));
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(10, 10), {});
         infinityProvider = rectangle;
         pathInfinityProvider = infinityProvider.getForPath();
         infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(Transformation.identity));
@@ -98,7 +98,7 @@ describe("a viewbox infinity for a translated context", () => {
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(10, 10));
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(10, 10), {});
         infinityProvider = rectangle;
         pathInfinityProvider = infinityProvider.getForPath();
         infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(new Transformation(1, 0, 0, 1, 5, 5)));
@@ -120,7 +120,7 @@ describe("a viewbox infinity for skewed context", () => {
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(10, 10));
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(10, 10), {});
         infinityProvider = rectangle;
         pathInfinityProvider = infinityProvider.getForPath();
         infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(new Transformation(1, 0.2, 0, 1, 0, 0)));
@@ -143,7 +143,7 @@ describe("a viewbox infinity for a scaled context", () => {
     let rectangle: CanvasRectangle;
 
     beforeEach(() => {
-        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(10, 10));
+        rectangle = new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(10, 10), {});
         infinityProvider = rectangle;
         pathInfinityProvider = infinityProvider.getForPath();
         infinity = pathInfinityProvider.getInfinity(getStateWithTransformation(Transformation.scale(2)));
