@@ -29,7 +29,7 @@
 					return new ImageData(array, width);
 				}
 				var canvas = document.getElementById("canvas");
-				var infCanvas = new InfiniteCanvas(canvas, {units: InfiniteCanvas.SCREEN_UNITS});
+				infCanvas = new InfiniteCanvas(canvas, {units: InfiniteCanvas.SCREEN_UNITS});
 				infCanvas.greedyGestureHandling = true;
 				var ctx = infCanvas.getContext();
 

@@ -18,6 +18,8 @@ import {CanvasRectangle} from "./rectangle/canvas-rectangle";
 import {HTMLCanvasRectangle} from "./rectangle/html-canvas-rectangle";
 import {HtmlCanvasMeasurementProvider} from "./rectangle/html-canvas-measurement-provider";
 import {InfiniteCanvasUnits} from "./infinite-canvas-units";
+import {CanvasResizeObserver} from "./canvas-resize-observer";
+import {HtmlCanvasResizeObserver} from "./html-canvas-resize-observer";
 
 export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private context: InfiniteCanvasRenderingContext2D;
@@ -26,23 +28,28 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private config: InfiniteCanvasConfig;
 	private eventDispatchers: EventDispatchers;
 	private drawEventDispatcher: InfiniteCanvasEventDispatcher<"draw">;
+	private rectangle: CanvasRectangle;
+	private canvasResizeObserver: CanvasResizeObserver;
+	private canvasResizeListener: () => void;
 	constructor(private readonly canvas: HTMLCanvasElement, config?: InfiniteCanvasConfig){
 		this.config = {rotationEnabled: true, greedyGestureHandling: false, units: InfiniteCanvasUnits.CANVAS};
 		if(config){
 			Object.assign(this.config, config)
 		}
+		this.canvasResizeObserver = new HtmlCanvasResizeObserver(canvas);
+		this.canvasResizeListener = () => {};
 		const drawingIterationProvider: DrawingIterationProviderWithCallback = new DrawingIterationProviderWithCallback(new AnimationFrameDrawingIterationProvider());
 		drawingIterationProvider.onDraw(() => this.dispatchDrawEvent());
 		const lockableDrawingIterationProvider: LockableDrawingIterationProvider = new LockableDrawingIterationProvider(drawingIterationProvider);
-		const canvasRectangle: CanvasRectangle = new HTMLCanvasRectangle(new HtmlCanvasMeasurementProvider(canvas), this.config);
+		this.rectangle = new HTMLCanvasRectangle(new HtmlCanvasMeasurementProvider(canvas), this.config);
 		this.viewBox = new InfiniteCanvasViewBox(
-			canvasRectangle,
+			this.rectangle,
 			canvas.getContext("2d"),
 			lockableDrawingIterationProvider,
 			() => lockableDrawingIterationProvider.getLock(),
 			() => this.transformer.isTransforming);
 		this.transformer = new InfiniteCanvasTransformer(this.viewBox, this.config);
-		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.transformer, this.config, canvasRectangle);
+		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.transformer, this.config, this.rectangle);
 		this.drawEventDispatcher = new InfiniteCanvasEventDispatcher();
 		this.eventDispatchers = {
 			draw: this.drawEventDispatcher,
@@ -50,7 +57,21 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 			transformationChange: this.transformer.transformationChange,
 			transformationEnd: this.transformer.transformationEnd
 		};
-		this.transformer.transformationStart.addListener(() => canvasRectangle.measure())
+		this.transformer.transformationStart.addListener(() => this.rectangle.measure());
+		if(config && config.units === InfiniteCanvasUnits.SCREEN){
+			this.canvasResizeObserver.addListener(this.canvasResizeListener);
+		}
+	}
+	private setUnits(units: InfiniteCanvasUnits): void{
+		if(units === InfiniteCanvasUnits.SCREEN && this.config.units !== InfiniteCanvasUnits.SCREEN){
+			this.canvasResizeObserver.addListener(this.canvasResizeListener);
+		}
+		if(units !== InfiniteCanvasUnits.SCREEN && this.config.units === InfiniteCanvasUnits.SCREEN){
+			this.canvasResizeObserver.removeListener(this.canvasResizeListener);
+		}
+		this.config.units = units;
+		this.rectangle.setUnits();
+		this.viewBox.draw();
 	}
 	public getContext(): InfiniteCanvasRenderingContext2D{
 		if(!this.context){
@@ -68,7 +89,7 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 		return this.config.units;
 	}
 	public set units(value: InfiniteCanvasUnits){
-		this.config.units = value;
+		this.setUnits(value)
 	}
 	public get greedyGestureHandling(): boolean{
 		return this.config.greedyGestureHandling;

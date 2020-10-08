@@ -1,16 +1,16 @@
-import { ConvexPolygon } from "../areas/polygons/convex-polygon";
-import { Point } from "../geometry/point";
+import {ConvexPolygon} from "../areas/polygons/convex-polygon";
+import {Point} from "../geometry/point";
 import {CanvasRectangle} from "./canvas-rectangle";
-import { InfiniteCanvasState } from "../state/infinite-canvas-state";
-import { Transformation } from "../transformation";
-import { CanvasMeasurementProvider } from "./canvas-measurement-provider";
-import { PathInfinityProvider } from "../interfaces/path-infinity-provider";
-import { InfiniteCanvasPathInfinityProvider } from "../infinite-canvas-path-infinity-provider";
-import { CanvasViewboxTransformer } from "./canvas-viewbox-transformer";
-import { ViewboxTransformer } from "./viewbox-transformer";
-import { Instruction } from "../instructions/instruction";
+import {InfiniteCanvasState} from "../state/infinite-canvas-state";
+import {Transformation} from "../transformation";
+import {CanvasMeasurementProvider} from "./canvas-measurement-provider";
+import {PathInfinityProvider} from "../interfaces/path-infinity-provider";
+import {InfiniteCanvasPathInfinityProvider} from "../infinite-canvas-path-infinity-provider";
+import {CanvasViewboxTransformer} from "./canvas-viewbox-transformer";
+import {ViewboxTransformer} from "./viewbox-transformer";
+import {Instruction} from "../instructions/instruction";
 import {InfiniteCanvasConfig} from "../config/infinite-canvas-config";
-import { InfiniteCanvasUnits } from "../infinite-canvas-units";
+import {InfiniteCanvasUnits} from "../infinite-canvas-units";
 
 export class HTMLCanvasRectangle implements CanvasRectangle{
     public viewboxWidth: number;
@@ -27,16 +27,21 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
     public get transformation(): Transformation{return this._transformation;}
     public set transformation(value: Transformation){
         this._transformation = value;
-        this.initialTransformation = this.getInitialTransformation(value);
+        this.setInitialTransformation();
     }
     constructor(private readonly measurementProvider: CanvasMeasurementProvider, private readonly config: InfiniteCanvasConfig) {
-        this.setUnits();
+        this.unitsUsed = config.units === InfiniteCanvasUnits.SCREEN ? InfiniteCanvasUnits.SCREEN : InfiniteCanvasUnits.CANVAS;
         this.measure();
         this.transformation = Transformation.identity;
     }
-    public setUnits(){
+    public setUnits(): void{
         const newUnitsToUse: InfiniteCanvasUnits = this.config.units === InfiniteCanvasUnits.SCREEN ? InfiniteCanvasUnits.SCREEN : InfiniteCanvasUnits.CANVAS;
+        if(newUnitsToUse === InfiniteCanvasUnits.CANVAS && this.unitsUsed !== InfiniteCanvasUnits.CANVAS){
+            this.cumulativeScreenTransformation = this.screenTransformation;
+        }
         this.unitsUsed = newUnitsToUse;
+        this.measure();
+        this.setInitialTransformation();
     }
     public measure(): void{
         const {viewboxWidth, viewboxHeight, screenWidth, screenHeight} = this.measurementProvider.measure();
@@ -58,11 +63,11 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         this.inverseScreenTransformation = this.screenTransformation.inverse();
         this.polygon = ConvexPolygon.createRectangle(0, 0, this.viewboxWidth, this.viewboxHeight);
     }
-    private getInitialTransformation(viewboxTransformation: Transformation): Transformation{
+    private setInitialTransformation(): void{
         if(this.unitsUsed === InfiniteCanvasUnits.CANVAS){
-            return this.cumulativeScreenTransformation.before(viewboxTransformation).before(this.inverseScreenTransformation).before(viewboxTransformation.inverse())
+            this.initialTransformation = this.cumulativeScreenTransformation.before(this.transformation).before(this.inverseScreenTransformation).before(this.transformation.inverse())
         }else{
-            return viewboxTransformation.before(this.inverseScreenTransformation).before(viewboxTransformation.inverse());
+            this.initialTransformation = this.transformation.before(this.inverseScreenTransformation).before(this.transformation.inverse());
         }
     }
     private getNewCumulativeScreenTransformation(newScreenTransformation: Transformation): Transformation{
@@ -89,7 +94,11 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         return new CanvasViewboxTransformer(state, this);
     }
     public applyInitialTransformation(context: CanvasRenderingContext2D): void{
-        const {a, b, c, d, e, f} = this.transformation.inverse().before(this.initialTransformation).before(this.transformation);
+        const transformationToApply: Transformation = this.transformation.inverse().before(this.initialTransformation).before(this.transformation);
+        if(transformationToApply.equals(Transformation.identity)){
+            return;
+        }
+        const {a, b, c, d, e, f} = transformationToApply;
         context.setTransform(a, b, c, d, e, f);
     }
 }

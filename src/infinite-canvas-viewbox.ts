@@ -127,7 +127,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 		result = new InfiniteCanvasPattern(this.context.createPattern(image, repetition));
 		return result;
 	}
-	private draw(): void{
+	public draw(): void{
 		this.drawingIterationProvider.provideDrawingIteration(() => {
 			if(!this.isTransforming()){
 				this.canvasRectangle.measure();
