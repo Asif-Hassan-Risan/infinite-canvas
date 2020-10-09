@@ -1,12 +1,14 @@
-import { InfiniteCanvasViewBox } from "../src/infinite-canvas-viewbox"
-import { InfiniteContext } from "../src/infinite-context/infinite-context";
-import { ViewBox } from "../src/interfaces/viewbox";
-import { CanvasContextMock } from "./canvas-context-mock";
-import { Transformation } from "../src/transformation";
-import { DrawingLock } from "../src/drawing-lock";
-import { InfiniteCanvasRenderingContext2D } from "../src/infinite-context/infinite-canvas-rendering-context-2d";
-import { HTMLCanvasRectangle } from "../src/rectangle/html-canvas-rectangle";
-import { MockCanvasMeasurementProvider } from "./mock-canvas-measurement-provider";
+import {InfiniteCanvasViewBox} from "../src/infinite-canvas-viewbox"
+import {InfiniteContext} from "../src/infinite-context/infinite-context";
+import {ViewBox} from "../src/interfaces/viewbox";
+import {CanvasContextMock} from "./canvas-context-mock";
+import {Transformation} from "../src/transformation";
+import {DrawingLock} from "../src/drawing-lock";
+import {InfiniteCanvasRenderingContext2D} from "../src/infinite-context/infinite-canvas-rendering-context-2d";
+import {HTMLCanvasRectangle} from "../src/rectangle/html-canvas-rectangle";
+import {MockCanvasMeasurementProvider} from "./mock-canvas-measurement-provider";
+import {InfiniteCanvasConfig} from "../src/config/infinite-canvas-config";
+import {InfiniteCanvasUnits} from "../src/infinite-canvas-units";
 
 describe("an infinite canvas context", () => {
 	let width: number;
@@ -18,19 +20,26 @@ describe("an infinite canvas context", () => {
 	let releaseDrawingLockSpy: jest.SpyInstance;
 	let latestDrawingInstruction: () => void;
 	let executeLatestDrawingInstruction: () => void;
+	let isTransforming: boolean;
+	let measurementProvider: MockCanvasMeasurementProvider;
+	let config: InfiniteCanvasConfig;
 
 	beforeEach(() => {
+		config = {};
+		width = 200;
+		height = 200;
+		isTransforming = false;
+		measurementProvider = new MockCanvasMeasurementProvider(width, height);
 		executeLatestDrawingInstruction = () => {latestDrawingInstruction();};
 		const drawingLock: DrawingLock = {release(){}};
 		releaseDrawingLockSpy = jest.spyOn(drawingLock, 'release');
 		const getDrawingLock: () => DrawingLock = () => drawingLock;
 		getDrawingLockSpy = jest.fn().mockReturnValue(drawingLock);
-		width = 200;
-		height = 200;
+
 		contextMock = new CanvasContextMock();
 		const context: any = contextMock.mock;
 		viewbox = new InfiniteCanvasViewBox(
-			new HTMLCanvasRectangle(new MockCanvasMeasurementProvider(width, height), {}),
+			new HTMLCanvasRectangle(measurementProvider, config),
 			context,
 			{
 				provideDrawingIteration(draw: () => void): void {
@@ -38,7 +47,7 @@ describe("an infinite canvas context", () => {
 				}
 			},
 			getDrawingLockSpy,
-			() => false);
+			() => isTransforming);
 		infiniteContext = new InfiniteContext(undefined, viewbox);
 	});
 
@@ -3287,6 +3296,38 @@ describe("an infinite canvas context", () => {
 
 			it("should take the line width into account for the stroked path", () => {
 				expect(contextMock.getLog()).toMatchSnapshot();
+			});
+		});
+	});
+
+	describe("whose canvas has a non-identity screen transformation", () => {
+
+		beforeEach(() => {
+			measurementProvider.measurement = {
+				screenWidth: 500,
+				screenHeight: 1000,
+				viewboxWidth: 300,
+				viewboxHeight: 300,
+				left: 0,
+				top: 0
+			};
+		});
+
+		describe('and that uses canvas units', () => {
+
+			beforeEach(() => {
+				config.units = InfiniteCanvasUnits.CANVAS;
+			});
+
+			describe('and then draws a square', () => {
+
+				beforeEach(() => {
+					infiniteContext.fillRect(0, 0, 20, 20);
+				});
+
+				it("should not have applied an initial transformation", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
 			});
 		});
 	});

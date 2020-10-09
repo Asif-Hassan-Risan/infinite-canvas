@@ -2,10 +2,9 @@ import { CanvasMeasurement } from "../src/rectangle/canvas-measurement";
 import { CanvasMeasurementProvider } from "../src/rectangle/canvas-measurement-provider";
 
 export class MockCanvasMeasurementProvider implements CanvasMeasurementProvider{
-    constructor(private readonly width: number, private readonly height: number){}
-
-    public measure(): CanvasMeasurement{
-        return {
+    public measurement: CanvasMeasurement;
+    constructor(private readonly width: number, private readonly height: number){
+        this.measurement = {
             left: 0,
             top: 0,
             screenWidth: this.width,
@@ -13,5 +12,9 @@ export class MockCanvasMeasurementProvider implements CanvasMeasurementProvider{
             viewboxWidth: this.width,
             viewboxHeight: this.height
         };
+    }
+
+    public measure(): CanvasMeasurement{
+        return this.measurement;
     }
 }
