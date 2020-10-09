@@ -3330,14 +3330,55 @@ describe("an infinite canvas context", () => {
 				});
 
 				describe('and then rotates', () => {
+					let counterClockwiseRotation: Transformation;
 
 					beforeEach(() => {
+						counterClockwiseRotation = new Transformation(0, -1, 1, 0, 0, 0).before(Transformation.translation(0, 20));
 						contextMock.clear();
-						viewbox.transformation = new Transformation(0, -1, 1, 0, 0, 0).before(Transformation.translation(0, 20));
+						viewbox.transformation = counterClockwiseRotation;
 					});
 
 					it("should have applied an initial transformation that makes the square appear with the same distortion, only rotated", () => {
 						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+
+					describe('and then resizes the canvas to exacerbate the distortion', () => {
+
+						beforeEach(() => {
+							measurementProvider.measurement = {
+								screenWidth: 1000,
+								screenHeight: 1000,
+								viewboxWidth: 300,
+								viewboxHeight: 300,
+								left: 0,
+								top: 0
+							};
+						});
+
+						describe('and then draws again', () => {
+
+							beforeEach(() => {
+								contextMock.clear();
+								infiniteContext.fillRect(5, 5, 10, 10);
+							});
+
+							it("should have applied an initial transformation that makes the drawing appear more distorted", () => {
+								expect(contextMock.getLog()).toMatchSnapshot();
+							});
+
+							describe('and then rotates again', () => {
+
+								beforeEach(() => {
+									contextMock.clear();
+									viewbox.transformation = viewbox.transformation.before(counterClockwiseRotation);
+								});
+
+								it("should have applied an initial transformation that makes the drawing appear with the same distortion, but rotated", () => {
+									const log: string[] = contextMock.getLog();
+									expect(contextMock.getLog()).toMatchSnapshot();
+								});
+							});
+						});
 					});
 				});
 			});

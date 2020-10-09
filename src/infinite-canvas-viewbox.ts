@@ -130,7 +130,7 @@ export class InfiniteCanvasViewBox implements ViewBox{
 	public draw(): void{
 		this.drawingIterationProvider.provideDrawingIteration(() => {
 			if(!this.isTransforming()){
-				this.canvasRectangle.measure();
+				this.canvasRectangle.setUnits();
 			}
 			this.context.restore();
 			this.context.save();
