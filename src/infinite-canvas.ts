@@ -38,7 +38,6 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 		}
 		this.canvasResizeObserver = new HtmlCanvasResizeObserver(canvas);
 		this.canvasResizeListener = () => {
-			this.rectangle.setUnits();
 			this.viewBox.draw();
 		};
 		const drawingIterationProvider: DrawingIterationProviderWithCallback = new DrawingIterationProviderWithCallback(new AnimationFrameDrawingIterationProvider());
