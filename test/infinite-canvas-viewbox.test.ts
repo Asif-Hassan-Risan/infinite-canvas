@@ -3328,6 +3328,18 @@ describe("an infinite canvas context", () => {
 				it("should not have applied an initial transformation", () => {
 					expect(contextMock.getLog()).toMatchSnapshot();
 				});
+
+				describe('and then rotates', () => {
+
+					beforeEach(() => {
+						contextMock.clear();
+						viewbox.transformation = new Transformation(0, -1, 1, 0, 0, 0).before(Transformation.translation(0, 20));
+					});
+
+					it("should have applied an initial transformation that makes the square appear with the same distortion, only rotated", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
 			});
 		});
 	});
