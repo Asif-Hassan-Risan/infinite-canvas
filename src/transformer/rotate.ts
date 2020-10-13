@@ -9,7 +9,7 @@ export class Rotate{
     private initialTransformation: Transformation;
     constructor(movable: Movable, private readonly viewBox: TransformableBox){
         this.initialTransformation = viewBox.transformation;
-        this.angularVelocity = 4 * Math.PI / viewBox.width;
+        this.angularVelocity = Math.PI / 100;
         this.point = movable.onMoved(() => {
             this.setTransformation();
         });
