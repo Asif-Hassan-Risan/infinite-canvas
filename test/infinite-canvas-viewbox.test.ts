@@ -3399,7 +3399,21 @@ describe("an infinite canvas context", () => {
 				it("should have applied an initial transformation that is the inverse of the screen transformation", () => {
 					expect(contextMock.getLog()).toMatchSnapshot();
 				});
-			})
+
+				describe('and then rotates', () => {
+					let counterClockwiseRotation: Transformation;
+
+					beforeEach(() => {
+						counterClockwiseRotation = new Transformation(0, -1, 1, 0, 0, 0).before(Transformation.translation(0, 20));
+						contextMock.clear();
+						viewbox.transformation = counterClockwiseRotation;
+					});
+
+					it("should have applied the same initial transformation", () => {
+						expect(contextMock.getLog()).toMatchSnapshot();
+					});
+				});
+			});
 		});
 	});
 })
