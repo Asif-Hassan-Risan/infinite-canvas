@@ -59,7 +59,7 @@ describe("an infinite canvas transformer", () => {
 
         beforeEach(() => {
             anchorIdentifier = transformer.createRotationAnchor(1, 1);
-            transformer.moveAnchorByIdentifier(anchorIdentifier, 0, 1);
+            transformer.moveAnchorByIdentifier(anchorIdentifier, -24, 1);
         });
 
         it.each([
