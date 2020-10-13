@@ -19,7 +19,7 @@ export function mapMouseEvents(
                     return;
                 }
                 transformer.startTransformation();
-                const {x, y} = rectangle.getViewboxPosition(ev.clientX, ev.clientY);
+                const {x, y} = rectangle.getCSSPosition(ev.clientX, ev.clientY);
                 if(ev.button === 1){
                     if(!config.rotationEnabled){
                         return true;
@@ -33,7 +33,7 @@ export function mapMouseEvents(
             });
             canvasElement.addEventListener("mousemove", (ev: MouseEvent) => {
                 if(mouseAnchorIdentifier !== undefined){
-                    const {x, y} = rectangle.getViewboxPosition(ev.clientX, ev.clientY);
+                    const {x, y} = rectangle.getCSSPosition(ev.clientX, ev.clientY);
                     transformer.moveAnchorByIdentifier(mouseAnchorIdentifier, x, y);
                 }
             });

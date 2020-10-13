@@ -20,7 +20,7 @@ export function mapTouchEvents(
             for(let i = 0; i <  touches.length; i++){
                 const touch: Touch = touches[i];
                 const identifier: number = touch.identifier;
-                const {x,y} = rectangle.getViewboxPosition(touch.clientX, touch.clientY);
+                const {x,y} = rectangle.getCSSPosition(touch.clientX, touch.clientY);
                 transformer.createAnchorByExternalIdentifier(identifier, x, y);
             }
             ev.preventDefault();
@@ -30,7 +30,7 @@ export function mapTouchEvents(
             const changedTouches: TouchList = ev.changedTouches;
             for(let i = 0; i <  changedTouches.length; i++){
                 const changedTouch: Touch = changedTouches[i];
-                const {x,y} = rectangle.getViewboxPosition(changedTouch.clientX, changedTouch.clientY);
+                const {x,y} = rectangle.getCSSPosition(changedTouch.clientX, changedTouch.clientY);
                 transformer.moveAnchorByExternalIdentifier(changedTouch.identifier, x, y);
             }
         });

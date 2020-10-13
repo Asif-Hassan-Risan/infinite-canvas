@@ -12,7 +12,7 @@ export function mapWheelEvents(
             return true;
         }
         transformer.startTransformation();
-        const {x, y} = rectangle.getViewboxPosition(ev.clientX, ev.clientY);
+        const {x, y} = rectangle.getCSSPosition(ev.clientX, ev.clientY);
         let delta: number = ev.deltaY;
         const scale: number = Math.pow(2, -delta / 300);
         transformer.zoom(x, y, scale);

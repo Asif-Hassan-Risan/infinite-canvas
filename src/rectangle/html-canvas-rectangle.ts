@@ -83,7 +83,7 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
             context.setTransform(a, b, c, d, e, f);
         }
     }
-    public getViewboxPosition(clientX: number, clientY: number): Point{
+    public getCSSPosition(clientX: number, clientY: number): Point{
         const {left, top} = this.measurementProvider.measure();
         return new Point(clientX - left, clientY - top);
     }
