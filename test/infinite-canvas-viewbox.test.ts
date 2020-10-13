@@ -3383,5 +3383,23 @@ describe("an infinite canvas context", () => {
 				});
 			});
 		});
+
+		describe('that uses CSS units', () => {
+
+			beforeEach(() => {
+				config.units = InfiniteCanvasUnits.CSS;
+			});
+
+			describe('and then draws a square', () => {
+
+				beforeEach(() => {
+					infiniteContext.fillRect(0, 0, 20, 20);
+				});
+
+				it("should have applied an initial transformation that is the inverse of the screen transformation", () => {
+					expect(contextMock.getLog()).toMatchSnapshot();
+				});
+			})
+		});
 	});
 })

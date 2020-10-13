@@ -30,12 +30,12 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         this.setInitialTransformation();
     }
     constructor(private readonly measurementProvider: CanvasMeasurementProvider, private readonly config: InfiniteCanvasConfig) {
-        this.unitsUsed = config.units === InfiniteCanvasUnits.SCREEN ? InfiniteCanvasUnits.SCREEN : InfiniteCanvasUnits.CANVAS;
+        this.unitsUsed = config.units === InfiniteCanvasUnits.CSS ? InfiniteCanvasUnits.CSS : InfiniteCanvasUnits.CANVAS;
         this.measure();
         this.transformation = Transformation.identity;
     }
     public setUnits(): void{
-        const newUnitsToUse: InfiniteCanvasUnits = this.config.units === InfiniteCanvasUnits.SCREEN ? InfiniteCanvasUnits.SCREEN : InfiniteCanvasUnits.CANVAS;
+        const newUnitsToUse: InfiniteCanvasUnits = this.config.units === InfiniteCanvasUnits.CSS ? InfiniteCanvasUnits.CSS : InfiniteCanvasUnits.CANVAS;
         if(newUnitsToUse === InfiniteCanvasUnits.CANVAS && this.unitsUsed !== InfiniteCanvasUnits.CANVAS){
             this.cumulativeScreenTransformation = this.screenTransformation;
         }

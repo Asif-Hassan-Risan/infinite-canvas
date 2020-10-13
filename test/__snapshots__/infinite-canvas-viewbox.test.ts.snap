@@ -4024,6 +4024,23 @@ Array [
 ]
 `;
 
+exports[`an infinite canvas context whose canvas has a non-identity screen transformation that uses CSS units and then draws a square should have applied an initial transformation that is the inverse of the screen transformation 1`] = `
+Array [
+  "context.restore()",
+  "context.save()",
+  "context.clearRect(0,0,300,300)",
+  "context.setTransform(0.6,0,0,0.3,0,0)",
+  "context.lineWidth = 1",
+  "context.beginPath()",
+  "context.moveTo(0,0)",
+  "context.lineTo(20,0)",
+  "context.lineTo(20,20)",
+  "context.lineTo(0,20)",
+  "context.lineTo(0,0)",
+  "context.fill()",
+]
+`;
+
 exports[`an infinite canvas context whose state is changed and then draws something should have modified the context correctly 1`] = `
 Array [
   "context.restore()",

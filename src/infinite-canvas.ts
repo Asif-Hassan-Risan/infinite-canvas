@@ -60,15 +60,15 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 			transformationEnd: this.transformer.transformationEnd
 		};
 		this.transformer.transformationStart.addListener(() => this.rectangle.measure());
-		if(config && config.units === InfiniteCanvasUnits.SCREEN){
+		if(config && config.units === InfiniteCanvasUnits.CSS){
 			this.canvasResizeObserver.addListener(this.canvasResizeListener);
 		}
 	}
 	private setUnits(units: InfiniteCanvasUnits): void{
-		if(units === InfiniteCanvasUnits.SCREEN && this.config.units !== InfiniteCanvasUnits.SCREEN){
+		if(units === InfiniteCanvasUnits.CSS && this.config.units !== InfiniteCanvasUnits.CSS){
 			this.canvasResizeObserver.addListener(this.canvasResizeListener);
 		}
-		if(units !== InfiniteCanvasUnits.SCREEN && this.config.units === InfiniteCanvasUnits.SCREEN){
+		if(units !== InfiniteCanvasUnits.CSS && this.config.units === InfiniteCanvasUnits.CSS){
 			this.canvasResizeObserver.removeListener(this.canvasResizeListener);
 		}
 		this.config.units = units;
@@ -109,5 +109,5 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 		this.drawEventDispatcher.dispatchEvent({});
 	}
 	public static CANVAS_UNITS: InfiniteCanvasUnits = InfiniteCanvasUnits.CANVAS;
-	public static SCREEN_UNITS: InfiniteCanvasUnits = InfiniteCanvasUnits.SCREEN;
+	public static CSS_UNITS: InfiniteCanvasUnits = InfiniteCanvasUnits.CSS;
 }

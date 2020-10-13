@@ -1,1 +1,1 @@
-export enum InfiniteCanvasUnits{SCREEN, CANVAS}
+export enum InfiniteCanvasUnits{CSS, CANVAS}
