@@ -105,6 +105,9 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 	public addEventListener<K extends keyof InfiniteCanvasEventMap>(type: K, listener: InfiniteCanvasEventListener<K>, options?: InfiniteCanvasAddEventListenerOptions): void{
 		this.eventDispatchers.addEventListener(type, listener, options);
 	}
+	public removeEventListener<K extends keyof InfiniteCanvasEventMap>(type: K, listener: InfiniteCanvasEventListener<K>): void{
+		this.eventDispatchers.removeEventListener(type, listener);
+	}
 	private dispatchDrawEvent(): void{
 		this.drawEventDispatcher.dispatchEvent({});
 	}
