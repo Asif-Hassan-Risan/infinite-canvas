@@ -13,58 +13,50 @@ import { Translate } from "./translate";
 import { TranslateZoom } from "./translate-zoom";
 import { TranslateRotateZoom } from "./translate-rotate-zoom";
 import { Movable } from "./movable";
-import { InfiniteCanvasEventDispatcher } from "../custom-events/infinite-canvas-event-dispatcher";
-import { InfiniteCanvasEvent } from "../custom-events/infinite-canvas-event";
-import { InfiniteCanvasTransformationEvent } from "../custom-events/infinite-canvas-transformation-event";
+import {EventDispatcher} from "../custom-events/event-dispatcher";
+import { Event } from "../custom-events/event";
 
 
 export class InfiniteCanvasTransformer implements Transformer{
     private gesture: Gesture;
     private anchorSet: AnchorSet;
     private _zoom: Zoom;
-    private _transformationStart: InfiniteCanvasEventDispatcher<"transformationStart">;
-    private _transformationChange: InfiniteCanvasEventDispatcher<"transformationChange">;
-    private _transformationEnd: InfiniteCanvasEventDispatcher<"transformationEnd">;
+    private _transformationStart: EventDispatcher<Transformation>;
+    private _transformationChange: EventDispatcher<Transformation>;
+    private _transformationEnd: EventDispatcher<Transformation>;
     private _isTransforming: boolean;
     public get isTransforming(): boolean{return this._isTransforming;}
     constructor(private readonly viewBox: TransformableBox, private readonly config: InfiniteCanvasConfig){
         this.anchorSet = new AnchorSet();
-        this._transformationStart = new InfiniteCanvasEventDispatcher();
-        this._transformationChange = new InfiniteCanvasEventDispatcher();
-        this._transformationEnd = new InfiniteCanvasEventDispatcher();
+        this._transformationStart = new EventDispatcher();
+        this._transformationChange = new EventDispatcher();
+        this._transformationEnd = new EventDispatcher();
         this._isTransforming = false;
     }
-    public get transformationStart(): InfiniteCanvasEvent<"transformationStart">{return this._transformationStart;}
-    public get transformationChange(): InfiniteCanvasEvent<"transformationChange">{return this._transformationChange;}
-    public get transformationEnd(): InfiniteCanvasEvent<"transformationEnd">{return this._transformationEnd;}
+    public get transformationStart(): Event<Transformation>{return this._transformationStart;}
+    public get transformationChange(): Event<Transformation>{return this._transformationChange;}
+    public get transformationEnd(): Event<Transformation>{return this._transformationEnd;}
     
     public get transformation(): Transformation{
         return this.viewBox.transformation;
     }
     public set transformation(value: Transformation){
         this.viewBox.transformation = value;
-        this.dispatchTransformationEvent(this._transformationChange);
+        this._transformationChange.dispatchEvent(value);
     }
     public startTransformation(): void{
         if(this._isTransforming){
             return;
         }
         this._isTransforming = true;
-        this.dispatchTransformationEvent(this._transformationStart);
-    }
-    private dispatchTransformationEvent(dispatcher: InfiniteCanvasEventDispatcher<"transformationStart" | "transformationChange" | "transformationEnd">): void{
-        const {a, b, c, d, e, f} = this.transformation;
-        const event: InfiniteCanvasTransformationEvent = {
-            transformation: {a, b, c, d, e, f}
-        };
-        dispatcher.dispatchEvent(event);
+        this._transformationStart.dispatchEvent(this.transformation)
     }
     private checkTransformationEnded(): void{
         if(!!this._zoom || !this.anchorSet.isEmpty){
             return;
         }
         this._isTransforming = false;
-        this.dispatchTransformationEvent(this._transformationEnd);
+        this._transformationEnd.dispatchEvent(this.transformation)
     }
     public getGestureForOneMovable(movable: Movable): Gesture{
         return new Translate(movable, this);

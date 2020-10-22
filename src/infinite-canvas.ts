@@ -10,8 +10,6 @@ import {AnimationFrameDrawingIterationProvider} from "./animation-frame-drawing-
 import {InfiniteCanvasEventMap} from "./custom-events/infinite-canvas-event-map";
 import {InfiniteCanvasAddEventListenerOptions} from "./custom-events/infinite-canvas-add-event-listener-options";
 import {InfiniteCanvasEventListener} from "./custom-events/infinite-canvas-event-listener";
-import {EventDispatchers} from "./custom-events/event-dispatchers";
-import {InfiniteCanvasEventDispatcher} from "./custom-events/infinite-canvas-event-dispatcher";
 import {DrawingIterationProviderWithCallback} from "./drawing-iteration-provider-with-callback";
 import {LockableDrawingIterationProvider} from "./lockable-drawing-iteration-provider";
 import {CanvasRectangle} from "./rectangle/canvas-rectangle";
@@ -20,14 +18,17 @@ import {HtmlCanvasMeasurementProvider} from "./rectangle/html-canvas-measurement
 import {InfiniteCanvasUnits} from "./infinite-canvas-units";
 import {CanvasResizeObserver} from "./canvas-resize-observer";
 import {HtmlCanvasResizeObserver} from "./html-canvas-resize-observer";
+import {EventDispatcher} from "./custom-events/event-dispatcher";
+import {InfiniteCanvasDrawEvent} from "./custom-events/infinite-canvas-draw-event";
+import {EventDispatcherCollection} from "./custom-events/event-dispatcher-collection";
 
 export class InfiniteCanvas implements InfiniteCanvasConfig{
 	private context: InfiniteCanvasRenderingContext2D;
 	private viewBox: ViewBox;
 	private transformer: Transformer;
 	private config: InfiniteCanvasConfig;
-	private eventDispatchers: EventDispatchers;
-	private drawEventDispatcher: InfiniteCanvasEventDispatcher<"draw">;
+	private eventDispatchers: EventDispatcherCollection;
+	private drawEventDispatcher: EventDispatcher<InfiniteCanvasDrawEvent>;
 	private rectangle: CanvasRectangle;
 	private canvasResizeObserver: CanvasResizeObserver;
 	private canvasResizeListener: () => void;
@@ -55,13 +56,12 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 			() => this.transformer.isTransforming);
 		this.transformer = new InfiniteCanvasTransformer(this.viewBox, this.config);
 		const events: InfiniteCanvasEvents = new InfiniteCanvasEvents(canvas, this.transformer, this.config, this.rectangle);
-		this.drawEventDispatcher = new InfiniteCanvasEventDispatcher();
-		this.eventDispatchers = {
-			draw: this.drawEventDispatcher,
-			transformationStart: this.transformer.transformationStart,
-			transformationChange: this.transformer.transformationChange,
-			transformationEnd: this.transformer.transformationEnd
-		};
+		this.drawEventDispatcher = new EventDispatcher();
+		this.eventDispatchers = new EventDispatcherCollection(
+			this.drawEventDispatcher,
+			this.transformer.transformationStart,
+			this.transformer.transformationChange,
+			this.transformer.transformationEnd);
 		this.transformer.transformationStart.addListener(() => this.rectangle.measure());
 		if(config && config.units === InfiniteCanvasUnits.CSS){
 			this.canvasResizeObserver.addListener(this.canvasResizeListener);
@@ -103,10 +103,7 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 		this.config.greedyGestureHandling = value;
 	}
 	public addEventListener<K extends keyof InfiniteCanvasEventMap>(type: K, listener: InfiniteCanvasEventListener<K>, options?: InfiniteCanvasAddEventListenerOptions): void{
-		const eventDispatcher = this.eventDispatchers[type];
-		eventDispatcher.addListener((ev: InfiniteCanvasEventMap[K]) => {
-			listener(ev);
-		}, options);
+		this.eventDispatchers.addEventListener(type, listener, options);
 	}
 	private dispatchDrawEvent(): void{
 		this.drawEventDispatcher.dispatchEvent({});

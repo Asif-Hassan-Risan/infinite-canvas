@@ -1,10 +1,11 @@
-import { InfiniteCanvasEvent } from "../custom-events/infinite-canvas-event";
 import { TransformerContext } from "./transformer-context";
+import {Transformation} from "../transformation";
+import { Event } from "../custom-events/event";
 
 export interface Transformer extends TransformerContext{
-	readonly transformationStart: InfiniteCanvasEvent<"transformationStart">;
-	readonly transformationChange: InfiniteCanvasEvent<"transformationChange">;
-	readonly transformationEnd: InfiniteCanvasEvent<"transformationEnd">;
+	readonly transformationStart: Event<Transformation>;
+	readonly transformationChange: Event<Transformation>;
+	readonly transformationEnd: Event<Transformation>;
 	startTransformation(): void;
 	zoom(x: number, y: number, scale: number): void;
 	createAnchorByExternalIdentifier(externalIdentifier: any, x: number, y: number): void;
