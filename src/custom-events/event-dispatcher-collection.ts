@@ -26,8 +26,16 @@ export class EventDispatcherCollection{
                 this.drawEvent.addListener(listener, options);
                 break;
             }
+            case "transformationStart": {
+                this.transformationStartEvent.addListener(listener, options)
+                break;
+            }
             case "transformationChange": {
                 this.transformationChangeEvent.addListener(listener, options)
+                break;
+            }
+            case "transformationEnd": {
+                this.transformationEndEvent.addListener(listener, options)
                 break;
             }
         }
@@ -39,8 +47,16 @@ export class EventDispatcherCollection{
                 this.drawEvent.removeListener(listener);
                 break;
             }
+            case "transformationStart": {
+                this.transformationStartEvent.removeListener(listener)
+                break;
+            }
             case "transformationChange": {
                 this.transformationChangeEvent.removeListener(listener)
+                break;
+            }
+            case "transformationEnd": {
+                this.transformationEndEvent.removeListener(listener)
                 break;
             }
         }
