@@ -87,6 +87,11 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         const {left, top} = this.measurementProvider.measure();
         return new Point(clientX - left, clientY - top);
     }
+    public getCanvasContextPosition(clientX: number, clientY: number): Point{
+        const cssPosition: Point = this.getCSSPosition(clientX, clientY);
+        const t: Transformation = this.inverseScreenTransformation.before(this.transformation.inverse()).before(this.initialTransformation.inverse());
+        return t.apply(cssPosition);
+    }
     public getForPath(): PathInfinityProvider{
         return new InfiniteCanvasPathInfinityProvider(this);
     }
