@@ -109,7 +109,7 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
     }
     public getCanvasContextPosition(clientX: number, clientY: number): Point{
         const cssPosition: Point = this.getCSSPosition(clientX, clientY);
-        const t: Transformation = this.inverseScreenTransformation.before(this.transformation.inverse()).before(this.initialTransformation.inverse());
+        const t: Transformation = this.transformations.inverseScreenTransformation.before(this.transformations.initialContextTransformation.inverse()).before(this.transformation.inverse());
         return t.apply(cssPosition);
     }
     public getForPath(): PathInfinityProvider{
