@@ -8,7 +8,7 @@ import { ViewboxTransformer } from "./viewbox-transformer";
 export class CanvasViewboxTransformer implements ViewboxTransformer{
     constructor(private readonly state: InfiniteCanvasState, private readonly rectangle: CanvasRectangle){}
     public getTransformedViewbox(margin: number): ConvexPolygon{
-        const t: Transformation = this.state.current.transformation.before(this.rectangle.initialTransformation).before(this.rectangle.transformation)
+        const t: Transformation = this.state.current.transformation.before(this.rectangle.transformation).before(this.rectangle.initialContextTransformation);
         return this.rectangle.polygon.expandByDistance(margin * this.rectangle.transformation.scale).transform(t.inverse());
     }
     public addPathAroundViewbox(context: CanvasRenderingContext2D, margin: number): void{
@@ -30,7 +30,7 @@ export class CanvasViewboxTransformer implements ViewboxTransformer{
     }
     public transformAbsolutely(instruction: Instruction): Instruction{
         return (context: CanvasRenderingContext2D) => {
-            const {a, b, c, d, e, f} = this.rectangle.initialTransformation.before(this.rectangle.transformation);
+            const {a, b, c, d, e, f} = this.rectangle.transformation.before(this.rectangle.initialContextTransformation);
             context.save();
             context.setTransform(a, b, c, d, e, f);
             instruction(context, this.rectangle.transformation);

@@ -75,7 +75,7 @@ export class InfiniteCanvas implements InfiniteCanvasConfig{
 			this.canvasResizeObserver.removeListener(this.canvasResizeListener);
 		}
 		this.config.units = units;
-		this.rectangle.setUnits();
+		this.rectangle.measure();
 		this.viewBox.draw();
 	}
 	public getContext(): InfiniteCanvasRenderingContext2D{
