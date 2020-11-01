@@ -54,6 +54,9 @@
 			<span class="darklight" v-on:click="setLight" v-if="dark">light</span>
 		</div>
 		<div class="option"><a href="/sandbox.html">sandbox</a></div>
+		<div>
+			<div v-for="otherLink in otherLinks"><a v-bind:href="otherLink.url" target="_blank">{{otherLink.text}}</a></div>
+		</div>
 		<div v-if="numberSkipped > 0" class="notification">{{numberSkipped}} examples were skipped</div>
 		<div v-if="unequalImages.length > 0" class="danger">
 			<div>Not all images appear to be equal. Please inspect:</div>
@@ -131,6 +134,28 @@
 				var minIndentLength = Math.min.apply(null, matchedLines.map(function(l){return l[1].length;}));
 				return lines.map(function(l){return l.substring(minIndentLength);})
 			}
+			var otherLinks = [
+				{
+					text: "A full-screen canvas using canvas units",
+					url: "canvas-width-height.html"
+				},
+				{
+					text: "A fixed-size canvas with width and height set before creation of the InfiniteCanvas",
+					url: "canvas-width-height-2.html"
+				},
+				{
+					text: "A fixed-size canvas with width and height set after creation of the InfiniteCanvas",
+					url: "canvas-width-height-3.html"
+				},
+				{
+					text: "A full-screen canvas using css units",
+					url: "canvas-width-height-4.html"
+				},
+				{
+					text: "A canvas whose used units can be switched",
+					url: "canvas-width-height-5.html"
+				}
+			];
 			var examples = [
 						{
 							code:function(ctx){
@@ -1289,7 +1314,8 @@
 						ignoredImages: [],
 						viewDiff: false,
 						diffImageData: undefined,
-						differenceMeasure: undefined
+						differenceMeasure: undefined,
+						otherLinks: otherLinks
 					};
 				},
 				methods:{

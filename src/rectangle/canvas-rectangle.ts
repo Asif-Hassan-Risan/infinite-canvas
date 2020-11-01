@@ -5,16 +5,17 @@ import { ViewboxInfinityProvider } from "../interfaces/viewbox-infinity-provider
 import { InfiniteCanvasState } from "../state/infinite-canvas-state";
 import { Transformable } from "../transformable";
 import { Transformation } from "../transformation";
-import { ViewboxTransformer } from "./viewbox-transformer";
 
 export interface CanvasRectangle extends Transformable, ViewboxInfinityProvider {
     viewboxWidth: number;
     viewboxHeight: number;
-    polygon: ConvexPolygon;
-    readonly initialContextTransformation: Transformation;
     measure(): void;
     getCSSPosition(screenX: number, screenY: number): Point;
-    getViewboxTransformer(state: InfiniteCanvasState): ViewboxTransformer;
+    getCanvasContextPosition(clientX: number, clientY: number): Point;
     getTransformationInstruction(toTransformation: Transformation): Instruction;
     applyInitialTransformation(context: CanvasRenderingContext2D): void;
+    getViewboxFromState(state: InfiniteCanvasState, margin: number): ConvexPolygon;
+    transformRelatively(instruction: Instruction): Instruction;
+    transformAbsolutely(instruction: Instruction): Instruction;
+    addPathAroundViewbox(context: CanvasRenderingContext2D, margin: number): void;
 }

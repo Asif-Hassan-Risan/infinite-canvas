@@ -15,6 +15,8 @@ export function mapMouseEvents(
                 }
             }
             canvasElement.addEventListener("mousedown", (ev: MouseEvent) => {
+                const {x: infCanvasX, y: infCanvasY} = rectangle.getCanvasContextPosition(ev.clientX, ev.clientY);
+                console.log(`mousedown at (${infCanvasX}, ${infCanvasY})`)
                 if(mouseAnchorIdentifier !== undefined){
                     return;
                 }

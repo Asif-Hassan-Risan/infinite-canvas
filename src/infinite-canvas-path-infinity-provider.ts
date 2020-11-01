@@ -17,6 +17,6 @@ export class InfiniteCanvasPathInfinityProvider implements PathInfinityProvider{
     }
 
     public getInfinity(state: InfiniteCanvasState): ViewboxInfinity{
-        return new InfiniteCanvasViewboxInfinity(this.canvasRectangle.getViewboxTransformer(state), () => this.lineDashPeriod, () => this.drawnLineWidth);
+        return new InfiniteCanvasViewboxInfinity(this.canvasRectangle, state, () => this.lineDashPeriod, () => this.drawnLineWidth);
     }
 }

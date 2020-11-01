@@ -76,7 +76,7 @@ export class InfiniteCanvasInstructionSet{
         }
         const stateIsTransformable: boolean = this.state.current.isTransformable();
         if(!stateIsTransformable){
-            instruction = this.rectangle.getViewboxTransformer(this.state).transformRelatively(instruction);//transformInstructionRelatively(instruction);
+            instruction = this.rectangle.transformRelatively(instruction);//transformInstructionRelatively(instruction);
         }
         this.state = this.state.currentlyTransformed(stateIsTransformable);
         const recreatedPath: StateChangingInstructionSetWithAreaAndCurrentPath = this.currentInstructionsWithPath.recreatePath();
@@ -91,7 +91,7 @@ export class InfiniteCanvasInstructionSet{
     private drawRect(x: number, y: number, w: number, h: number, instruction: Instruction, drawPath: (path: StateChangingInstructionSetWithAreaAndCurrentPath, instruction: Instruction, state: InfiniteCanvasState) => void): void{
         const stateIsTransformable: boolean = this.state.current.isTransformable();
         if(!stateIsTransformable){
-            instruction = this.rectangle.getViewboxTransformer(this.state).transformRelatively(instruction);
+            instruction = this.rectangle.transformRelatively(instruction);
         }
         const stateToDrawWith: InfiniteCanvasState = this.state.currentlyTransformed(this.state.current.isTransformable());
         const pathToDraw: StateChangingInstructionSetWithAreaAndCurrentPath = InstructionsWithPath.create(stateToDrawWith, this.rectangle, this.rectangle.getForPath());
@@ -103,10 +103,10 @@ export class InfiniteCanvasInstructionSet{
 
     public addDrawing(instruction: Instruction, area: Area, transformationKind: TransformationKind, takeClippingRegionIntoAccount: boolean): void{
         if(transformationKind === TransformationKind.Relative){
-			instruction = this.rectangle.getViewboxTransformer(this.state).transformRelatively(instruction);
+			instruction = this.rectangle.transformRelatively(instruction);
 			area = area.transform(this.state.current.transformation);
 		}else if(transformationKind === TransformationKind.Absolute){
-			instruction = this.rectangle.getViewboxTransformer(this.state).transformAbsolutely(instruction);
+			instruction = this.rectangle.transformAbsolutely(instruction);
         }
         let areaToDraw: Area = area;
         if(this.state.current.clippingRegion && takeClippingRegionIntoAccount){

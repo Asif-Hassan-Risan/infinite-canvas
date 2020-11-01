@@ -6,43 +6,24 @@ import {Transformation} from "../transformation";
 import {CanvasMeasurementProvider} from "./canvas-measurement-provider";
 import {PathInfinityProvider} from "../interfaces/path-infinity-provider";
 import {InfiniteCanvasPathInfinityProvider} from "../infinite-canvas-path-infinity-provider";
-import {CanvasViewboxTransformer} from "./canvas-viewbox-transformer";
-import {ViewboxTransformer} from "./viewbox-transformer";
 import {Instruction} from "../instructions/instruction";
 import {InfiniteCanvasConfig} from "../config/infinite-canvas-config";
 import {InfiniteCanvasUnits} from "../infinite-canvas-units";
-import { CanvasMeasurement } from "./canvas-measurement";
-import { RectangleMeasurement } from "./rectangle-measurement";
-import { RectangleTransformations } from "./transformations/rectangle-transformations";
-import { RectangleTransformationsForCSSUnits } from "./transformations/rectangle-transformations-for-css-units";
-import { RectangleTransformationsForCanvasUnits } from "./transformations/rectangle-transformations-for-canvas-units";
+import {CanvasMeasurement} from "./canvas-measurement";
+import {RectangleMeasurement} from "./rectangle-measurement";
+import {CoordinateSystems} from "./coordinate-systems/coordinate-systems";
+import {CssCoordinateSystemStack} from "./coordinate-systems/css/css-coordinate-system-stack";
+import {CanvasCoordinateSystemStack} from "./coordinate-systems/canvas/canvas-coordinate-system-stack";
+import {
+    convertToStackForCanvasUnits,
+    convertToStackForCssUnits
+} from "./coordinate-systems/coordinate-system-conversion";
 
 function createRectangleMeasurement(canvasMeasurement: CanvasMeasurement): RectangleMeasurement{
     const {viewboxWidth, viewboxHeight, screenWidth, screenHeight} = canvasMeasurement;
     const polygon: ConvexPolygon = ConvexPolygon.createRectangle(0, 0, viewboxWidth, viewboxHeight);
     const screenTransformation: Transformation = new Transformation(screenWidth / viewboxWidth, 0, 0, screenHeight / viewboxHeight, 0, 0);
-    return {screenWidth, screenHeight, viewboxWidth, viewboxHeight, polygon, screenTransformation};
-}
-
-function convertToRectangleTransformationsForCanvasUnits(transformations: RectangleTransformationsForCSSUnits): RectangleTransformationsForCanvasUnits{
-    return new RectangleTransformationsForCanvasUnits(
-        transformations.transformation,
-        transformations.inverseTransformation,
-        transformations.screenTransformation,
-        transformations.inverseScreenTransformation,
-        transformations.screenTransformation,
-        transformations.initialContextTransformation
-    )
-}
-
-function convertToRectangleTransformationsForCSSUnits(transformations: RectangleTransformationsForCanvasUnits): RectangleTransformationsForCSSUnits{
-    return new RectangleTransformationsForCSSUnits(
-        transformations.transformation,
-        transformations.inverseTransformation,
-        transformations.screenTransformation,
-        transformations.inverseScreenTransformation,
-        transformations.initialContextTransformation
-    );
+    return {screenWidth, screenHeight, viewboxWidth, viewboxHeight, polygon, screenTransformation, inverseScreenTransformation: screenTransformation.inverse()};
 }
 
 export class HTMLCanvasRectangle implements CanvasRectangle{
@@ -52,19 +33,18 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
     private unitsUsed: InfiniteCanvasUnits;
     private screenWidth: number;
     private screenHeight: number;
-    public get initialContextTransformation(): Transformation{return this.transformations.initialContextTransformation;}
-    private transformations: RectangleTransformations;
-    public get transformation(): Transformation{return this.transformations.transformation;}
+    private coordinateSystems: CoordinateSystems;
+    public get transformation(): Transformation{return this.coordinateSystems.userTransformation;}
     public set transformation(value: Transformation){
-        this.transformations = this.transformations.setTransformation(value);
+        this.coordinateSystems = this.coordinateSystems.withUserTransformation(value);
     }
     constructor(private readonly measurementProvider: CanvasMeasurementProvider, private readonly config: InfiniteCanvasConfig) {
         this.unitsUsed = config.units === InfiniteCanvasUnits.CSS ? InfiniteCanvasUnits.CSS : InfiniteCanvasUnits.CANVAS;
         const measurement: RectangleMeasurement = createRectangleMeasurement(this.measurementProvider.measure());
         this.addMeasurement(measurement);
-        this.transformations = config.units === InfiniteCanvasUnits.CSS ? 
-            RectangleTransformationsForCSSUnits.create(measurement) :
-            RectangleTransformationsForCanvasUnits.create(measurement);
+        this.coordinateSystems = config.units === InfiniteCanvasUnits.CSS ?
+            CssCoordinateSystemStack.create(measurement) :
+            CanvasCoordinateSystemStack.create(measurement);
     }
     private isChange(measurement: CanvasMeasurement): boolean{
         return measurement.viewboxWidth !== this.viewboxWidth ||
@@ -82,10 +62,10 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
     public measure(): void{
         const newUnitsToUse: InfiniteCanvasUnits = this.config.units === InfiniteCanvasUnits.CSS ? InfiniteCanvasUnits.CSS : InfiniteCanvasUnits.CANVAS;
         if(newUnitsToUse === InfiniteCanvasUnits.CANVAS && this.unitsUsed === InfiniteCanvasUnits.CSS){
-            this.transformations = convertToRectangleTransformationsForCanvasUnits(this.transformations as RectangleTransformationsForCSSUnits);
+            this.coordinateSystems = convertToStackForCanvasUnits(this.coordinateSystems as CssCoordinateSystemStack);
         }
         if(newUnitsToUse === InfiniteCanvasUnits.CSS && this.unitsUsed === InfiniteCanvasUnits.CANVAS){
-            this.transformations = convertToRectangleTransformationsForCSSUnits(this.transformations as RectangleTransformationsForCanvasUnits);
+            this.coordinateSystems = convertToStackForCssUnits(this.coordinateSystems as CanvasCoordinateSystemStack);
         }
         this.unitsUsed = newUnitsToUse;
         const newMeasurement: CanvasMeasurement = this.measurementProvider.measure();
@@ -94,13 +74,12 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
         }
         const newRectangleMeasurement: RectangleMeasurement = createRectangleMeasurement(newMeasurement);
         this.addMeasurement(newRectangleMeasurement);
-        this.transformations = this.transformations.setScreenTransformation(newRectangleMeasurement.screenTransformation);
+        this.coordinateSystems = this.coordinateSystems.withScreenTransformation(newRectangleMeasurement.screenTransformation, newRectangleMeasurement.inverseScreenTransformation);
     }
 
     public getTransformationInstruction(toTransformation: Transformation): Instruction{
         return (context: CanvasRenderingContext2D) => {
-            const {a, b, c, d, e, f} = this.transformations.inverseTransformation.before(toTransformation).before(this.transformations.transformation).before(this.transformations.initialContextTransformation);
-            context.setTransform(a, b, c, d, e, f);
+            this.coordinateSystems.setTransformationToTransformInfiniteCanvasContext(context, toTransformation);
         }
     }
     public getCSSPosition(clientX: number, clientY: number): Point{
@@ -109,21 +88,33 @@ export class HTMLCanvasRectangle implements CanvasRectangle{
     }
     public getCanvasContextPosition(clientX: number, clientY: number): Point{
         const cssPosition: Point = this.getCSSPosition(clientX, clientY);
-        const t: Transformation = this.transformations.inverseScreenTransformation.before(this.transformations.initialContextTransformation.inverse()).before(this.transformation.inverse());
-        return t.apply(cssPosition);
+        return this.coordinateSystems.inverseInfiniteCanvasContextBase.apply(cssPosition);
     }
     public getForPath(): PathInfinityProvider{
         return new InfiniteCanvasPathInfinityProvider(this);
     }
-    public getViewboxTransformer(state: InfiniteCanvasState): ViewboxTransformer{
-        return new CanvasViewboxTransformer(state, this);
+    public getViewboxFromState(state: InfiniteCanvasState, margin: number): ConvexPolygon{
+        return this.coordinateSystems.rebaseFromScreenContextToInfiniteCanvasContext(state.current.transformation, this.polygon.expandByDistance(margin * this.transformation.scale));
     }
     public applyInitialTransformation(context: CanvasRenderingContext2D): void{
-        const transformationToApply: Transformation = this.transformations.initialContextTransformation;
-        if(transformationToApply.equals(Transformation.identity)){
-            return;
-        }
-        const {a, b, c, d, e, f} = transformationToApply;
-        context.setTransform(a, b, c, d, e, f);
+        this.coordinateSystems.setCanvasContextTransformation(context);
+    }
+    public transformRelatively(instruction: Instruction): Instruction{
+        return (context: CanvasRenderingContext2D) => {
+            this.coordinateSystems.executeInTransformedInfiniteCanvasContext(instruction, context);
+        };
+    }
+    public transformAbsolutely(instruction: Instruction): Instruction{
+        return (context: CanvasRenderingContext2D) => {
+            this.coordinateSystems.executeInUntransformedInfiniteCanvasContext(instruction, context);
+        };
+    }
+    public addPathAroundViewbox(context: CanvasRenderingContext2D, margin: number): void{
+        const width: number = this.viewboxWidth + 2 * margin;
+        const height: number = this.viewboxHeight + 2 * margin;
+        context.save();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.rect(-margin, -margin, width, height);
+        context.restore();
     }
 }
