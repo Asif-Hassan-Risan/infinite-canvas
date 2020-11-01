@@ -8,4 +8,5 @@ export interface RectangleMeasurement{
     viewboxHeight: number;
     polygon: ConvexPolygon;
     screenTransformation: Transformation;
+    inverseScreenTransformation: Transformation;
 }

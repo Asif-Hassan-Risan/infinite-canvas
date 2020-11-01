@@ -3,19 +3,24 @@ import {Point} from "./geometry/point";
 import {Transformation} from "./transformation";
 import {ConvexPolygon} from "./areas/polygons/convex-polygon";
 import { right, left, down, up } from "./geometry/points-at-infinity";
-import { ViewboxTransformer } from "./rectangle/viewbox-transformer";
+import {CanvasRectangle} from "./rectangle/canvas-rectangle";
+import {InfiniteCanvasState} from "./state/infinite-canvas-state";
 
 export class InfiniteCanvasViewboxInfinity implements ViewboxInfinity{
     constructor(
-        private readonly viewboxTransformer: ViewboxTransformer,
+        private readonly rectangle: CanvasRectangle,
+        private readonly state: InfiniteCanvasState,
         private readonly getLineDashPeriod: () => number,
         private readonly getDrawnLineWidth: () => number) {
     }
     public addPathAroundViewbox(context: CanvasRenderingContext2D): void{
-        this.viewboxTransformer.addPathAroundViewbox(context, this.getDrawnLineWidth());
+        this.rectangle.addPathAroundViewbox(context, this.getDrawnLineWidth());
+    }
+    private getTransformedViewbox(): ConvexPolygon{
+        return this.rectangle.getViewboxFromState(this.state, this.getDrawnLineWidth());
     }
     public clearRect(context: CanvasRenderingContext2D, transformation: Transformation, x: number, y: number, width: number, height: number): void{
-        const transformedViewbox: ConvexPolygon = this.viewboxTransformer.getTransformedViewbox(this.getDrawnLineWidth());
+        const transformedViewbox: ConvexPolygon = this.getTransformedViewbox();
         const {a, b, c, d, e, f} = transformation;
         context.save();
         context.transform(a, b, c, d, e, f);
@@ -27,11 +32,11 @@ export class InfiniteCanvasViewboxInfinity implements ViewboxInfinity{
         context.restore();
     }
     public moveToInfinityFromPointInDirection(context: CanvasRenderingContext2D, transformation: Transformation, fromPoint: Point, direction: Point): void{
-        const pointInFront: Point = this.viewboxTransformer.getTransformedViewbox(this.getDrawnLineWidth()).getPointInFrontInDirection(fromPoint, direction);
+        const pointInFront: Point = this.getTransformedViewbox().getPointInFrontInDirection(fromPoint, direction);
         this.moveToTransformed(context, pointInFront, transformation);
     }
     public drawLineToInfinityFromInfinityFromPoint(context: CanvasRenderingContext2D, transformation: Transformation, point: Point, fromDirection: Point, toDirection: Point): void{
-        const transformedViewbox: ConvexPolygon = this.viewboxTransformer.getTransformedViewbox(this.getDrawnLineWidth());
+        const transformedViewbox: ConvexPolygon = this.getTransformedViewbox();
         const startingPoint: Point = transformedViewbox.getPointInFrontInDirection(point, fromDirection);
         const destinationPoint: Point = transformedViewbox.getPointInFrontInDirection(point, toDirection);
         let polygonToCircumscribe: ConvexPolygon = transformedViewbox
@@ -57,7 +62,7 @@ export class InfiniteCanvasViewboxInfinity implements ViewboxInfinity{
         this.ensureDistanceCoveredIsMultipleOfLineDashPeriod(context, transformation, distanceCovered, destinationPoint, toDirection);
     }
     public drawLineFromInfinityFromPointToInfinityFromPoint(context: CanvasRenderingContext2D, transformation: Transformation, point1: Point, point2: Point, direction: Point): void{
-        const transformedViewbox: ConvexPolygon = this.viewboxTransformer.getTransformedViewbox(this.getDrawnLineWidth());
+        const transformedViewbox: ConvexPolygon = this.getTransformedViewbox();
         const fromPoint: Point = transformedViewbox.getPointInFrontInDirection(point1, direction);
         const toPoint: Point = transformedViewbox.getPointInFrontInDirection(point2, direction);
         this.lineToTransformed(context, toPoint, transformation);
@@ -65,13 +70,13 @@ export class InfiniteCanvasViewboxInfinity implements ViewboxInfinity{
         this.ensureDistanceCoveredIsMultipleOfLineDashPeriod(context, transformation, distanceCovered, toPoint, direction);
     }
     public drawLineFromInfinityFromPointToPoint(context: CanvasRenderingContext2D, transformation: Transformation, point: Point, direction: Point): void{
-        const fromPoint: Point = this.viewboxTransformer.getTransformedViewbox(this.getDrawnLineWidth()).getPointInFrontInDirection(point, direction);
+        const fromPoint: Point = this.getTransformedViewbox().getPointInFrontInDirection(point, direction);
         const distanceToCover: number = point.minus(fromPoint).mod();
         this.ensureDistanceCoveredIsMultipleOfLineDashPeriod(context, transformation, distanceToCover, fromPoint, direction);
         this.lineToTransformed(context, point, transformation);
     }
     public drawLineToInfinityFromPointInDirection(context: CanvasRenderingContext2D, transformation: Transformation, fromPoint: Point, direction: Point): void{
-        const toPoint: Point = this.viewboxTransformer.getTransformedViewbox(this.getDrawnLineWidth()).getPointInFrontInDirection(fromPoint, direction);
+        const toPoint: Point = this.getTransformedViewbox().getPointInFrontInDirection(fromPoint, direction);
         this.lineToTransformed(context, toPoint, transformation);
         const distanceCovered: number = toPoint.minus(fromPoint).mod();
         this.ensureDistanceCoveredIsMultipleOfLineDashPeriod(context, transformation, distanceCovered, toPoint, direction);
